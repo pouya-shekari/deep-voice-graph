@@ -1,0 +1,16 @@
+@font-face {
+  font-family: IRAN-Sans;
+  src: url("../fonts/IRANSansWeb.cdb118d6.woff2") format("woff2");
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: IRAN-Sans;
+}
+
+body {
+  /*background: rgb(241, 243, 246);*/
+}
+
