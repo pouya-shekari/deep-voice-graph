@@ -1,1 +1,1 @@
-//code
+export {UserLayout} from './user-layout/index'

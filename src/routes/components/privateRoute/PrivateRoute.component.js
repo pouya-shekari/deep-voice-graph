@@ -7,7 +7,7 @@ import { IS_LOGGED_IN } from "../../../config/variables.config";
 
 const TargetPage = ({ Component }) => {
   if (!localStorage.getItem(IS_LOGGED_IN)) {
-    return <Navigate replace to={PATHS.HOME} />;
+    return <Navigate replace to={PATHS.LOGIN} />;
   }
 
   return (

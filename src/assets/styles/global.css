@@ -7,10 +7,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: IRAN-Sans;
+  font-family: IRAN-Sans!important;
 }
 
 body {
   /*background: rgb(241, 243, 246);*/
+  direction: rtl;
 }
 

@@ -8,12 +8,24 @@ class AppRoute extends Component {
   render() {
     return (
       <Routes>
-        <Route
-          path={PATHS.HOME}
-          element={
-            <PublicRoute component={(props) => <Page.Home {...props} />} />
-          }
-        />
+          <Route
+              path={PATHS.HOME}
+              element={
+                  <PrivateRoute component={(props) => <Page.Home {...props} />} />
+              }
+          />
+          <Route
+              path={PATHS.LOGIN}
+              element={
+                  <ProtectedRoute component={(props) => <Page.Login {...props} />} />
+              }
+          />
+          <Route
+              path={PATHS.NOT_FOUND}
+              element={
+                  <PublicRoute component={(props) => <Page.NotFound {...props} />} />
+              }
+          />
       </Routes>
     );
   }

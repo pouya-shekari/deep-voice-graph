@@ -1,4 +1,5 @@
 import {Helmet} from "react-helmet";
+import {UserLayout} from "../../layouts";
 
 const Home = ()=>{
     return (
@@ -6,7 +7,7 @@ const Home = ()=>{
             <Helmet>
                 <title>صفحه اصلی</title>
             </Helmet>
-            <h1>Home</h1>
+            <UserLayout children={<h1>Home</h1>} />
         </>
     )
 }

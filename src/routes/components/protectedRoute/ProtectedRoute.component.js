@@ -3,10 +3,11 @@ import {Navigate} from 'react-router-dom';
 import {PATHS} from '../../../config/routes.config';
 import {History} from '../history/History.component';
 import {DEFAULT_PROPS, PROP_TYPES} from './protectedRoute.config';
+import {IS_LOGGED_IN} from "../../../config/variables.config";
 
 const TargetPage = ({Component}) => {
 
-    const isLoggedIn = localStorage.getItem('IS_LOGGED_IN') === 'true';
+    const isLoggedIn = localStorage.getItem(IS_LOGGED_IN) === 'true';
 
     if (isLoggedIn) {
         return <Navigate replace to={PATHS.HOME} />
