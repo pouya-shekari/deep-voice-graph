@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet";
 import { UserLayout } from "../../layouts";
 import HaraBreadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { PATHS } from "../../config/routes.config";
+import List from "../../components/Announcement/List";
 
 const breadcrumbItems = [
   { title: "پیشخوان", isActive: false, href: PATHS.HOME },
@@ -15,7 +16,7 @@ const AnnouncementsWrapper = () => {
       <div className="container-fluid mt-5">
         <div className="row">
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3">
-            <h1>Announcements</h1>
+            <List />
           </div>
         </div>
       </div>
