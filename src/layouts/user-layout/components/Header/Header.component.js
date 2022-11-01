@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import LOGO from "../../../../assets/media/hara.png";
 import { PATHS } from "../../../../config/routes.config";
-import { IS_LOGGED_IN } from "../../../../config/variables.config";
+import {IS_LOGGED_IN, TOKEN} from "../../../../config/variables.config";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -44,6 +44,7 @@ const Header = (props) => {
   React.useEffect(() => {
     if (exit) {
       localStorage.removeItem(IS_LOGGED_IN);
+      localStorage.removeItem(TOKEN)
       toast.success("خروج با موفقیت انجام شد.");
       navigate(PATHS.LOGIN);
     }

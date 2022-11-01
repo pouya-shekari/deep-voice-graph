@@ -5,7 +5,9 @@ import { PATHS } from "../../config/routes.config";
 import style from "./Login.module.scss";
 import LOGO from "../../assets/media/hara.png";
 import { toast } from "react-toastify";
-import { IS_LOGGED_IN } from "../../config/variables.config";
+import {BASE_URL, IS_LOGGED_IN, TOKEN} from "../../config/variables.config";
+import {Helmet} from "react-helmet";
+import {loginUser} from "../../api/login.api";
 import axios from "axios";
 
 const Login = () => {
@@ -41,18 +43,29 @@ const Login = () => {
   };
 
   const sendRequest = async (event) => {
-    // toast.success("ورود با موفقیت انجام شد.");
-    // const { data } = await axios.post("http://172.16.12.231:8090/user/login", {
-    //   username: "mohammad",
-    //   password: "1234",
-    // });
-    // console.log(data);
-    localStorage.setItem(IS_LOGGED_IN, "true");
-    navigate(PATHS.HOME);
+    const data = {
+      "username": event.username,
+      "password": event.password
+    }
+    await loginUser(data).then((res)=>{
+      localStorage.setItem(TOKEN,res.data.token)
+      localStorage.setItem(IS_LOGGED_IN, "true");
+      toast.success("ورود با موفقیت انجام شد.");
+      navigate(PATHS.HOME);
+    }).catch((err)=>{
+      if(err.response.data.message === "USER_NOT_FOUND: "){
+        toast.error('نام کاربری یا رمز عبور اشتباه است.')
+      }else{
+        toast.error('اتصال با خطا مواجه شد.')
+      }
+    })
   };
 
   return (
     <>
+      <Helmet>
+        <title>صفحه ورود</title>
+      </Helmet>
       <div className={style.login}>
         <div className="container-fluid">
           <div className={`row`}>
