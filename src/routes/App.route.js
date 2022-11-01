@@ -8,24 +8,61 @@ class AppRoute extends Component {
   render() {
     return (
       <Routes>
-          <Route
-              path={PATHS.HOME}
-              element={
-                  <PrivateRoute component={(props) => <Page.Home {...props} />} />
-              }
-          />
-          <Route
-              path={PATHS.LOGIN}
-              element={
-                  <ProtectedRoute component={(props) => <Page.Login {...props} />} />
-              }
-          />
-          <Route
-              path={PATHS.NOT_FOUND}
-              element={
-                  <PublicRoute component={(props) => <Page.NotFound {...props} />} />
-              }
-          />
+        {/* PrivateRoutes */}
+        <Route
+          path={PATHS.HOME}
+          element={
+            <PrivateRoute component={(props) => <Page.Home {...props} />} />
+          }
+        />
+        <Route
+          path={PATHS.CHECKERS}
+          element={
+            <PrivateRoute component={(props) => <Page.Checkers {...props} />} />
+          }
+        />
+        <Route
+          path={PATHS.ACTINOS}
+          element={
+            <PrivateRoute component={(props) => <Page.Actions {...props} />} />
+          }
+        />
+        <Route
+          path={PATHS.QUESTIONS}
+          element={
+            <PrivateRoute
+              component={(props) => <Page.Questions {...props} />}
+            />
+          }
+        />
+        <Route
+          path={PATHS.ANNOUNCEMENTS}
+          element={
+            <PrivateRoute
+              component={(props) => <Page.Announcements {...props} />}
+            />
+          }
+        />
+        <Route
+          path={PATHS.FLOWS}
+          element={
+            <PrivateRoute component={(props) => <Page.Flows {...props} />} />
+          }
+        />
+        {/* ProtectedRoutes */}
+        <Route
+          path={PATHS.LOGIN}
+          element={
+            <ProtectedRoute component={(props) => <Page.Login {...props} />} />
+          }
+        />
+        {/* PublicRoutes */}
+        <Route
+          path={PATHS.NOT_FOUND}
+          element={
+            <PublicRoute component={(props) => <Page.NotFound {...props} />} />
+          }
+        />
       </Routes>
     );
   }

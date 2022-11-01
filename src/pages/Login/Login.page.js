@@ -6,6 +6,7 @@ import style from "./Login.module.scss";
 import LOGO from "../../assets/media/hara.png";
 import { toast } from "react-toastify";
 import { IS_LOGGED_IN } from "../../config/variables.config";
+import axios from "axios";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -39,8 +40,13 @@ const Login = () => {
     return error;
   };
 
-  const sendRequest = (event) => {
-    toast.success("ورود با موفقیت انجام شد.");
+  const sendRequest = async (event) => {
+    // toast.success("ورود با موفقیت انجام شد.");
+    // const { data } = await axios.post("http://172.16.12.231:8090/user/login", {
+    //   username: "mohammad",
+    //   password: "1234",
+    // });
+    // console.log(data);
     localStorage.setItem(IS_LOGGED_IN, "true");
     navigate(PATHS.HOME);
   };

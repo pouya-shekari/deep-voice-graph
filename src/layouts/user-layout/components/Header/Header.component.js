@@ -50,7 +50,7 @@ const Header = (props) => {
   }, [exit]);
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box>
       <AppBar component="nav" sx={{ backgroundColor: "rgb(45,55,145)" }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography
