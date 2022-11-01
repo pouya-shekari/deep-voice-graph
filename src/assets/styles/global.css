@@ -13,5 +13,9 @@
 }
 
 body {
-  /*background: rgb(241, 243, 246);*/
+  background: rgb(241, 243, 246);
+}
+
+a {
+  text-decoration: none !important;
 }
