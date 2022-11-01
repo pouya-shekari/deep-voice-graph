@@ -8,10 +8,10 @@
   padding: 0;
   box-sizing: border-box;
   font-family: IRAN-Sans !important;
+  /* TODO: need to refactor */
   direction: rtl;
 }
 
 body {
   /*background: rgb(241, 243, 246);*/
-  /* overflow-x: hidden; TODO: check overflow */
 }
