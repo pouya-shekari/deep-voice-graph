@@ -1,4 +1,3 @@
-import axios from "axios";
 import React from "react";
 import useSWR from "swr";
 import { getAnnouncements } from "../../api/announcement.api";
@@ -9,7 +8,8 @@ const fetcher = async (url) => {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     params: {
-      applicationId: 40,
+      // TODO: APP ID is static
+      applicationId: 4,
     },
   });
   console.log(res);
