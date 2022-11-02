@@ -10,6 +10,9 @@ import {
   Paper,
   Alert,
   Button,
+  Box,
+  CircularProgress,
+  Badge,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -42,9 +45,11 @@ const List = () => {
     );
   if (!data)
     return (
-      <div className="text-center mt-5">
-        <ClipLoader color="rgb(45,55,145)" />
-      </div>
+      <Box
+        sx={{ display: "flex", justifyContent: "center", marginTop: "1.5rem" }}
+      >
+        <CircularProgress />
+      </Box>
     );
   return (
     <>
@@ -79,12 +84,12 @@ const List = () => {
                 <TableCell align="right">{row.waitTime}</TableCell>
                 {row.isEnable && (
                   <TableCell align="right">
-                    <span className="badge text-bg-success">فعال</span>
+                    <Badge badgeContent={"فعال"} color="success" />
                   </TableCell>
                 )}
                 {!row.isEnable && (
                   <TableCell align="right">
-                    <span className="badge text-bg-danger">غیرفعال</span>
+                    <Badge badgeContent={"غیرفعال"} color="error" />
                   </TableCell>
                 )}
                 <TableCell align="right">
@@ -96,6 +101,7 @@ const List = () => {
                     <AddIcon />
                     ویرایش
                   </Button> */}
+
                   <Button
                     variant="contained"
                     color="error"
