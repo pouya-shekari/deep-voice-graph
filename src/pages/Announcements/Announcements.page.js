@@ -13,9 +13,9 @@ const AnnouncementsWrapper = () => {
   return (
     <>
       <HaraBreadcrumb items={breadcrumbItems} />
-      <div className="container-fluid mt-5">
+      <div className="container-fluid mt-4">
         <div className="row">
-          <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3">
+          <div className="col-12">
             <List />
           </div>
         </div>
