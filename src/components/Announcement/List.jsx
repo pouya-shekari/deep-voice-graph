@@ -9,7 +9,10 @@ import {
   TableRow,
   Paper,
   Alert,
+  Button,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { ClipLoader } from "react-spinners";
 import { getAnnouncements } from "../../api/announcement.api";
 import { BASE_URL } from "../../config/variables.config";
@@ -44,44 +47,71 @@ const List = () => {
       </div>
     );
   return (
-    <TableContainer component={Paper}>
-      <Table
-        sx={{ minWidth: 650 }}
-        aria-label="announcements table"
-        size="large"
-      >
-        <TableHead>
-          <TableRow>
-            <TableCell align="right">شناسه اعلان</TableCell>
-            <TableCell align="right">عنوان</TableCell>
-            <TableCell align="right">مدت زمان انتظار (ms)</TableCell>
-            <TableCell align="right">وضعیت اعلان</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map((row) => (
-            <TableRow
-              key={row.announcementId}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell align="right">{row.announcementId}</TableCell>
-              <TableCell align="right">{row.text}</TableCell>
-              <TableCell align="right">{row.waitTime}</TableCell>
-              {row.isEnable && (
-                <TableCell align="right">
-                  <span className="badge text-bg-success">فعال</span>
-                </TableCell>
-              )}
-              {!row.isEnable && (
-                <TableCell align="right">
-                  <span className="badge text-bg-danger">غیرفعال</span>
-                </TableCell>
-              )}
+    <>
+      <div aria-label="add new announcement" className="mb-3">
+        <Button variant="contained" color="success" className="d-flex gap-2">
+          <AddIcon />
+          افزودن اعلان جدید
+        </Button>
+      </div>
+      <TableContainer component={Paper}>
+        <Table
+          sx={{ minWidth: 650 }}
+          aria-label="announcements table"
+          size="large"
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell align="right">شناسه اعلان</TableCell>
+              <TableCell align="right">عنوان</TableCell>
+              <TableCell align="right">مدت زمان انتظار (ms)</TableCell>
+              <TableCell align="right">وضعیت اعلان</TableCell>
+              <TableCell align="right">عملیات</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {data.map((row) => (
+              <TableRow
+                key={row.announcementId}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell align="right">{row.announcementId}</TableCell>
+                <TableCell align="right">{row.text}</TableCell>
+                <TableCell align="right">{row.waitTime}</TableCell>
+                {row.isEnable && (
+                  <TableCell align="right">
+                    <span className="badge text-bg-success">فعال</span>
+                  </TableCell>
+                )}
+                {!row.isEnable && (
+                  <TableCell align="right">
+                    <span className="badge text-bg-danger">غیرفعال</span>
+                  </TableCell>
+                )}
+                <TableCell align="right">
+                  {/* <Button
+                    variant="contained"
+                    color="warning"
+                    className="d-flex gap-2"
+                  >
+                    <AddIcon />
+                    ویرایش
+                  </Button> */}
+                  <Button
+                    variant="contained"
+                    color="error"
+                    className="d-flex gap-2"
+                  >
+                    <DeleteIcon />
+                    حذف اعلان
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
   );
 };
 
