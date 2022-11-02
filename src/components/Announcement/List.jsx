@@ -65,7 +65,7 @@ const List = () => {
           size="large"
         >
           <TableHead>
-            <TableRow>
+            <TableRow className="bg-light">
               <TableCell align="right">شناسه اعلان</TableCell>
               <TableCell align="right">عنوان</TableCell>
               <TableCell align="right">مدت زمان انتظار (ms)</TableCell>
@@ -93,15 +93,6 @@ const List = () => {
                   </TableCell>
                 )}
                 <TableCell align="right">
-                  {/* <Button
-                    variant="contained"
-                    color="warning"
-                    className="d-flex gap-2"
-                  >
-                    <AddIcon />
-                    ویرایش
-                  </Button> */}
-
                   <Button
                     variant="contained"
                     color="error"
