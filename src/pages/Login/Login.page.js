@@ -5,10 +5,9 @@ import { PATHS } from "../../config/routes.config";
 import style from "./Login.module.scss";
 import LOGO from "../../assets/media/hara.png";
 import { toast } from "react-toastify";
-import {BASE_URL, IS_LOGGED_IN, TOKEN} from "../../config/variables.config";
-import {Helmet} from "react-helmet";
-import {loginUser} from "../../api/login.api";
-import axios from "axios";
+import { IS_LOGGED_IN, TOKEN } from "../../config/variables.config";
+import { Helmet } from "react-helmet";
+import { loginUser } from "../../api/login.api";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -44,21 +43,23 @@ const Login = () => {
 
   const sendRequest = async (event) => {
     const data = {
-      "username": event.username,
-      "password": event.password
-    }
-    await loginUser(data).then((res)=>{
-      localStorage.setItem(TOKEN,res.data.token)
-      localStorage.setItem(IS_LOGGED_IN, "true");
-      toast.success("ورود با موفقیت انجام شد.");
-      navigate(PATHS.HOME);
-    }).catch((err)=>{
-      if(err.response.data.message === "USER_NOT_FOUND: "){
-        toast.error('نام کاربری یا رمز عبور اشتباه است.')
-      }else{
-        toast.error('اتصال با خطا مواجه شد.')
-      }
-    })
+      username: event.username,
+      password: event.password,
+    };
+    await loginUser(data)
+      .then((res) => {
+        localStorage.setItem(TOKEN, res.data.token);
+        localStorage.setItem(IS_LOGGED_IN, "true");
+        toast.success("ورود با موفقیت انجام شد.");
+        navigate(PATHS.HOME);
+      })
+      .catch((err) => {
+        if (err.response.data.message === "USER_NOT_FOUND: ") {
+          toast.error("نام کاربری یا رمز عبور اشتباه است.");
+        } else {
+          toast.error("اتصال با خطا مواجه شد.");
+        }
+      });
   };
 
   return (

@@ -11,10 +11,14 @@ const HaraBreadcrumb = ({ items }) => {
             <Breadcrumb aria-label="Hara Breadcrumb" className={styles.hara}>
               {items.map(({ title, isActive, href }) => {
                 if (isActive) {
-                  return <BreadcrumbItem active>{title}</BreadcrumbItem>;
+                  return (
+                    <BreadcrumbItem active key={href}>
+                      {title}
+                    </BreadcrumbItem>
+                  );
                 }
                 return (
-                  <BreadcrumbItem>
+                  <BreadcrumbItem key={href}>
                     <Link to={href}>{title}</Link>
                   </BreadcrumbItem>
                 );
