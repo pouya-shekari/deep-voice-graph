@@ -1,5 +1,4 @@
 import React from "react";
-import useSWR from "swr";
 import { Dialog, useMediaQuery, useTheme } from "@mui/material";
 import Transition from "../ModalTransition/Transition";
 
