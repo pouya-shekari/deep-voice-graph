@@ -82,16 +82,14 @@ const List = () => {
                 <TableCell align="right">{row.announcementId}</TableCell>
                 <TableCell align="right">{row.text}</TableCell>
                 <TableCell align="right">{row.waitTime}</TableCell>
-                {row.isEnable && (
-                  <TableCell align="right">
-                    <Badge badgeContent={"فعال"} color="success" />
-                  </TableCell>
-                )}
-                {!row.isEnable && (
-                  <TableCell align="right">
-                    <Badge badgeContent={"غیرفعال"} color="error" />
-                  </TableCell>
-                )}
+                <TableCell align="right">
+                  <Alert
+                    severity={row.isEnable ? "success" : "error"}
+                    sx={{ justifyContent: "center" }}
+                  >
+                    {row.isEnable ? "فعال" : "غیرفعال"}
+                  </Alert>
+                </TableCell>
                 <TableCell align="right">
                   <Button
                     variant="contained"
