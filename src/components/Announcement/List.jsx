@@ -12,11 +12,9 @@ import {
   Button,
   Box,
   CircularProgress,
-  Badge,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ClipLoader } from "react-spinners";
 import { getAnnouncements } from "../../api/announcement.api";
 import { BASE_URL } from "../../config/variables.config";
 const fetcher = async (url) => {
