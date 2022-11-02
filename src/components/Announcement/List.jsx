@@ -49,8 +49,7 @@ const List = () => {
   return (
     <>
       <div aria-label="add new announcement" className="mb-3">
-        <Button variant="contained" color="success" className="d-flex gap-2">
-          <AddIcon />
+        <Button variant="contained" color="success" startIcon={<AddIcon />}>
           افزودن اعلان جدید
         </Button>
       </div>
@@ -100,9 +99,8 @@ const List = () => {
                   <Button
                     variant="contained"
                     color="error"
-                    className="d-flex gap-2"
+                    startIcon={<DeleteIcon />}
                   >
-                    <DeleteIcon />
                     حذف اعلان
                   </Button>
                 </TableCell>
