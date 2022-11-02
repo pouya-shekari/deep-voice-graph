@@ -75,11 +75,11 @@ const List = () => {
         >
           <TableHead>
             <TableRow className="bg-light">
-              <TableCell align="right">شناسه اعلان</TableCell>
-              <TableCell align="right">عنوان</TableCell>
-              <TableCell align="right">مدت زمان انتظار (ms)</TableCell>
-              <TableCell align="right">وضعیت اعلان</TableCell>
-              <TableCell align="right">عملیات</TableCell>
+              <TableCell align="center">شناسه اعلان</TableCell>
+              <TableCell align="center">عنوان</TableCell>
+              <TableCell align="center">مدت زمان انتظار (ms)</TableCell>
+              <TableCell align="center">وضعیت اعلان</TableCell>
+              <TableCell align="center">عملیات</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -88,10 +88,10 @@ const List = () => {
                 key={row.announcementId}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell align="right">{row.announcementId}</TableCell>
-                <TableCell align="right">{row.text}</TableCell>
-                <TableCell align="right">{row.waitTime}</TableCell>
-                <TableCell align="right">
+                <TableCell align="center">{row.announcementId}</TableCell>
+                <TableCell align="center">{row.text}</TableCell>
+                <TableCell align="center">{row.waitTime}</TableCell>
+                <TableCell align="center">
                   <Alert
                     severity={row.isEnable ? "success" : "error"}
                     sx={{ justifyContent: "center" }}
@@ -99,7 +99,7 @@ const List = () => {
                     {row.isEnable ? "فعال" : "غیرفعال"}
                   </Alert>
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="center">
                   <Button
                     variant="contained"
                     color="error"
