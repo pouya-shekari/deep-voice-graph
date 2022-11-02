@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet";
 import { UserLayout } from "../../layouts";
 import HaraBreadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { PATHS } from "../../config/routes.config";
-import {QuestionsList} from "../../components";
+import { QuestionsList } from "../../components/Questions";
 
 const breadcrumbItems = [
   { title: "پیشخوان", isActive: false, href: PATHS.HOME },
