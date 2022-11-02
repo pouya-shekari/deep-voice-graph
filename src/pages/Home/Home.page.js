@@ -12,7 +12,7 @@ const HomeWrapper = () => {
   return (
     <>
       <HaraBreadcrumb items={breadcrumbItems} />
-      <div className="container-fluid mt-5">
+      <div className="container-fluid mt-3">
         <div className="row">
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3">
             <Media title={"Announcement"} />
