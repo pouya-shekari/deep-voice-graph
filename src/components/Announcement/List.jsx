@@ -27,11 +27,6 @@ const fetcher = async (url) => {
 };
 const List = () => {
   const { data, error } = useSWR(`${BASE_URL}/announcement/list`, fetcher);
-  useEffect(() => {
-    if (data) {
-      console.log(data);
-    }
-  }, [data]);
   if (error)
     return (
       <Alert
