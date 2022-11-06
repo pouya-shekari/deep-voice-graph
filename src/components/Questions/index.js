@@ -8,7 +8,6 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -25,28 +24,50 @@ import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import style from "./index.module.scss";
 import { toast } from "react-toastify";
-import { getQuestion } from "../../api/question.api";
-
-/*function createData(id,title,wait,status) {
-    return {
-        id,
-        title,
-        wait,
-        status,
-        answers: [
-            {
-                title:'yes'
-            },
-            {
-                title:'no'
-            },
-        ],
-    };
-}*/
+import {deleteQuestion, getQuestion} from "../../api/question.api";
+import Transition from "../ModalTransition/Transition";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import Dialog from "@mui/material/Dialog";
 
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
+  const [openDialog , setOpenDialog] = React.useState(false)
+    const [itemIdNumberForDelete , setItemIdNumberForDelete] = React.useState(null)
+
+    const deleteHandler = (id) => {
+        setOpenDialog(true);
+        setItemIdNumberForDelete(id)
+
+    };
+
+    const handleClose = () => {
+        setItemIdNumberForDelete(null)
+        setOpenDialog(false);
+    };
+
+    const handleExit = () => {
+        setOpenDialog(false);
+        deleteQuestion(itemIdNumberForDelete,{
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            params: {
+                /*applicationId: 8,*/
+                announcementId: itemIdNumberForDelete,
+            },
+        }).then(()=>{
+            toast.success("آیتم با موفقیت حذف شد.")
+            setItemIdNumberForDelete(null)
+            props.onChange()
+        }).catch(()=>{
+            toast.error("خطا در حذف سوال!");
+            setItemIdNumberForDelete(null)
+        })
+    };
 
   return (
     <React.Fragment>
@@ -94,49 +115,57 @@ function Row(props) {
             color={"error"}
             variant="contained"
             startIcon={<DeleteIcon />}
+            onClick={()=>{deleteHandler(row.announcementId)}}
           >
             حذف سوال
           </Button>
         </TableCell>
       </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                پاسخ‌ها
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="left">عنوان پاسخ</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {/*{row.responses.slice(1,rows.responses.lenght-2).split(',').map((historyRow) => (
-                                        <TableRow key={historyRow}>
-                                            <TableCell>{historyRow}</TableCell>
-                                        </TableRow>
-                                    ))}*/}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+        <TableRow>
+            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <Collapse in={open} timeout="auto" unmountOnExit>
+                    <Box sx={{ margin: 1 }}>
+                        <Table size="small" aria-label="purchases">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{fontWeight:'bold'}} align="left">عنوان پاسخ</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody sx={{backgroundColor:'whiteSmoke'}}>
+                                {row.responses.map((historyRow) => (
+                                    <TableRow key={historyRow}>
+                                        <TableCell>{historyRow}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </Box>
+                </Collapse>
+            </TableCell>
+        </TableRow>
+        <Dialog
+            open={openDialog}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={handleClose}
+            aria-describedby="alert-dialog-slide-description"
+        >
+            <DialogTitle>
+                {"آیا از حذف این سوال اطمینان دارید؟"}
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description">
+                    در صورت انتخاب گزینه حذف، اگر این سوال در هیچ فلوچارتی مورد استفاده قرار نگرفته باشد، از لیست سوالات شما حذف خواهد شد.
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button variant="contained" color="error" onClick={handleExit}>حذف</Button>
+                <Button className={style.deleteBtn} onClick={handleClose}>لغو</Button>
+            </DialogActions>
+        </Dialog>
     </React.Fragment>
   );
 }
-
-/*const rows = [
-    createData(1, 'آیا اینطوریه؟' , 100 , 'فعال' ),
-    createData(2, 'آیا اونطوریه؟' , 100 , 'فعال' ),
-    createData(3, 'چگونه؟' , 100 , 'فعال' ),
-    createData(4, 'چرا اینطوریه؟' , 100 , 'غیر فعال' ),
-    createData(5, 'چرا اونطوریه؟' , 100 , 'فعال' ),
-    createData(6, 'چرا اینطوری نیست؟' , 100 , 'فعال' ),
-    createData(7, 'چرا اونطوری نیست؟' , 100 , 'فعال' ),
-];*/
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -207,6 +236,8 @@ const QuestionsList = () => {
 
   const [questionsList, setQuestionsList] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
+  const [updateList , setUpdateList] = React.useState(false)
+
 
   React.useEffect(() => {
     getQuestion({
@@ -221,12 +252,11 @@ const QuestionsList = () => {
       .then((res) => {
         setQuestionsList(res.data);
         setLoading(false);
-        console.log(res.data);
       })
       .catch((err) => {
         toast.error("اتصال با خطا مواجه شد.");
       });
-  }, []);
+  }, [updateList]);
 
   const enToFaDigits = function (input) {
     if (input == undefined) return;
@@ -259,6 +289,10 @@ const QuestionsList = () => {
     setPage(0);
   };
 
+  const handleChange = ()=>{
+      setUpdateList(!updateList)
+  }
+
   return (
     <>
       {loading ? (
@@ -285,7 +319,7 @@ const QuestionsList = () => {
                     )
                   : questionsList
                 ).map((row) => (
-                  <Row key={row.announcementId} row={row} />
+                  <Row onChange={handleChange} key={row.announcementId} row={row} />
                 ))}
               </TableBody>
 
