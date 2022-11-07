@@ -7,14 +7,18 @@
 }
 
 .deleteBtn{
-  background-color: gray;
-  color: white;
+  background-color: gray!important;
+  color: white!important;
   &:hover {
-    background-color: #535353;
+    background-color: #535353!important;
   }
 }
 
 .paginationTable div{
   flex: unset!important;
   -webkit-flex:unset!important;
+}
+
+.addDialog div {
+  min-width: 35%;
 }
