@@ -1,0 +1,24 @@
+.paginationTable{
+  direction: ltr;
+  p{
+    margin-bottom: 0!important;
+    margin-left: 0.5rem!important;
+  }
+}
+
+.deleteBtn{
+  background-color: gray!important;
+  color: white!important;
+  &:hover {
+    background-color: #535353!important;
+  }
+}
+
+.paginationTable div{
+  flex: unset!important;
+  -webkit-flex:unset!important;
+}
+
+.addDialog div {
+  min-width: 35%;
+}

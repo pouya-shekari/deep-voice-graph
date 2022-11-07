@@ -9,9 +9,9 @@ export async function getQuestion(config){
     }
 }
 
-export async function deleteQuestion(id,config){
+export async function deleteQuestion(config){
     try{
-        const response = await http.delete('/announcement/delete',id,config)
+        const response = await http.delete('/announcement/delete',config)
         return response
     }catch (e){
         return Promise.reject(e)
