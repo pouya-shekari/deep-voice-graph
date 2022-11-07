@@ -1,31 +1,22 @@
 import React, { useState } from "react";
-import useSWR from "swr";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Alert,
-  Button,
-  Box,
-  CircularProgress,
-} from "@mui/material";
+import useSWR, { useSWRConfig } from "swr";
+import { Alert, Button, Box, CircularProgress, Snackbar } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { getAnnouncements } from "../../api/announcement.api";
+import {
+  getAnnouncements,
+  deleteAnnouncement,
+} from "../../api/announcement.api";
 import { BASE_URL } from "../../config/variables.config";
-import AddDialog from "./Add";
 import { SimpleTable } from "../UI/Table/Tabel";
-const fetcher = async (url) => {
+import { ErrorModal } from "../UI/Modal/Modal";
+import Snak from "../Snak/Snak";
+const getAllAnn = async (url) => {
   const { data } = await getAnnouncements(url, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     params: {
-      applicationId: 8,
+      applicationId: 14,
       isQuestion: false,
     },
   });
@@ -40,8 +31,69 @@ const tableHeaders = [
 ];
 
 const List = () => {
-  const { data, error } = useSWR(`${BASE_URL}/announcement/list`, fetcher);
+  const [snak, setSnak] = useState({
+    message: "",
+    type: "",
+    open: false,
+  });
+  const [deleteId, setDeleteId] = useState(0);
+  const { data, error, mutate } = useSWR(
+    `${BASE_URL}/announcement/list`,
+    getAllAnn
+  );
+  const [modalState, setModalState] = useState({
+    deleteModal: false,
+    addModal: false,
+  });
 
+  const showDeleteModal = (id, event) => {
+    setModalState((prevState) => {
+      return { ...prevState, deleteModal: true };
+    });
+    setDeleteId(id);
+  };
+  const closeModal = () => {
+    setModalState((prevState) => {
+      return { ...prevState, deleteModal: false, addModal: false };
+    });
+  };
+  const confirmDelete = async () => {
+    closeModal();
+    setSnak({
+      open: true,
+      type: "warning",
+      message: "در حال حذف اعلان...",
+    });
+    try {
+      const res = await deleteAnnouncement(`${BASE_URL}/announcement/delete`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        params: {
+          announcementId: deleteId,
+        },
+      });
+      setSnak({
+        open: true,
+        type: "success",
+        message: "اعلان با موفقیت حذف شد.",
+      });
+      mutate(data.filter((ann) => ann.announcementId === deleteId));
+    } catch (error) {
+      setSnak({
+        open: true,
+        type: "error",
+        message: "حذف اعلان با خطا مواجه شد.",
+      });
+    }
+  };
+
+  const handleSnakClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnak({ ...snak, open: false });
+  };
   if (error)
     return (
       <Alert
@@ -49,7 +101,7 @@ const List = () => {
         severity="error"
         sx={{ justifyContent: "center", gap: "5px" }}
       >
-        خطا! لطفا اتصال اینترنت خود را بررسی نمایید.
+        دریافت اطلاعات با خطا مواجه شد! لطفا اتصال اینترنت خود را بررسی نمایید.
       </Alert>
     );
   if (!data)
@@ -64,90 +116,54 @@ const List = () => {
     return {
       id: announcementId,
       title: text,
-      isEnable,
+      isEnable: (
+        <Alert
+          severity={isEnable ? "success" : "error"}
+          sx={{ justifyContent: "center" }}
+        >
+          {isEnable ? "فعال" : "غیرفعال"}
+        </Alert>
+      ),
       waitTime,
       actions: ["delete", "edit"],
     };
   });
-
-  // return (
-  //   <div aria-label="add new announcement" className="mb-3">
-  //     <Button variant="contained" color="success" startIcon={<AddIcon />}>
-  //       افزودن اعلان جدید
-  //     </Button>
-  //     <SimpleTable
-  //       label={"Annoucement Table"}
-  //       data={tableData}
-  //       hasAction={true}
-  //       actions={[
-  //         { type: "delete", label: "حذف اعلان" },
-  //         { type: "edit", label: "ویرایش اعلان" },
-  //       ]}
-  //       tableHeaders={tableHeaders}
-  //       options={{}}
-  //     />
-  //   </div>
-  // );
   return (
     <>
+      <Snak
+        isOpen={snak.open}
+        type={snak.type}
+        message={snak.message}
+        onClose={handleSnakClose}
+      />
+      <ErrorModal
+        open={modalState.deleteModal}
+        onClose={closeModal}
+        title={"آیا از حذف این اعلان اطمینان دارید؟"}
+        description={
+          "در صورت انتخاب گزینه حذف، اگر این اعلان در هیچ فلوچارتی مورد استفاده قرار نگرفته باشد، از لیست اعلان‌های شما حذف خواهد شد."
+        }
+        actions={[
+          { type: "delete", label: "تایید", onClick: confirmDelete },
+          { type: "cancel", label: "انصراف", onClick: closeModal },
+        ]}
+      />
       <div aria-label="add new announcement" className="mb-3">
-        <Button
-          variant="contained"
-          color="success"
-          startIcon={<AddIcon />}
-          onClick={openAddDialogHandler}
-        >
+        <Button variant="contained" color="success" startIcon={<AddIcon />}>
           افزودن اعلان جدید
         </Button>
       </div>
-      <TableContainer component={Paper}>
-        <Table
-          sx={{ minWidth: 650 }}
-          aria-label="announcements table"
-          size="large"
-        >
-          <TableHead>
-            <TableRow className="bg-light">
-              <TableCell align="center">شناسه اعلان</TableCell>
-              <TableCell align="center">عنوان</TableCell>
-              <TableCell align="center">مدت زمان انتظار (ms)</TableCell>
-              <TableCell align="center">وضعیت اعلان</TableCell>
-              <TableCell align="center">عملیات</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.map((row) => (
-              <TableRow
-                key={row.announcementId}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="center">{row.announcementId}</TableCell>
-                <TableCell align="center">{row.text}</TableCell>
-                <TableCell align="center">{row.waitTime}</TableCell>
-                <TableCell align="center">
-                  <Alert
-                    severity={row.isEnable ? "success" : "error"}
-                    sx={{ justifyContent: "center" }}
-                  >
-                    {row.isEnable ? "فعال" : "غیرفعال"}
-                  </Alert>
-                </TableCell>
-                <TableCell align="center">
-                  <Button
-                    variant="contained"
-                    color="error"
-                    startIcon={<DeleteIcon />}
-                  >
-                    حذف اعلان
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <AddDialog open={addOpen} closeHandler={closeAddDialogHandler} />
+      <SimpleTable
+        label={"Annoucement Table"}
+        data={tableData}
+        hasAction={true}
+        actions={[
+          // { type: "edit", label: "ویرایش اعلان" },
+          { type: "delete", label: "حذف اعلان", onClick: showDeleteModal },
+        ]}
+        tableHeaders={tableHeaders}
+        options={{}}
+      />
     </>
   );
 };

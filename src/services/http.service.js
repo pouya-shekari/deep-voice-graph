@@ -26,8 +26,8 @@ class HttpService {
     return axios.patch(`${url}/${id}`, data);
   }
 
-  delete(url, id , config) {
-    return axios.delete(`${url}` , config);
+  delete(url, config) {
+    return axios.delete(`${url}`, config);
   }
 }
 
