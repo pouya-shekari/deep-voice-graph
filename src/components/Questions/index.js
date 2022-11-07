@@ -24,7 +24,7 @@ import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import style from "./index.module.scss";
 import { toast } from "react-toastify";
-import {addQuestion, deleteQuestion, getQuestion} from "../../api/question.api";
+import {addQuestion, deleteQuestion, editQuestion, getQuestion} from "../../api/question.api";
 import Transition from "../ModalTransition/Transition";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -34,22 +34,37 @@ import Dialog from "@mui/material/Dialog";
 import AddIcon from "@mui/icons-material/Add";
 import TextField from '@mui/material/TextField';
 import {CircularProgress} from "@mui/material";
+import {APPLICATIONID} from "../../config/variables.config";
 
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
   const [openDialog , setOpenDialog] = React.useState(false)
+    const [openEditDialog , setOpenEditDialog] = React.useState(false)
     const [itemIdNumberForDelete , setItemIdNumberForDelete] = React.useState(null)
+    const [itemIdNumberForEdit , setItemIdNumberForEdit] = React.useState(null)
+    const [questionTitle , setQuestionTitle] = React.useState('')
+    const [waitTime , setWaitTime] = React.useState('')
+    const [changeTitleFlag , setChangeTitleFlag] = React.useState(false)
+    const [changeWaitTimeFlag , setChangeWaitTimeFlag] = React.useState(false)
 
     const deleteHandler = (id) => {
         setOpenDialog(true);
         setItemIdNumberForDelete(id)
-
     };
+
+  const editHandler = (id)=>{
+      setOpenEditDialog(true)
+      setItemIdNumberForEdit(id)
+  }
 
     const handleClose = () => {
         setItemIdNumberForDelete(null)
+        setItemIdNumberForEdit(null)
         setOpenDialog(false);
+        setOpenEditDialog(false)
+        setChangeTitleFlag(false)
+        setChangeWaitTimeFlag(false)
     };
 
     const handleExit = () => {
@@ -71,6 +86,80 @@ function Row(props) {
             setItemIdNumberForDelete(null)
         })
     };
+
+    const handleEdit = ()=>{
+        if(questionTitle.trim() == ''){
+            toast.error('عنوان نمی‌تواند خالی باشد.')
+        }else if(waitTime.trim() == ''){
+            toast.error('زمان انتظار نمی‌تواند خالی باشد.')
+        }else if(isNaN(faToEnDigits(waitTime.trim())) || faToEnDigits(waitTime.trim())<=0){
+            toast.error('زمان انتظار معتبر نیست.')
+        }else{
+            const data = {
+                "announcementId": itemIdNumberForEdit,
+                "text": questionTitle.trim(),
+                "waitTime": faToEnDigits(waitTime.trim()),
+                "statusCode": 1
+            }
+            editQuestion(data,{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                }
+            }).then((res)=>{
+                toast.success('ویرایش سوال با موفقیت انجام شد.')
+                setChangeWaitTimeFlag(false)
+                setChangeTitleFlag(false)
+                setOpenEditDialog(false);
+            }).catch((err)=>{
+                toast.error('خطا')
+                setChangeWaitTimeFlag(false)
+                setChangeTitleFlag(false)
+                setOpenEditDialog(false);
+            })
+        }
+    }
+
+    const handleQuestionTitle = (event)=>{
+        setChangeTitleFlag(true)
+        if(!changeWaitTimeFlag){
+            setWaitTime(row.waitTime)
+            setChangeWaitTimeFlag(true)
+        }
+        setQuestionTitle(event.target.value)
+    }
+
+    const handleWaitTime = (event)=>{
+        setChangeWaitTimeFlag(true)
+        if(!changeTitleFlag){
+            setQuestionTitle(row.text)
+            setChangeTitleFlag(true)
+        }
+        setWaitTime(event.target.value)
+    }
+
+    const faToEnDigits = function (input) {
+        if (input == undefined)
+            return;
+        var returnModel = "", symbolMap = {
+            '۱': '1',
+            '۲': '2',
+            '۳': '3',
+            '۴': '4',
+            '۵': '5',
+            '۶': '6',
+            '۷': '7',
+            '۸': '8',
+            '۹': '9',
+            '۰': '0'
+        };
+        input = input.toString();
+        for (let i = 0; i < input.length; i++)
+            if (symbolMap[input[i]])
+                returnModel += symbolMap[input[i]];
+            else
+                returnModel += input[i];
+        return returnModel;
+    }
 
   return (
     <React.Fragment>
@@ -102,7 +191,7 @@ function Row(props) {
           </Alert>
         </TableCell>
         <TableCell align="center">
-          <Button variant="contained" startIcon={<EditIcon />}>
+          <Button onClick={()=>{editHandler(row.announcementId)}} variant="contained" startIcon={<EditIcon />}>
             ویرایش سوال
           </Button>
           <button
@@ -166,6 +255,40 @@ function Row(props) {
                 <Button className={style.deleteBtn} onClick={handleClose}>لغو</Button>
             </DialogActions>
         </Dialog>
+
+        <Dialog className={style.addDialog} open={openEditDialog} onClose={handleClose}>
+            <DialogTitle>ویرایش سوال</DialogTitle>
+            <DialogContent>
+                <TextField
+                    autoFocus={true}
+                    margin="dense"
+                    id="عنوان سوال"
+                    label="عنوان سوال"
+                    type="text"
+                    defaultValue={row.text}
+                    fullWidth
+                    variant="standard"
+                    onChange={handleQuestionTitle}
+                />
+                <br/>
+                <TextField
+                    autoFocus={true}
+                    margin="dense"
+                    id="مدت زمان انتظار"
+                    label="مدت زمان انتظار (ms)"
+                    fullWidth
+                    defaultValue={row.waitTime}
+                    variant="standard"
+                    onChange={handleWaitTime}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button disabled={!changeTitleFlag || !changeWaitTimeFlag} variant={"contained"} color={"primary"} onClick={handleEdit} >ویرایش</Button>
+                <Button className={style.deleteBtn} onClick={handleClose}>لغو</Button>
+            </DialogActions>
+        </Dialog>
+
+
     </React.Fragment>
   );
 }
@@ -252,7 +375,7 @@ const QuestionsList = () => {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       params: {
-        applicationId: 8,
+        applicationId: APPLICATIONID,
         isQuestion: true,
       },
     })
@@ -361,7 +484,7 @@ const QuestionsList = () => {
                     answers.push(item.trim())
                 })
                 const data = {
-                    "applicationId": 8,
+                    "applicationId": APPLICATIONID,
                     "text": questionTitle.trim(),
                     "waitTime": faToEnDigits(waitTime.trim()),
                     "statusCode": 1,

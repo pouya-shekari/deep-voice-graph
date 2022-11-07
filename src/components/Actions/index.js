@@ -31,6 +31,7 @@ import AddIcon from "@mui/icons-material/Add";
 import TextField from '@mui/material/TextField';
 import {CircularProgress} from "@mui/material";
 import {addAction, deleteAction, getActions} from "../../api/actions.api";
+import {APPLICATIONID} from "../../config/variables.config";
 
 function Row(props) {
     const { row } = props;
@@ -215,7 +216,7 @@ const ActionsList = () => {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
             params: {
-                applicationId: 8
+                applicationId: APPLICATIONID
             },
         })
             .then((res) => {
@@ -281,7 +282,7 @@ const ActionsList = () => {
         }
         else{
                 const data = {
-                    "applicationId": 8,
+                    "applicationId": APPLICATIONID,
                     "text": actionTitle.trim(),
                     "url": actionURL.trim(),
                 }
