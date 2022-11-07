@@ -14,8 +14,8 @@ class HttpService {
     return axios.get(`${url}/${id}`);
   };
 
-  post(url, data) {
-    return axios.post(url, data);
+  post(url, data , config) {
+    return axios.post(url, data , config);
   }
 
   put(url, data, config) {
