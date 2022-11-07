@@ -33,7 +33,6 @@ import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
 import AddIcon from "@mui/icons-material/Add";
 import TextField from '@mui/material/TextField';
-import BeatLoader from "react-spinners/BeatLoader";
 import {CircularProgress} from "@mui/material";
 
 function Row(props) {
@@ -55,7 +54,7 @@ function Row(props) {
 
     const handleExit = () => {
         setOpenDialog(false);
-        deleteQuestion(itemIdNumberForDelete,{
+        deleteQuestion({
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
@@ -64,7 +63,7 @@ function Row(props) {
                 announcementId: itemIdNumberForDelete,
             },
         }).then(()=>{
-            toast.success("آیتم با موفقیت حذف شد.")
+            toast.success("سوال با موفقیت حذف شد.")
             setItemIdNumberForDelete(null)
             props.onChange()
         }).catch(()=>{
@@ -332,6 +331,8 @@ const QuestionsList = () => {
     const handleClose = () => {
         setOpen(false)
         setOptions([])
+        setQuestionTitle('')
+        setWaitTime('')
     };
 
     const handleSendQuestion = () =>{
