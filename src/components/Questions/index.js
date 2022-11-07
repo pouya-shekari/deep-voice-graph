@@ -24,7 +24,7 @@ import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import style from "./index.module.scss";
 import { toast } from "react-toastify";
-import {deleteQuestion, getQuestion} from "../../api/question.api";
+import { deleteQuestion, getQuestion } from "../../api/question.api";
 import Transition from "../ModalTransition/Transition";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -35,39 +35,41 @@ import Dialog from "@mui/material/Dialog";
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
-  const [openDialog , setOpenDialog] = React.useState(false)
-    const [itemIdNumberForDelete , setItemIdNumberForDelete] = React.useState(null)
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [itemIdNumberForDelete, setItemIdNumberForDelete] =
+    React.useState(null);
 
-    const deleteHandler = (id) => {
-        setOpenDialog(true);
-        setItemIdNumberForDelete(id)
+  const deleteHandler = (id) => {
+    setOpenDialog(true);
+    setItemIdNumberForDelete(id);
+  };
 
-    };
+  const handleClose = () => {
+    setItemIdNumberForDelete(null);
+    setOpenDialog(false);
+  };
 
-    const handleClose = () => {
-        setItemIdNumberForDelete(null)
-        setOpenDialog(false);
-    };
-
-    const handleExit = () => {
-        setOpenDialog(false);
-        deleteQuestion(itemIdNumberForDelete,{
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            params: {
-                /*applicationId: 8,*/
-                announcementId: itemIdNumberForDelete,
-            },
-        }).then(()=>{
-            toast.success("آیتم با موفقیت حذف شد.")
-            setItemIdNumberForDelete(null)
-            props.onChange()
-        }).catch(()=>{
-            toast.error("خطا در حذف سوال!");
-            setItemIdNumberForDelete(null)
-        })
-    };
+  const handleExit = () => {
+    setOpenDialog(false);
+    deleteQuestion(itemIdNumberForDelete, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      params: {
+        /*applicationId: 8,*/
+        announcementId: itemIdNumberForDelete,
+      },
+    })
+      .then(() => {
+        toast.success("آیتم با موفقیت حذف شد.");
+        setItemIdNumberForDelete(null);
+        props.onChange();
+      })
+      .catch(() => {
+        toast.error("خطا در حذف سوال!");
+        setItemIdNumberForDelete(null);
+      });
+  };
 
   return (
     <React.Fragment>
@@ -115,54 +117,61 @@ function Row(props) {
             color={"error"}
             variant="contained"
             startIcon={<DeleteIcon />}
-            onClick={()=>{deleteHandler(row.announcementId)}}
+            onClick={() => {
+              deleteHandler(row.announcementId);
+            }}
           >
             حذف سوال
           </Button>
         </TableCell>
       </TableRow>
-        <TableRow>
-            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                <Collapse in={open} timeout="auto" unmountOnExit>
-                    <Box sx={{ margin: 1 }}>
-                        <Table size="small" aria-label="purchases">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell sx={{fontWeight:'bold'}} align="left">عنوان پاسخ</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody sx={{backgroundColor:'whiteSmoke'}}>
-                                {row.responses.map((historyRow) => (
-                                    <TableRow key={historyRow}>
-                                        <TableCell>{historyRow}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </Box>
-                </Collapse>
-            </TableCell>
-        </TableRow>
-        <Dialog
-            open={openDialog}
-            TransitionComponent={Transition}
-            keepMounted
-            onClose={handleClose}
-            aria-describedby="alert-dialog-slide-description"
-        >
-            <DialogTitle>
-                {"آیا از حذف این سوال اطمینان دارید؟"}
-            </DialogTitle>
-            <DialogContent>
-                <DialogContentText id="alert-dialog-slide-description">
-                    در صورت انتخاب گزینه حذف، اگر این سوال در هیچ فلوچارتی مورد استفاده قرار نگرفته باشد، از لیست سوالات شما حذف خواهد شد.
-                </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button variant="contained" color="error" onClick={handleExit}>حذف</Button>
-                <Button className={style.deleteBtn} onClick={handleClose}>لغو</Button>
-            </DialogActions>
-        </Dialog>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box sx={{ margin: 1 }}>
+              <Table size="small" aria-label="purchases">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "bold" }} align="left">
+                      عنوان پاسخ
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody sx={{ backgroundColor: "whiteSmoke" }}>
+                  {row.responses.map((historyRow) => (
+                    <TableRow key={historyRow}>
+                      <TableCell>{historyRow}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+      <Dialog
+        open={openDialog}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"آیا از حذف این سوال اطمینان دارید؟"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            در صورت انتخاب گزینه حذف، اگر این سوال در هیچ فلوچارتی مورد استفاده
+            قرار نگرفته باشد، از لیست سوالات شما حذف خواهد شد.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" color="error" onClick={handleExit}>
+            حذف
+          </Button>
+          <Button className={style.deleteBtn} onClick={handleClose}>
+            لغو
+          </Button>
+        </DialogActions>
+      </Dialog>
     </React.Fragment>
   );
 }
@@ -236,8 +245,7 @@ const QuestionsList = () => {
 
   const [questionsList, setQuestionsList] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
-  const [updateList , setUpdateList] = React.useState(false)
-
+  const [updateList, setUpdateList] = React.useState(false);
 
   React.useEffect(() => {
     getQuestion({
@@ -289,9 +297,9 @@ const QuestionsList = () => {
     setPage(0);
   };
 
-  const handleChange = ()=>{
-      setUpdateList(!updateList)
-  }
+  const handleChange = () => {
+    setUpdateList(!updateList);
+  };
 
   return (
     <>
@@ -319,7 +327,11 @@ const QuestionsList = () => {
                     )
                   : questionsList
                 ).map((row) => (
-                  <Row onChange={handleChange} key={row.announcementId} row={row} />
+                  <Row
+                    onChange={handleChange}
+                    key={row.announcementId}
+                    row={row}
+                  />
                 ))}
               </TableBody>
 

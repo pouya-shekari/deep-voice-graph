@@ -18,6 +18,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { getAnnouncements } from "../../api/announcement.api";
 import { BASE_URL } from "../../config/variables.config";
 import AddDialog from "./Add";
+import { SimpleTable } from "../UI/Table/Tabel";
 const fetcher = async (url) => {
   const { data } = await getAnnouncements(url, {
     headers: {
@@ -30,12 +31,16 @@ const fetcher = async (url) => {
   });
   return data;
 };
+
+const tableHeaders = [
+  { colNumber: 0, title: "شناسه اعلان", field: "id" },
+  { colNumber: 1, title: "عنوان اعلان", field: "title" },
+  { colNumber: 2, title: "مدت زمان انتظار (ms)", field: "waitTime" },
+  { colNumber: 3, title: "وضعیت اعلان", field: "isEnable" },
+];
+
 const List = () => {
   const { data, error } = useSWR(`${BASE_URL}/announcement/list`, fetcher);
-  const [addOpen, setAddOpen] = useState(false);
-
-  const openAddDialogHandler = () => setAddOpen(true);
-  const closeAddDialogHandler = () => setAddOpen(false);
 
   if (error)
     return (
@@ -55,6 +60,34 @@ const List = () => {
         <CircularProgress />
       </Box>
     );
+  const tableData = data.map(({ announcementId, isEnable, text, waitTime }) => {
+    return {
+      id: announcementId,
+      title: text,
+      isEnable,
+      waitTime,
+      actions: ["delete", "edit"],
+    };
+  });
+
+  // return (
+  //   <div aria-label="add new announcement" className="mb-3">
+  //     <Button variant="contained" color="success" startIcon={<AddIcon />}>
+  //       افزودن اعلان جدید
+  //     </Button>
+  //     <SimpleTable
+  //       label={"Annoucement Table"}
+  //       data={tableData}
+  //       hasAction={true}
+  //       actions={[
+  //         { type: "delete", label: "حذف اعلان" },
+  //         { type: "edit", label: "ویرایش اعلان" },
+  //       ]}
+  //       tableHeaders={tableHeaders}
+  //       options={{}}
+  //     />
+  //   </div>
+  // );
   return (
     <>
       <div aria-label="add new announcement" className="mb-3">
