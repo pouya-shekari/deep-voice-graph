@@ -14,8 +14,8 @@ class HttpService {
     return axios.get(`${url}/${id}`);
   };
 
-  post(url, data , config) {
-    return axios.post(url, data , config);
+  post(url, data, config) {
+    return axios.post(url, data, config);
   }
 
   put(url, data, config) {
@@ -26,8 +26,8 @@ class HttpService {
     return axios.patch(`${url}/${id}`, data);
   }
 
-  delete(url , config) {
-    return axios.delete(`${url}` , config);
+  delete(url, config) {
+    return axios.delete(`${url}`, config);
   }
 }
 

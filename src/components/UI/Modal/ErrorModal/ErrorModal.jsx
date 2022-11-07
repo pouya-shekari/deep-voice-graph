@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 import {
   Dialog,
   DialogTitle,
-  Typography,
   DialogContent,
   DialogContentText,
   DialogActions,
@@ -52,20 +51,6 @@ const ErrorModal = ({ title, open, onClose, description, actions }) => {
             {actions.map((action) => (
               <Fragment key={action.type}>{renderActions(action)}</Fragment>
             ))}
-            {/* <Button
-              variant="contained"
-              color="error"
-              startIcon={<DeleteIcon />}
-            >
-              حذف
-            </Button>
-            <Button
-              variant="contained"
-              color="cancel"
-              startIcon={<CloseIcon />}
-            >
-              انصراف
-            </Button> */}
           </DialogActions>
         </DialogContent>
       </Dialog>

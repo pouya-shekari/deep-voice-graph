@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import useSWR, { useSWRConfig } from "swr";
-import { Alert, Button, Box, CircularProgress, Snackbar } from "@mui/material";
+import useSWR from "swr";
+import { Alert, Button, Box, CircularProgress } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import {
   getAnnouncements,
@@ -65,7 +65,7 @@ const List = () => {
       message: "در حال حذف اعلان...",
     });
     try {
-      const res = await deleteAnnouncement(`${BASE_URL}/announcement/delete`, {
+      await deleteAnnouncement(`${BASE_URL}/announcement/delete`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
