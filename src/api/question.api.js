@@ -26,3 +26,12 @@ export async function addQuestion(data,config){
         return Promise.reject(e)
     }
 }
+
+export async function editQuestion(data,config){
+    try{
+        const response = await http.put('/announcement/update',data,config)
+        return response
+    }catch (e){
+        return Promise.reject(e)
+    }
+}
