@@ -30,14 +30,19 @@ import Dialog from "@mui/material/Dialog";
 import AddIcon from "@mui/icons-material/Add";
 import TextField from '@mui/material/TextField';
 import {CircularProgress} from "@mui/material";
-import {addAction, deleteAction, getActions} from "../../api/actions.api";
+import {addAction, deleteAction, editAction, getActions} from "../../api/actions.api";
 import {APPLICATIONID} from "../../config/variables.config";
 
 function Row(props) {
     const { row } = props;
-    const [open, setOpen] = React.useState(false);
     const [openDialog , setOpenDialog] = React.useState(false)
     const [itemIdNumberForDelete , setItemIdNumberForDelete] = React.useState(null)
+    const [openEditDialog , setOpenEditDialog] = React.useState(false)
+    const [itemIdNumberForEdit , setItemIdNumberForEdit] = React.useState(null)
+    const [actionTitle , setActionTitle] = React.useState('')
+    const [url , setURL] = React.useState('')
+    const [changeTitleFlag , setChangeTitleFlag] = React.useState(false)
+    const [changeURLFlag , setChangeURLFlag] = React.useState(false)
 
     const deleteHandler = (id) => {
         setOpenDialog(true);
@@ -45,9 +50,18 @@ function Row(props) {
 
     };
 
+    const editHandler = (id)=>{
+        setOpenEditDialog(true)
+        setItemIdNumberForEdit(id)
+    }
+
     const handleClose = () => {
         setItemIdNumberForDelete(null)
+        setItemIdNumberForEdit(null)
         setOpenDialog(false);
+        setOpenEditDialog(false)
+        setChangeTitleFlag(false)
+        setChangeURLFlag(false)
     };
 
     const handleExit = () => {
@@ -64,11 +78,67 @@ function Row(props) {
             toast.success("عملکرد با موفقیت حذف شد.")
             setItemIdNumberForDelete(null)
             props.onChange()
-        }).catch(()=>{
-            toast.error("خطا در حذف عملکرد!");
+        }).catch((err)=>{
+            if (err.response.status == 404){
+                toast.error('این عملکرد قابل حذف نمی‌باشد.')
+            }
+            else{
+                toast.error('عملیات با خطا مواجه شد.')
+            }
             setItemIdNumberForDelete(null)
         })
     };
+
+    const handleEdit = ()=>{
+        if(actionTitle.trim() == ''){
+            toast.error('عنوان نمی‌تواند خالی باشد.')
+        }else if(url.trim() == ''){
+            toast.error('آدرس url نمی‌تواند خالی باشد.')
+        }else{
+            const data = {
+                "actionId": itemIdNumberForEdit,
+                "text": actionTitle.trim(),
+                "url": url.trim()
+            }
+            editAction(data,{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                }
+            }).then((res)=>{
+                toast.success('ویرایش عملکرد با موفقیت انجام شد.')
+                setChangeURLFlag(false)
+                setChangeTitleFlag(false)
+                setOpenEditDialog(false);
+                setItemIdNumberForEdit(null)
+                props.onChange()
+            }).catch((err)=>{
+                toast.error('عملیات با خطا مواجه شد.')
+                setChangeURLFlag(false)
+                setChangeTitleFlag(false)
+                setOpenEditDialog(false);
+                setItemIdNumberForEdit(null)
+            })
+        }
+    }
+
+
+    const handleActionTitle = (event)=>{
+        setChangeTitleFlag(true)
+        if(!changeURLFlag){
+            setURL(row.url)
+            setChangeURLFlag(true)
+        }
+        setActionTitle(event.target.value)
+    }
+
+    const handleURL = (event)=>{
+        setChangeURLFlag(true)
+        if(!changeTitleFlag){
+            setActionTitle(row.text)
+            setChangeTitleFlag(true)
+        }
+        setURL(event.target.value)
+    }
 
     return (
         <React.Fragment>
@@ -91,7 +161,7 @@ function Row(props) {
                     </Alert>
                 </TableCell>
                 <TableCell align="center">
-                    <Button variant="contained" startIcon={<EditIcon />}>
+                    <Button onClick={()=>{editHandler(row.actionId)}} variant="contained" startIcon={<EditIcon />}>
                         ویرایش عملکرد
                     </Button>
                     <button
@@ -133,6 +203,39 @@ function Row(props) {
                     <Button className={style.deleteBtn} onClick={handleClose}>لغو</Button>
                 </DialogActions>
             </Dialog>
+
+            <Dialog className={style.addDialog} open={openEditDialog} onClose={handleClose}>
+                <DialogTitle>ویرایش عملکرد</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        autoFocus={true}
+                        margin="dense"
+                        id="عنوان عملکرد"
+                        label="عنوان عملکرد"
+                        type="text"
+                        defaultValue={row.text}
+                        fullWidth
+                        variant="standard"
+                        onChange={handleActionTitle}
+                    />
+                    <br/>
+                    <TextField
+                        autoFocus={true}
+                        margin="dense"
+                        id="url"
+                        label="url"
+                        fullWidth
+                        defaultValue={row.url}
+                        variant="standard"
+                        onChange={handleURL}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button disabled={!changeTitleFlag || !changeURLFlag} variant={"contained"} color={"primary"} onClick={handleEdit} >ویرایش</Button>
+                    <Button className={style.deleteBtn} onClick={handleClose}>لغو</Button>
+                </DialogActions>
+            </Dialog>
+
         </React.Fragment>
     );
 }

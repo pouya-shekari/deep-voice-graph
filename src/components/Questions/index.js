@@ -81,8 +81,13 @@ function Row(props) {
             toast.success("سوال با موفقیت حذف شد.")
             setItemIdNumberForDelete(null)
             props.onChange()
-        }).catch(()=>{
-            toast.error("خطا در حذف سوال!");
+        }).catch((err)=>{
+            if (err.response.status == 404){
+                toast.error('این سوال قابل حذف نمی‌باشد.')
+            }
+            else{
+                toast.error('عملیات با خطا مواجه شد.')
+            }
             setItemIdNumberForDelete(null)
         })
     };
@@ -110,11 +115,14 @@ function Row(props) {
                 setChangeWaitTimeFlag(false)
                 setChangeTitleFlag(false)
                 setOpenEditDialog(false);
+                setItemIdNumberForEdit(null)
+                props.onChange()
             }).catch((err)=>{
-                toast.error('خطا')
+                toast.error('عملیات با خطا مواجه شد.')
                 setChangeWaitTimeFlag(false)
                 setChangeTitleFlag(false)
                 setOpenEditDialog(false);
+                setItemIdNumberForEdit(null)
             })
         }
     }
@@ -122,7 +130,7 @@ function Row(props) {
     const handleQuestionTitle = (event)=>{
         setChangeTitleFlag(true)
         if(!changeWaitTimeFlag){
-            setWaitTime(row.waitTime)
+            setWaitTime(""+row.waitTime)
             setChangeWaitTimeFlag(true)
         }
         setQuestionTitle(event.target.value)
