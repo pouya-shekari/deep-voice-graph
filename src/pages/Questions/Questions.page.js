@@ -1,18 +1,12 @@
 import { Helmet } from "react-helmet";
 import { UserLayout } from "../../layouts";
 import HaraBreadcrumb from "../../components/Breadcrumb/Breadcrumb";
-import { PATHS } from "../../config/routes.config";
 import { QuestionsList } from "../../components/Questions";
-
-const breadcrumbItems = [
-  { title: "پیشخوان", isActive: false, href: PATHS.HOME },
-  { title: "مدیریت سوال‌ها", isActive: true, href: PATHS.QUESTIONS },
-];
 
 const QuestionsWrapper = () => {
   return (
     <>
-      <HaraBreadcrumb items={breadcrumbItems} />
+      <HaraBreadcrumb />
       <div className="container-fluid mt-5">
         <div className="row">
           <div className="col-12 mb-3">
