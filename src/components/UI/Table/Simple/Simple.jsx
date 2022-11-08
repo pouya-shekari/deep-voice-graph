@@ -61,6 +61,23 @@ const Simple = ({ label, data, hasAction, actions, tableHeaders, options }) => {
             </TableRow>
           </TableHead>
           <TableBody>
+            {data.length === 0 && (
+              <TableRow
+                key={uuidv4()}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell
+                  align="center"
+                  key={uuidv4()}
+                  colSpan={
+                    hasAction ? tableHeaders.length + 1 : tableHeaders.length
+                  }
+                >
+                  داده‌ای یافت نشد.
+                </TableCell>
+              </TableRow>
+            )}
+
             {data.map((row) => (
               <TableRow
                 key={uuidv4()}

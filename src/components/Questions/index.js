@@ -372,12 +372,11 @@ const QuestionsList = () => {
 
   const [questionsList, setQuestionsList] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
-  const [updateList , setUpdateList] = React.useState(false)
-    const [open,setOpen] = React.useState(false)
-    const [options,setOptions] = React.useState([])
-    const [questionTitle,setQuestionTitle] = React.useState('')
-    const [waitTime , setWaitTime] = React.useState('')
-
+  const [updateList, setUpdateList] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [options, setOptions] = React.useState([]);
+  const [questionTitle, setQuestionTitle] = React.useState("");
+  const [waitTime, setWaitTime] = React.useState("");
 
   React.useEffect(() => {
     getQuestion({
@@ -420,29 +419,27 @@ const QuestionsList = () => {
     return returnModel;
   };
 
-    const faToEnDigits = function (input) {
-        if (input == undefined)
-            return;
-        var returnModel = "", symbolMap = {
-            '۱': '1',
-            '۲': '2',
-            '۳': '3',
-            '۴': '4',
-            '۵': '5',
-            '۶': '6',
-            '۷': '7',
-            '۸': '8',
-            '۹': '9',
-            '۰': '0'
-        };
-        input = input.toString();
-        for (let i = 0; i < input.length; i++)
-            if (symbolMap[input[i]])
-                returnModel += symbolMap[input[i]];
-            else
-                returnModel += input[i];
-        return returnModel;
-    }
+  const faToEnDigits = function (input) {
+    if (input == undefined) return;
+    var returnModel = "",
+      symbolMap = {
+        "۱": "1",
+        "۲": "2",
+        "۳": "3",
+        "۴": "4",
+        "۵": "5",
+        "۶": "6",
+        "۷": "7",
+        "۸": "8",
+        "۹": "9",
+        "۰": "0",
+      };
+    input = input.toString();
+    for (let i = 0; i < input.length; i++)
+      if (symbolMap[input[i]]) returnModel += symbolMap[input[i]];
+      else returnModel += input[i];
+    return returnModel;
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -457,25 +454,34 @@ const QuestionsList = () => {
     setUpdateList(!updateList);
   };
 
-    const openAddDialogHandler = () => {
-        setOpen(true);
-    };
+  const openAddDialogHandler = () => {
+    setOpen(true);
+  };
 
-    const handleClose = () => {
-        setOpen(false)
-        setOptions([])
-        setQuestionTitle('')
-        setWaitTime('')
-    };
+  const handleClose = () => {
+    setOpen(false);
+    setOptions([]);
+    setQuestionTitle("");
+    setWaitTime("");
+  };
 
-    const handleSendQuestion = () =>{
-        if(questionTitle.trim() === ''){
-            toast.error('عنوان نمی‌تواند خالی باشد.')
-        }
-        else if(waitTime.trim() === ''){
-            toast.error('زمان انتظار نمی‌تواند خالی باشد.')
-        }else if(isNaN(faToEnDigits(waitTime.trim())) || faToEnDigits(waitTime.trim())<=0){
-            toast.error('زمان انتظار معتبر نیست.')
+  const handleSendQuestion = () => {
+    if (questionTitle.trim() === "") {
+      toast.error("عنوان نمی‌تواند خالی باشد.");
+    } else if (waitTime.trim() === "") {
+      toast.error("زمان انتظار نمی‌تواند خالی باشد.");
+    } else if (
+      isNaN(faToEnDigits(waitTime.trim())) ||
+      faToEnDigits(waitTime.trim()) <= 0
+    ) {
+      toast.error("زمان انتظار معتبر نیست.");
+    } else if (options == false) {
+      toast.error("پاسخی یافت نشد.");
+    } else {
+      let flag = false;
+      options.forEach((item) => {
+        if (item.trim() === "") {
+          flag = true;
         }
         else if(options == false){
             toast.error('پاسخی یافت نشد.')
@@ -521,106 +527,137 @@ const QuestionsList = () => {
                     }
                 })
             }
-        }
+          });
+      }
     }
+  };
 
-    function handleOptionChange(
-        event: React.ChangeEvent<HTMLInputElement>,
-        index: number
-    ) {
-        const values = options
-        values[index] = event.target.value
-        setOptions([...values])
-    }
+  function handleOptionChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) {
+    const values = options;
+    values[index] = event.target.value;
+    setOptions([...values]);
+  }
 
-    function handleAddOption() {
-        setOptions([...options, ''])
-    }
+  function handleAddOption() {
+    setOptions([...options, ""]);
+  }
 
-    function handleRemoveOption(index: number) {
-        const values = options
-        values.splice(index, 1)
-        setOptions([...values])
-    }
+  function handleRemoveOption(index: number) {
+    const values = options;
+    values.splice(index, 1);
+    setOptions([...values]);
+  }
 
-    const handleQuestionTitle = (event)=>{
-        setQuestionTitle(event.target.value)
-    }
+  const handleQuestionTitle = (event) => {
+    setQuestionTitle(event.target.value);
+  };
 
-    const handleWaitTime = (event)=>{
-        setWaitTime(event.target.value)
-    }
+  const handleWaitTime = (event) => {
+    setWaitTime(event.target.value);
+  };
 
-    return (
+  return (
     <>
       {loading ? (
-        <div style={{display:'flex',justifyContent:'center'}}>
-            <CircularProgress />
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <CircularProgress />
         </div>
       ) : (
         <div dir="rtl">
-            <div aria-label="add new announcement" className="mb-3">
-                <Button
-                    variant="contained"
-                    color="success"
-                    startIcon={<AddIcon />}
-                    onClick={openAddDialogHandler}
+          <div aria-label="add new announcement" className="mb-3">
+            <Button
+              variant="contained"
+              color="success"
+              startIcon={<AddIcon />}
+              onClick={openAddDialogHandler}
+            >
+              افزودن سوال جدید
+            </Button>
+          </div>
+          <Dialog className={style.addDialog} open={open} onClose={handleClose}>
+            <DialogTitle>افزودن سوال</DialogTitle>
+            <DialogContent>
+              <TextField
+                autoFocus={true}
+                margin="dense"
+                id="عنوان سوال"
+                label="عنوان سوال"
+                type="text"
+                fullWidth
+                variant="standard"
+                onChange={handleQuestionTitle}
+              />
+              <br />
+              <TextField
+                autoFocus={true}
+                margin="dense"
+                id="مدت زمان انتظار"
+                label="مدت زمان انتظار (ms)"
+                fullWidth
+                variant="standard"
+                onChange={handleWaitTime}
+              />
+            </DialogContent>
+            <DialogActions
+              sx={{ justifyContent: "start", padding: "0.5rem 1.5rem 0" }}
+            >
+              <Button
+                variant={"contained"}
+                color={"primary"}
+                onClick={handleAddOption}
+              >
+                افزودن پاسخ
+              </Button>
+            </DialogActions>
+            <DialogContent>
+              {options.map((_option, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    alignItems: "end",
+                    justifyContent: "space-between",
+                    gap: "0.5rem",
+                  }}
                 >
-                    افزودن سوال جدید
-                </Button>
-            </div>
-            <Dialog className={style.addDialog} open={open} onClose={handleClose}>
-                <DialogTitle>افزودن سوال</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus={true}
-                        margin="dense"
-                        id="عنوان سوال"
-                        label="عنوان سوال"
-                        type="text"
-                        fullWidth
-                        variant="standard"
-                        onChange={handleQuestionTitle}
-                    />
-                    <br/>
-                    <TextField
-                        autoFocus={true}
-                        margin="dense"
-                        id="مدت زمان انتظار"
-                        label="مدت زمان انتظار (ms)"
-                        fullWidth
-                        variant="standard"
-                        onChange={handleWaitTime}
-                    />
-                </DialogContent>
-                <DialogActions sx={{justifyContent:'start', padding:'0.5rem 1.5rem 0'}}>
-                    <Button variant={"contained"} color={"primary"} onClick={handleAddOption}>افزودن پاسخ</Button>
-                </DialogActions>
-                <DialogContent >
-
-                    {options.map((_option, i) => (
-                        <div key={i} style={{display:'flex' , alignItems:'end' , justifyContent:'space-between' , gap:'0.5rem'}}>
-                            <TextField
-                                sx={{flexGrow:1}}
-                                autoFocus={true}
-                                margin="dense"
-                                id="عنوان پاسخ"
-                                label="عنوان پاسخ"
-                                type="text"
-                                variant="standard"
-                                value={options[i]}
-                                onChange={(event) => handleOptionChange(event, i)}
-                            />
-                            <Button variant={"contained"} startIcon={<DeleteIcon />} color={"error"} onClick={()=>handleRemoveOption(i)}>حذف پاسخ</Button>
-                        </div>
-                    ))}
-
-                </DialogContent>
-                <DialogActions>
-                    <Button variant={"contained"} color={"success"} onClick={handleSendQuestion}>افزودن</Button>
-                    <Button className={style.deleteBtn} onClick={handleClose}>لغو</Button>
-                </DialogActions>
-            </Dialog>
+                  <TextField
+                    sx={{ flexGrow: 1 }}
+                    autoFocus={true}
+                    margin="dense"
+                    id="عنوان پاسخ"
+                    label="عنوان پاسخ"
+                    type="text"
+                    variant="standard"
+                    value={options[i]}
+                    onChange={(event) => handleOptionChange(event, i)}
+                  />
+                  <Button
+                    variant={"contained"}
+                    startIcon={<DeleteIcon />}
+                    color={"error"}
+                    onClick={() => handleRemoveOption(i)}
+                  >
+                    حذف پاسخ
+                  </Button>
+                </div>
+              ))}
+            </DialogContent>
+            <DialogActions>
+              <Button
+                variant={"contained"}
+                color={"success"}
+                onClick={handleSendQuestion}
+              >
+                افزودن
+              </Button>
+              <Button className={style.deleteBtn} onClick={handleClose}>
+                لغو
+              </Button>
+            </DialogActions>
+          </Dialog>
           <TableContainer component={Paper}>
             <Table aria-label="collapsible table">
               <TableHead>
