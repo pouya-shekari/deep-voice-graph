@@ -2,46 +2,41 @@ import React, { useState, useRef } from "react";
 import useSWR from "swr";
 import { Alert, Button, Box, CircularProgress, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import {
-  getAnnouncements,
-  deleteAnnouncement,
-  addAnnouncement,
-} from "../../api/announcement.api";
+import { addChecker, deleteChecker, getCheckers } from "../../api/checker.api";
 import { BASE_URL } from "../../config/variables.config";
 import { SimpleTable } from "../UI/Table/Tabel";
 import Modal from "../UI/Modal/Modal";
 import Snak from "../Snak/Snak";
 import faToEnDigits from "../../helpers/faToEnDigits";
-const getAllAnn = async (url) => {
-  const { data } = await getAnnouncements(url, {
+const getAllCheckers = async (url) => {
+  const { data } = await getCheckers(url, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     params: {
       applicationId: 14,
-      isQuestion: false,
     },
   });
   return data;
 };
 
 const tableHeaders = [
-  { colNumber: 0, title: "شناسه اعلان", field: "id" },
-  { colNumber: 1, title: "عنوان اعلان", field: "title" },
-  { colNumber: 2, title: "مدت زمان انتظار (ms)", field: "waitTime" },
-  { colNumber: 3, title: "وضعیت اعلان", field: "isEnable" },
+  { colNumber: 0, title: "شناسه چکر", field: "id" },
+  { colNumber: 1, title: "عنوان چکر", field: "title" },
+  { colNumber: 2, title: "URL", field: "url" },
+  { colNumber: 3, title: "وضعیت چکر", field: "isEnable" },
 ];
 
 const List = () => {
   const titleRef = useRef(null);
-  const waitTimeRef = useRef(null);
+  const URLRef = useRef(null);
 
   const [titleError, setTitleError] = useState({
     isError: false,
     errorText: "",
   });
 
-  const [waitTimeError, setWaitTimeError] = useState({
+  const [URLError, setURLError] = useState({
     isError: false,
     errorText: "",
   });
@@ -53,8 +48,8 @@ const List = () => {
   });
   const [deleteId, setDeleteId] = useState(0);
   const { data, error, mutate } = useSWR(
-    `${BASE_URL}/announcement/list`,
-    getAllAnn
+    `${BASE_URL}/checker/list`,
+    getAllCheckers
   );
   const [modalState, setModalState] = useState({
     deleteModal: false,
@@ -74,7 +69,7 @@ const List = () => {
   };
 
   const confirmAdd = async () => {
-    setWaitTimeError({
+    setURLError({
       isError: false,
       errorText: "",
     });
@@ -83,30 +78,20 @@ const List = () => {
       errorText: "",
     });
     const titleValue = titleRef.current.value.trim();
-    const waitTimeValue = waitTimeRef.current.value.trim();
+    const URLValue = URLRef.current.value.trim();
     let isValid = true;
-    if (
-      isNaN(faToEnDigits(waitTimeValue)) ||
-      faToEnDigits(waitTimeValue) <= 0
-    ) {
-      isValid = false;
-      setWaitTimeError({
-        isError: true,
-        errorText: "مدت زمان انتظار وارد شده معتبر نیست.",
-      });
-    }
     if (titleValue === "") {
       isValid = false;
       setTitleError({
         isError: true,
-        errorText: "لطفا عنوان اعلان را وارد کنید.",
+        errorText: "لطفا عنوان چکر را وارد کنید.",
       });
     }
-    if (waitTimeValue === "") {
+    if (URLValue === "") {
       isValid = false;
-      setWaitTimeError({
+      setURLError({
         isError: true,
-        errorText: "لطفا مدت زمان انتظار را وارد کنید.",
+        errorText: "لطفا URL را وارد کنید.",
       });
     }
     if (!isValid) {
@@ -115,18 +100,15 @@ const List = () => {
     setSnak({
       open: true,
       type: "warning",
-      message: "در حال افزودن اعلان...",
+      message: "در حال افزودن چکر...",
     });
     try {
-      const res = await addAnnouncement(
-        `${BASE_URL}/announcement/create`,
+      const res = await addChecker(
+        `${BASE_URL}/checker/create`,
         {
           applicationId: 14,
           text: titleValue,
-          waitTime: waitTimeValue,
-          statusCode: 1,
-          isQuestion: false,
-          responses: [],
+          url: URLValue,
         },
         {
           headers: {
@@ -138,7 +120,7 @@ const List = () => {
       setSnak({
         open: true,
         type: "success",
-        message: "اعلان با موفقیت افزوده شد.",
+        message: "چکر با موفقیت افزوده شد.",
       });
       closeModal();
     } catch (error) {
@@ -146,14 +128,14 @@ const List = () => {
         setSnak({
           open: true,
           type: "error",
-          message: "نام اعلان تکراری می‌باشد.",
+          message: "نام چکر تکراری می‌باشد.",
         });
         return;
       }
       setSnak({
         open: true,
         type: "error",
-        message: "افزودن اعلان با خطا مواجه شد.",
+        message: "افزودن چکر با خطا مواجه شد.",
       });
     }
   };
@@ -163,31 +145,31 @@ const List = () => {
     setSnak({
       open: true,
       type: "warning",
-      message: "در حال حذف اعلان...",
+      message: "در حال حذف چکر...",
     });
     try {
-      await deleteAnnouncement(`${BASE_URL}/announcement/delete`, {
+      await deleteChecker(`${BASE_URL}/checker/delete`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         params: {
-          announcementId: deleteId,
+          checkerId: deleteId,
         },
       });
       setSnak({
         open: true,
         type: "success",
-        message: "اعلان با موفقیت حذف شد.",
+        message: "چکر با موفقیت حذف شد.",
       });
       mutate(
-        data.filter((ann) => ann.announcementId !== deleteId),
+        data.filter((checker) => checker.checkerId !== deleteId),
         { revalidate: false }
       );
     } catch (error) {
       setSnak({
         open: true,
         type: "error",
-        message: "حذف اعلان با خطا مواجه شد.",
+        message: "حذف چکر با خطا مواجه شد.",
       });
     }
   };
@@ -222,9 +204,9 @@ const List = () => {
         <CircularProgress />
       </Box>
     );
-  const tableData = data.map(({ announcementId, isEnable, text, waitTime }) => {
+  const tableData = data.map(({ checkerId, isEnable, text, url }) => {
     return {
-      id: announcementId,
+      id: checkerId,
       title: text,
       isEnable: (
         <Alert
@@ -234,7 +216,7 @@ const List = () => {
           {isEnable ? "فعال" : "غیرفعال"}
         </Alert>
       ),
-      waitTime,
+      url,
       actions: ["delete", "edit"],
     };
   });
@@ -249,22 +231,22 @@ const List = () => {
       <Modal
         open={modalState.deleteModal}
         onClose={closeModal}
-        title={"آیا از حذف این اعلان اطمینان دارید؟"}
+        title={"آیا از حذف این چکر اطمینان دارید؟"}
         actions={[
           { type: "delete", label: "تایید", onClick: confirmDelete },
           { type: "cancel", label: "انصراف", onClick: closeModal },
         ]}
       >
-        در صورت انتخاب گزینه حذف، اگر این اعلان در هیچ فلوچارتی مورد استفاده
-        قرار نگرفته باشد، از لیست اعلان‌های شما حذف خواهد شد.
+        در صورت انتخاب گزینه حذف، اگر این چکر در هیچ فلوچارتی مورد استفاده قرار
+        نگرفته باشد، از لیست چکرهای شما حذف خواهد شد.
       </Modal>
       {/* Add Modal */}
       <Modal
         open={modalState.addModal}
         onClose={closeModal}
-        title={"افزودن اعلان جدید"}
+        title={"افزودن چکر جدید"}
         description={
-          "برای افزودن اعلان جدید، وارد کردن عنوان اعلان و مدت زمان انتظار (ms) الزامی می‌باشد."
+          "برای افزودن چکر جدید، وارد کردن عنوان چکر و URL  چکر الزامی می‌باشد."
         }
         actions={[
           { type: "add", label: "افزودن", onClick: confirmAdd },
@@ -273,8 +255,8 @@ const List = () => {
       >
         <div className="mb-3">
           <TextField
-            id="ann-title"
-            label="عنوان اعلان"
+            id="checker-title"
+            label="عنوان چکر"
             type="text"
             fullWidth
             variant="standard"
@@ -286,35 +268,35 @@ const List = () => {
         </div>
         <div className="mb-3">
           <TextField
-            id="ann-wait-time"
-            label="مدت زمان انتظار (ms)"
+            id="checker-url"
+            label="URL چکر"
             type="text"
             fullWidth
             variant="standard"
-            error={waitTimeError.isError}
-            helperText={waitTimeError.errorText}
-            inputRef={waitTimeRef}
+            error={URLError.isError}
+            helperText={URLError.errorText}
+            inputRef={URLRef}
             autoComplete={"off"}
           />
         </div>
       </Modal>
-      <div aria-label="add new announcement" className="mb-3">
+      <div aria-label="add new checker" className="mb-3">
         <Button
           variant="contained"
           color="success"
           startIcon={<AddIcon />}
           onClick={showAddModal}
         >
-          افزودن اعلان جدید
+          افزودن چکر جدید
         </Button>
       </div>
       <SimpleTable
-        label={"Annoucement Table"}
+        label={"Checker Table"}
         data={tableData}
         hasAction={true}
         actions={[
-          // { type: "edit", label: "ویرایش اعلان" },
-          { type: "delete", label: "حذف اعلان", onClick: showDeleteModal },
+          // { type: "edit", label: "ویرایش چکر" },
+          { type: "delete", label: "حذف چکر", onClick: showDeleteModal },
         ]}
         tableHeaders={tableHeaders}
         options={{}}

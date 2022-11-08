@@ -8,7 +8,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const Snak = ({ isOpen, type, message, onClose }) => {
   return (
-    <Snackbar open={isOpen} autoHideDuration={2000} onClose={onClose}>
+    <Snackbar open={isOpen} autoHideDuration={3000} onClose={onClose}>
       <Alert severity={type} sx={{ width: "100%" }} onClose={onClose}>
         {message}
       </Alert>

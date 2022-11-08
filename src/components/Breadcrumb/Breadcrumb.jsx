@@ -15,7 +15,7 @@ const HaraBreadcrumb = () => {
           <div>
             <Breadcrumbs aria-label="Hara Breadcrumb" className={styles.hara}>
               {pathnames.length === 0 && (
-                <Typography color="text.primary">
+                <Typography color="text.cancel">
                   <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
                   پیشخوان
                 </Typography>
@@ -30,7 +30,7 @@ const HaraBreadcrumb = () => {
                 const last = index === pathnames.length - 1;
                 const to = `/${pathnames.slice(0, index + 1).join("/")}`;
                 return last ? (
-                  <Typography color="text.primary" key={to}>
+                  <Typography color="text.cancel" key={to}>
                     {convertBreadcrumbs(value)}
                   </Typography>
                 ) : (
