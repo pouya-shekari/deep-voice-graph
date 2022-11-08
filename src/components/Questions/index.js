@@ -24,7 +24,11 @@ import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import style from "./index.module.scss";
 import { toast } from "react-toastify";
-import {addQuestion, deleteQuestion, getQuestion} from "../../api/question.api";
+import {
+  addQuestion,
+  deleteQuestion,
+  getQuestion,
+} from "../../api/question.api";
 import Transition from "../ModalTransition/Transition";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -32,8 +36,8 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
 import AddIcon from "@mui/icons-material/Add";
-import TextField from '@mui/material/TextField';
-import {CircularProgress} from "@mui/material";
+import TextField from "@mui/material/TextField";
+import { CircularProgress } from "@mui/material";
 
 function Row(props) {
   const { row } = props;
@@ -52,25 +56,27 @@ function Row(props) {
     setOpenDialog(false);
   };
 
-    const handleExit = () => {
-        setOpenDialog(false);
-        deleteQuestion({
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            params: {
-                /*applicationId: 8,*/
-                announcementId: itemIdNumberForDelete,
-            },
-        }).then(()=>{
-            toast.success("سوال با موفقیت حذف شد.")
-            setItemIdNumberForDelete(null)
-            props.onChange()
-        }).catch(()=>{
-            toast.error("خطا در حذف سوال!");
-            setItemIdNumberForDelete(null)
-        })
-    };
+  const handleExit = () => {
+    setOpenDialog(false);
+    deleteQuestion({
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      params: {
+        /*applicationId: 8,*/
+        announcementId: itemIdNumberForDelete,
+      },
+    })
+      .then(() => {
+        toast.success("سوال با موفقیت حذف شد.");
+        setItemIdNumberForDelete(null);
+        props.onChange();
+      })
+      .catch(() => {
+        toast.error("خطا در حذف سوال!");
+        setItemIdNumberForDelete(null);
+      });
+  };
 
   return (
     <React.Fragment>
@@ -246,12 +252,11 @@ const QuestionsList = () => {
 
   const [questionsList, setQuestionsList] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
-  const [updateList , setUpdateList] = React.useState(false)
-    const [open,setOpen] = React.useState(false)
-    const [options,setOptions] = React.useState([])
-    const [questionTitle,setQuestionTitle] = React.useState('')
-    const [waitTime , setWaitTime] = React.useState('')
-
+  const [updateList, setUpdateList] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [options, setOptions] = React.useState([]);
+  const [questionTitle, setQuestionTitle] = React.useState("");
+  const [waitTime, setWaitTime] = React.useState("");
 
   React.useEffect(() => {
     getQuestion({
@@ -259,7 +264,7 @@ const QuestionsList = () => {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       params: {
-        applicationId: 8,
+        applicationId: 14,
         isQuestion: true,
       },
     })
@@ -294,29 +299,27 @@ const QuestionsList = () => {
     return returnModel;
   };
 
-    const faToEnDigits = function (input) {
-        if (input == undefined)
-            return;
-        var returnModel = "", symbolMap = {
-            '۱': '1',
-            '۲': '2',
-            '۳': '3',
-            '۴': '4',
-            '۵': '5',
-            '۶': '6',
-            '۷': '7',
-            '۸': '8',
-            '۹': '9',
-            '۰': '0'
-        };
-        input = input.toString();
-        for (let i = 0; i < input.length; i++)
-            if (symbolMap[input[i]])
-                returnModel += symbolMap[input[i]];
-            else
-                returnModel += input[i];
-        return returnModel;
-    }
+  const faToEnDigits = function (input) {
+    if (input == undefined) return;
+    var returnModel = "",
+      symbolMap = {
+        "۱": "1",
+        "۲": "2",
+        "۳": "3",
+        "۴": "4",
+        "۵": "5",
+        "۶": "6",
+        "۷": "7",
+        "۸": "8",
+        "۹": "9",
+        "۰": "0",
+      };
+    input = input.toString();
+    for (let i = 0; i < input.length; i++)
+      if (symbolMap[input[i]]) returnModel += symbolMap[input[i]];
+      else returnModel += input[i];
+    return returnModel;
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -331,170 +334,201 @@ const QuestionsList = () => {
     setUpdateList(!updateList);
   };
 
-    const openAddDialogHandler = () => {
-        setOpen(true);
-    };
+  const openAddDialogHandler = () => {
+    setOpen(true);
+  };
 
-    const handleClose = () => {
-        setOpen(false)
-        setOptions([])
-        setQuestionTitle('')
-        setWaitTime('')
-    };
+  const handleClose = () => {
+    setOpen(false);
+    setOptions([]);
+    setQuestionTitle("");
+    setWaitTime("");
+  };
 
-    const handleSendQuestion = () =>{
-        if(questionTitle.trim() === ''){
-            toast.error('عنوان نمی‌تواند خالی باشد.')
-        }
-        else if(waitTime.trim() === ''){
-            toast.error('زمان انتظار نمی‌تواند خالی باشد.')
-        }else if(isNaN(faToEnDigits(waitTime.trim())) || faToEnDigits(waitTime.trim())<=0){
-            toast.error('زمان انتظار معتبر نیست.')
-        }
-        else if(options == false){
-            toast.error('پاسخی یافت نشد.')
-        }else{
-            let flag = false
-            options.forEach(item=>{
-                if(item.trim() === ''){
-                    flag = true
-                }
-            })
-            if (flag === true){
-                toast.error('پاسخ نمی‌تواند خالی باشد.')
-            }else {
-                let answers = []
-                options.map(item=>{
-                    answers.push(item.trim())
-                })
-                const data = {
-                    "applicationId": 8,
-                    "text": questionTitle.trim(),
-                    "waitTime": faToEnDigits(waitTime.trim()),
-                    "statusCode": 1,
-                    "isQuestion": true,
-                    "responses":answers
-                }
-                addQuestion(data,{
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    }
-                }).then(()=>{
-                    toast.success('سوال با موفقیت اضافه شد.')
-                    setOpen(false)
-                    setOptions([])
-                    setQuestionTitle('')
-                    setWaitTime('')
-                    handleChange()
-                }).catch((err)=>{
-                    if (err.response.status == 409){
-                        toast.error('عنوان سوال تکراری می‌باشد.')
-                    }
-                    else{
-                        toast.error('خطا')
-                    }
-                })
-            }
-        }
-    }
-
-    function handleOptionChange(
-        event: React.ChangeEvent<HTMLInputElement>,
-        index: number
+  const handleSendQuestion = () => {
+    if (questionTitle.trim() === "") {
+      toast.error("عنوان نمی‌تواند خالی باشد.");
+    } else if (waitTime.trim() === "") {
+      toast.error("زمان انتظار نمی‌تواند خالی باشد.");
+    } else if (
+      isNaN(faToEnDigits(waitTime.trim())) ||
+      faToEnDigits(waitTime.trim()) <= 0
     ) {
-        const values = options
-        values[index] = event.target.value
-        setOptions([...values])
+      toast.error("زمان انتظار معتبر نیست.");
+    } else if (options == false) {
+      toast.error("پاسخی یافت نشد.");
+    } else {
+      let flag = false;
+      options.forEach((item) => {
+        if (item.trim() === "") {
+          flag = true;
+        }
+      });
+      if (flag === true) {
+        toast.error("پاسخ نمی‌تواند خالی باشد.");
+      } else {
+        let answers = [];
+        options.map((item) => {
+          answers.push(item.trim());
+        });
+        const data = {
+          applicationId: 14,
+          text: questionTitle.trim(),
+          waitTime: faToEnDigits(waitTime.trim()),
+          statusCode: 1,
+          isQuestion: true,
+          responses: answers,
+        };
+        addQuestion(data, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+          .then(() => {
+            toast.success("سوال با موفقیت اضافه شد.");
+            setOpen(false);
+            setOptions([]);
+            setQuestionTitle("");
+            setWaitTime("");
+            handleChange();
+          })
+          .catch((err) => {
+            if (err.response.status == 409) {
+              toast.error("عنوان سوال تکراری می‌باشد.");
+            } else {
+              toast.error("خطا");
+            }
+          });
+      }
     }
+  };
 
-    function handleAddOption() {
-        setOptions([...options, ''])
-    }
+  function handleOptionChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) {
+    const values = options;
+    values[index] = event.target.value;
+    setOptions([...values]);
+  }
 
-    function handleRemoveOption(index: number) {
-        const values = options
-        values.splice(index, 1)
-        setOptions([...values])
-    }
+  function handleAddOption() {
+    setOptions([...options, ""]);
+  }
 
-    const handleQuestionTitle = (event)=>{
-        setQuestionTitle(event.target.value)
-    }
+  function handleRemoveOption(index: number) {
+    const values = options;
+    values.splice(index, 1);
+    setOptions([...values]);
+  }
 
-    const handleWaitTime = (event)=>{
-        setWaitTime(event.target.value)
-    }
+  const handleQuestionTitle = (event) => {
+    setQuestionTitle(event.target.value);
+  };
 
-    return (
+  const handleWaitTime = (event) => {
+    setWaitTime(event.target.value);
+  };
+
+  return (
     <>
       {loading ? (
-        <div style={{display:'flex',justifyContent:'center'}}>
-            <CircularProgress />
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <CircularProgress />
         </div>
       ) : (
         <div dir="rtl">
-            <div aria-label="add new announcement" className="mb-3">
-                <Button
-                    variant="contained"
-                    color="success"
-                    startIcon={<AddIcon />}
-                    onClick={openAddDialogHandler}
+          <div aria-label="add new announcement" className="mb-3">
+            <Button
+              variant="contained"
+              color="success"
+              startIcon={<AddIcon />}
+              onClick={openAddDialogHandler}
+            >
+              افزودن سوال جدید
+            </Button>
+          </div>
+          <Dialog className={style.addDialog} open={open} onClose={handleClose}>
+            <DialogTitle>افزودن سوال</DialogTitle>
+            <DialogContent>
+              <TextField
+                autoFocus={true}
+                margin="dense"
+                id="عنوان سوال"
+                label="عنوان سوال"
+                type="text"
+                fullWidth
+                variant="standard"
+                onChange={handleQuestionTitle}
+              />
+              <br />
+              <TextField
+                autoFocus={true}
+                margin="dense"
+                id="مدت زمان انتظار"
+                label="مدت زمان انتظار (ms)"
+                fullWidth
+                variant="standard"
+                onChange={handleWaitTime}
+              />
+            </DialogContent>
+            <DialogActions
+              sx={{ justifyContent: "start", padding: "0.5rem 1.5rem 0" }}
+            >
+              <Button
+                variant={"contained"}
+                color={"primary"}
+                onClick={handleAddOption}
+              >
+                افزودن پاسخ
+              </Button>
+            </DialogActions>
+            <DialogContent>
+              {options.map((_option, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    alignItems: "end",
+                    justifyContent: "space-between",
+                    gap: "0.5rem",
+                  }}
                 >
-                    افزودن سوال جدید
-                </Button>
-            </div>
-            <Dialog className={style.addDialog} open={open} onClose={handleClose}>
-                <DialogTitle>افزودن سوال</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus={true}
-                        margin="dense"
-                        id="عنوان سوال"
-                        label="عنوان سوال"
-                        type="text"
-                        fullWidth
-                        variant="standard"
-                        onChange={handleQuestionTitle}
-                    />
-                    <br/>
-                    <TextField
-                        autoFocus={true}
-                        margin="dense"
-                        id="مدت زمان انتظار"
-                        label="مدت زمان انتظار (ms)"
-                        fullWidth
-                        variant="standard"
-                        onChange={handleWaitTime}
-                    />
-                </DialogContent>
-                <DialogActions sx={{justifyContent:'start', padding:'0.5rem 1.5rem 0'}}>
-                    <Button variant={"contained"} color={"primary"} onClick={handleAddOption}>افزودن پاسخ</Button>
-                </DialogActions>
-                <DialogContent >
-
-                    {options.map((_option, i) => (
-                        <div key={i} style={{display:'flex' , alignItems:'end' , justifyContent:'space-between' , gap:'0.5rem'}}>
-                            <TextField
-                                sx={{flexGrow:1}}
-                                autoFocus={true}
-                                margin="dense"
-                                id="عنوان پاسخ"
-                                label="عنوان پاسخ"
-                                type="text"
-                                variant="standard"
-                                value={options[i]}
-                                onChange={(event) => handleOptionChange(event, i)}
-                            />
-                            <Button variant={"contained"} startIcon={<DeleteIcon />} color={"error"} onClick={()=>handleRemoveOption(i)}>حذف پاسخ</Button>
-                        </div>
-                    ))}
-
-                </DialogContent>
-                <DialogActions>
-                    <Button variant={"contained"} color={"success"} onClick={handleSendQuestion}>افزودن</Button>
-                    <Button className={style.deleteBtn} onClick={handleClose}>لغو</Button>
-                </DialogActions>
-            </Dialog>
+                  <TextField
+                    sx={{ flexGrow: 1 }}
+                    autoFocus={true}
+                    margin="dense"
+                    id="عنوان پاسخ"
+                    label="عنوان پاسخ"
+                    type="text"
+                    variant="standard"
+                    value={options[i]}
+                    onChange={(event) => handleOptionChange(event, i)}
+                  />
+                  <Button
+                    variant={"contained"}
+                    startIcon={<DeleteIcon />}
+                    color={"error"}
+                    onClick={() => handleRemoveOption(i)}
+                  >
+                    حذف پاسخ
+                  </Button>
+                </div>
+              ))}
+            </DialogContent>
+            <DialogActions>
+              <Button
+                variant={"contained"}
+                color={"success"}
+                onClick={handleSendQuestion}
+              >
+                افزودن
+              </Button>
+              <Button className={style.deleteBtn} onClick={handleClose}>
+                لغو
+              </Button>
+            </DialogActions>
+          </Dialog>
           <TableContainer component={Paper}>
             <Table aria-label="collapsible table">
               <TableHead>

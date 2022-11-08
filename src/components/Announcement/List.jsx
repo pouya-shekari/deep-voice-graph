@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import useSWR from "swr";
-import { Alert, Button, Box, CircularProgress } from "@mui/material";
+import { Alert, Button, Box, CircularProgress, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import {
   getAnnouncements,
   deleteAnnouncement,
+  addAnnouncement,
 } from "../../api/announcement.api";
 import { BASE_URL } from "../../config/variables.config";
 import { SimpleTable } from "../UI/Table/Tabel";
-import { ErrorModal } from "../UI/Modal/Modal";
+import Modal from "../UI/Modal/Modal";
 import Snak from "../Snak/Snak";
+import faToEnDigits from "../../helpers/faToEnDigits";
 const getAllAnn = async (url) => {
   const { data } = await getAnnouncements(url, {
     headers: {
@@ -31,6 +33,19 @@ const tableHeaders = [
 ];
 
 const List = () => {
+  const titleRef = useRef(null);
+  const waitTimeRef = useRef(null);
+
+  const [titleError, setTitleError] = useState({
+    isError: false,
+    errorText: "",
+  });
+
+  const [waitTimeError, setWaitTimeError] = useState({
+    isError: false,
+    errorText: "",
+  });
+
   const [snak, setSnak] = useState({
     message: "",
     type: "",
@@ -57,6 +72,92 @@ const List = () => {
       return { ...prevState, deleteModal: false, addModal: false };
     });
   };
+
+  const confirmAdd = async () => {
+    setWaitTimeError({
+      isError: false,
+      errorText: "",
+    });
+    setTitleError({
+      isError: false,
+      errorText: "",
+    });
+    const titleValue = titleRef.current.value.trim();
+    const waitTimeValue = waitTimeRef.current.value.trim();
+    let isValid = true;
+    if (
+      isNaN(faToEnDigits(waitTimeValue)) ||
+      faToEnDigits(waitTimeValue) <= 0
+    ) {
+      isValid = false;
+      setWaitTimeError({
+        isError: true,
+        errorText: "مدت زمان انتظار وارد شده معتبر نیست.",
+      });
+    }
+    if (titleValue === "") {
+      isValid = false;
+      setTitleError({
+        isError: true,
+        errorText: "لطفا عنوان اعلان را وارد کنید.",
+      });
+    }
+    if (waitTimeValue === "") {
+      isValid = false;
+      setWaitTimeError({
+        isError: true,
+        errorText: "لطفا مدت زمان انتظار را وارد کنید.",
+      });
+    }
+    if (!isValid) {
+      return;
+    }
+    setSnak({
+      open: true,
+      type: "warning",
+      message: "در حال افزودن اعلان...",
+    });
+    try {
+      const res = await addAnnouncement(
+        `${BASE_URL}/announcement/create`,
+        {
+          applicationId: 14,
+          text: titleValue,
+          waitTime: waitTimeValue,
+          statusCode: 1,
+          isQuestion: false,
+          responses: [],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      mutate([res.data, ...data], { revalidate: false });
+      setSnak({
+        open: true,
+        type: "success",
+        message: "اعلان با موفقیت افزوده شد.",
+      });
+      closeModal();
+    } catch (error) {
+      if (error.message === "409") {
+        setSnak({
+          open: true,
+          type: "error",
+          message: "نام اعلان تکراری می‌باشد.",
+        });
+        return;
+      }
+      setSnak({
+        open: true,
+        type: "error",
+        message: "افزودن اعلان با خطا مواجه شد.",
+      });
+    }
+  };
+
   const confirmDelete = async () => {
     closeModal();
     setSnak({
@@ -86,6 +187,12 @@ const List = () => {
         message: "حذف اعلان با خطا مواجه شد.",
       });
     }
+  };
+
+  const showAddModal = () => {
+    setModalState((prevState) => {
+      return { ...prevState, addModal: true };
+    });
   };
 
   const handleSnakClose = (event, reason) => {
@@ -136,20 +243,65 @@ const List = () => {
         message={snak.message}
         onClose={handleSnakClose}
       />
-      <ErrorModal
+      <Modal
         open={modalState.deleteModal}
         onClose={closeModal}
         title={"آیا از حذف این اعلان اطمینان دارید؟"}
-        description={
-          "در صورت انتخاب گزینه حذف، اگر این اعلان در هیچ فلوچارتی مورد استفاده قرار نگرفته باشد، از لیست اعلان‌های شما حذف خواهد شد."
-        }
         actions={[
           { type: "delete", label: "تایید", onClick: confirmDelete },
           { type: "cancel", label: "انصراف", onClick: closeModal },
         ]}
-      />
+      >
+        در صورت انتخاب گزینه حذف، اگر این اعلان در هیچ فلوچارتی مورد استفاده
+        قرار نگرفته باشد، از لیست اعلان‌های شما حذف خواهد شد.
+      </Modal>
+      {/* Add Modal */}
+      <Modal
+        open={modalState.addModal}
+        onClose={closeModal}
+        title={"افزودن اعلان جدید"}
+        description={
+          "برای افزودن اعلان جدید، وارد کردن عنوان اعلان و مدت زمان انتظار (ms) الزامی می‌باشد."
+        }
+        actions={[
+          { type: "add", label: "افزودن", onClick: confirmAdd },
+          { type: "cancel", label: "انصراف", onClick: closeModal },
+        ]}
+      >
+        <div className="mb-3">
+          <TextField
+            id="ann-title"
+            label="عنوان اعلان"
+            type="text"
+            fullWidth
+            variant="standard"
+            error={titleError.isError}
+            helperText={titleError.errorText}
+            inputRef={titleRef}
+            autoComplete={"off"}
+          />
+        </div>
+        <div className="mb-3">
+          <TextField
+            id="ann-wait-time"
+            label="مدت زمان انتظار (ms)"
+            type="text"
+            fullWidth
+            variant="standard"
+            error={waitTimeError.isError}
+            helperText={waitTimeError.errorText}
+            inputRef={waitTimeRef}
+            autoComplete={"off"}
+          />
+        </div>
+      </Modal>
       <div aria-label="add new announcement" className="mb-3">
-        <Button variant="contained" color="success" startIcon={<AddIcon />}>
+        <Button
+          variant="contained"
+          color="success"
+          startIcon={<AddIcon />}
+          onClick={showAddModal}
+        >
           افزودن اعلان جدید
         </Button>
       </div>
