@@ -24,7 +24,12 @@ import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import style from "./index.module.scss";
 import { toast } from "react-toastify";
-import {addQuestion, deleteQuestion, editQuestion, getQuestion} from "../../api/question.api";
+import {
+  addQuestion,
+  deleteQuestion,
+  editQuestion,
+  getQuestion,
+} from "../../api/question.api";
 import Transition from "../ModalTransition/Transition";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -32,142 +37,147 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
 import AddIcon from "@mui/icons-material/Add";
-import TextField from '@mui/material/TextField';
-import {CircularProgress} from "@mui/material";
-import {APPLICATIONID} from "../../config/variables.config";
+import TextField from "@mui/material/TextField";
+import { CircularProgress } from "@mui/material";
+import { APPLICATIONID } from "../../config/variables.config";
 
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
-  const [openDialog , setOpenDialog] = React.useState(false)
-    const [openEditDialog , setOpenEditDialog] = React.useState(false)
-    const [itemIdNumberForDelete , setItemIdNumberForDelete] = React.useState(null)
-    const [itemIdNumberForEdit , setItemIdNumberForEdit] = React.useState(null)
-    const [questionTitle , setQuestionTitle] = React.useState('')
-    const [waitTime , setWaitTime] = React.useState('')
-    const [changeTitleFlag , setChangeTitleFlag] = React.useState(false)
-    const [changeWaitTimeFlag , setChangeWaitTimeFlag] = React.useState(false)
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [openEditDialog, setOpenEditDialog] = React.useState(false);
+  const [itemIdNumberForDelete, setItemIdNumberForDelete] =
+    React.useState(null);
+  const [itemIdNumberForEdit, setItemIdNumberForEdit] = React.useState(null);
+  const [questionTitle, setQuestionTitle] = React.useState("");
+  const [waitTime, setWaitTime] = React.useState("");
+  const [changeTitleFlag, setChangeTitleFlag] = React.useState(false);
+  const [changeWaitTimeFlag, setChangeWaitTimeFlag] = React.useState(false);
 
-    const deleteHandler = (id) => {
-        setOpenDialog(true);
-        setItemIdNumberForDelete(id)
-    };
+  const deleteHandler = (id) => {
+    setOpenDialog(true);
+    setItemIdNumberForDelete(id);
+  };
 
-  const editHandler = (id)=>{
-      setOpenEditDialog(true)
-      setItemIdNumberForEdit(id)
-  }
+  const editHandler = (id) => {
+    setOpenEditDialog(true);
+    setItemIdNumberForEdit(id);
+  };
 
-    const handleClose = () => {
-        setItemIdNumberForDelete(null)
-        setItemIdNumberForEdit(null)
-        setOpenDialog(false);
-        setOpenEditDialog(false)
-        setChangeTitleFlag(false)
-        setChangeWaitTimeFlag(false)
-    };
+  const handleClose = () => {
+    setItemIdNumberForDelete(null);
+    setItemIdNumberForEdit(null);
+    setOpenDialog(false);
+    setOpenEditDialog(false);
+    setChangeTitleFlag(false);
+    setChangeWaitTimeFlag(false);
+  };
 
-    const handleExit = () => {
-        setOpenDialog(false);
-        deleteQuestion({
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            params: {
-                /*applicationId: 8,*/
-                announcementId: itemIdNumberForDelete,
-            },
-        }).then(()=>{
-            toast.success("سوال با موفقیت حذف شد.")
-            setItemIdNumberForDelete(null)
-            props.onChange()
-        }).catch((err)=>{
-            if (err.response.status == 404){
-                toast.error('این سوال قابل حذف نمی‌باشد.')
-            }
-            else{
-                toast.error('عملیات با خطا مواجه شد.')
-            }
-            setItemIdNumberForDelete(null)
+  const handleExit = () => {
+    setOpenDialog(false);
+    deleteQuestion({
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      params: {
+        /*applicationId: 8,*/
+        announcementId: itemIdNumberForDelete,
+      },
+    })
+      .then(() => {
+        toast.success("سوال با موفقیت حذف شد.");
+        setItemIdNumberForDelete(null);
+        props.onChange();
+      })
+      .catch((err) => {
+        if (err.response.status == 404) {
+          toast.error("این سوال قابل حذف نمی‌باشد.");
+        } else {
+          toast.error("عملیات با خطا مواجه شد.");
+        }
+        setItemIdNumberForDelete(null);
+      });
+  };
+
+  const handleEdit = () => {
+    if (questionTitle.trim() == "") {
+      toast.error("عنوان نمی‌تواند خالی باشد.");
+    } else if (waitTime.trim() == "") {
+      toast.error("زمان انتظار نمی‌تواند خالی باشد.");
+    } else if (
+      isNaN(faToEnDigits(waitTime.trim())) ||
+      faToEnDigits(waitTime.trim()) <= 0
+    ) {
+      toast.error("زمان انتظار معتبر نیست.");
+    } else {
+      const data = {
+        announcementId: itemIdNumberForEdit,
+        text: questionTitle.trim(),
+        waitTime: faToEnDigits(waitTime.trim()),
+        statusCode: 1,
+      };
+      editQuestion(data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+        .then((res) => {
+          toast.success("ویرایش سوال با موفقیت انجام شد.");
+          setChangeWaitTimeFlag(false);
+          setChangeTitleFlag(false);
+          setOpenEditDialog(false);
+          setItemIdNumberForEdit(null);
+          props.onChange();
         })
-    };
-
-    const handleEdit = ()=>{
-        if(questionTitle.trim() == ''){
-            toast.error('عنوان نمی‌تواند خالی باشد.')
-        }else if(waitTime.trim() == ''){
-            toast.error('زمان انتظار نمی‌تواند خالی باشد.')
-        }else if(isNaN(faToEnDigits(waitTime.trim())) || faToEnDigits(waitTime.trim())<=0){
-            toast.error('زمان انتظار معتبر نیست.')
-        }else{
-            const data = {
-                "announcementId": itemIdNumberForEdit,
-                "text": questionTitle.trim(),
-                "waitTime": faToEnDigits(waitTime.trim()),
-                "statusCode": 1
-            }
-            editQuestion(data,{
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                }
-            }).then((res)=>{
-                toast.success('ویرایش سوال با موفقیت انجام شد.')
-                setChangeWaitTimeFlag(false)
-                setChangeTitleFlag(false)
-                setOpenEditDialog(false);
-                setItemIdNumberForEdit(null)
-                props.onChange()
-            }).catch((err)=>{
-                toast.error('عملیات با خطا مواجه شد.')
-                setChangeWaitTimeFlag(false)
-                setChangeTitleFlag(false)
-                setOpenEditDialog(false);
-                setItemIdNumberForEdit(null)
-            })
-        }
+        .catch((err) => {
+          toast.error("عملیات با خطا مواجه شد.");
+          setChangeWaitTimeFlag(false);
+          setChangeTitleFlag(false);
+          setOpenEditDialog(false);
+          setItemIdNumberForEdit(null);
+        });
     }
+  };
 
-    const handleQuestionTitle = (event)=>{
-        setChangeTitleFlag(true)
-        if(!changeWaitTimeFlag){
-            setWaitTime(""+row.waitTime)
-            setChangeWaitTimeFlag(true)
-        }
-        setQuestionTitle(event.target.value)
+  const handleQuestionTitle = (event) => {
+    setChangeTitleFlag(true);
+    if (!changeWaitTimeFlag) {
+      setWaitTime("" + row.waitTime);
+      setChangeWaitTimeFlag(true);
     }
+    setQuestionTitle(event.target.value);
+  };
 
-    const handleWaitTime = (event)=>{
-        setChangeWaitTimeFlag(true)
-        if(!changeTitleFlag){
-            setQuestionTitle(row.text)
-            setChangeTitleFlag(true)
-        }
-        setWaitTime(event.target.value)
+  const handleWaitTime = (event) => {
+    setChangeWaitTimeFlag(true);
+    if (!changeTitleFlag) {
+      setQuestionTitle(row.text);
+      setChangeTitleFlag(true);
     }
+    setWaitTime(event.target.value);
+  };
 
-    const faToEnDigits = function (input) {
-        if (input == undefined)
-            return;
-        var returnModel = "", symbolMap = {
-            '۱': '1',
-            '۲': '2',
-            '۳': '3',
-            '۴': '4',
-            '۵': '5',
-            '۶': '6',
-            '۷': '7',
-            '۸': '8',
-            '۹': '9',
-            '۰': '0'
-        };
-        input = input.toString();
-        for (let i = 0; i < input.length; i++)
-            if (symbolMap[input[i]])
-                returnModel += symbolMap[input[i]];
-            else
-                returnModel += input[i];
-        return returnModel;
-    }
+  const faToEnDigits = function (input) {
+    if (input == undefined) return;
+    var returnModel = "",
+      symbolMap = {
+        "۱": "1",
+        "۲": "2",
+        "۳": "3",
+        "۴": "4",
+        "۵": "5",
+        "۶": "6",
+        "۷": "7",
+        "۸": "8",
+        "۹": "9",
+        "۰": "0",
+      };
+    input = input.toString();
+    for (let i = 0; i < input.length; i++)
+      if (symbolMap[input[i]]) returnModel += symbolMap[input[i]];
+      else returnModel += input[i];
+    return returnModel;
+  };
 
   return (
     <React.Fragment>
@@ -199,7 +209,13 @@ function Row(props) {
           </Alert>
         </TableCell>
         <TableCell align="center">
-          <Button onClick={()=>{editHandler(row.announcementId)}} variant="contained" startIcon={<EditIcon />}>
+          <Button
+            onClick={() => {
+              editHandler(row.announcementId);
+            }}
+            variant="contained"
+            startIcon={<EditIcon />}
+          >
             ویرایش سوال
           </Button>
           <button
@@ -223,82 +239,98 @@ function Row(props) {
           </Button>
         </TableCell>
       </TableRow>
-        <TableRow>
-            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                <Collapse in={open} timeout="auto" unmountOnExit>
-                    <Box sx={{ margin: 1 }}>
-                        <Table size="small" aria-label="purchases">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell sx={{fontWeight:'bold'}} align="left">عنوان پاسخ</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody sx={{backgroundColor:'whiteSmoke'}}>
-                                {row.responses.map((historyRow) => (
-                                    <TableRow key={historyRow}>
-                                        <TableCell>{historyRow}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </Box>
-                </Collapse>
-            </TableCell>
-        </TableRow>
-        <Dialog
-            open={openDialog}
-            TransitionComponent={Transition}
-            keepMounted
-            onClose={handleClose}
-            aria-describedby="alert-dialog-slide-description"
-        >
-            <DialogTitle>
-                {"آیا از حذف این سوال اطمینان دارید؟"}
-            </DialogTitle>
-            <DialogContent>
-                <DialogContentText id="alert-dialog-slide-description">
-                    در صورت انتخاب گزینه حذف، اگر این سوال در هیچ فلوچارتی مورد استفاده قرار نگرفته باشد، از لیست سوالات شما حذف خواهد شد.
-                </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button variant="contained" color="error" onClick={handleExit}>حذف</Button>
-                <Button className={style.deleteBtn} onClick={handleClose}>لغو</Button>
-            </DialogActions>
-        </Dialog>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box sx={{ margin: 1 }}>
+              <Table size="small" aria-label="purchases">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "bold" }} align="left">
+                      عنوان پاسخ
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody sx={{ backgroundColor: "whiteSmoke" }}>
+                  {row.responses.map((historyRow) => (
+                    <TableRow key={historyRow}>
+                      <TableCell>{historyRow}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+      <Dialog
+        open={openDialog}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"آیا از حذف این سوال اطمینان دارید؟"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            در صورت انتخاب گزینه حذف، اگر این سوال در هیچ فلوچارتی مورد استفاده
+            قرار نگرفته باشد، از لیست سوالات شما حذف خواهد شد.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" color="error" onClick={handleExit}>
+            حذف
+          </Button>
+          <Button className={style.deleteBtn} onClick={handleClose}>
+            لغو
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-        <Dialog className={style.addDialog} open={openEditDialog} onClose={handleClose}>
-            <DialogTitle>ویرایش سوال</DialogTitle>
-            <DialogContent>
-                <TextField
-                    autoFocus={true}
-                    margin="dense"
-                    id="عنوان سوال"
-                    label="عنوان سوال"
-                    type="text"
-                    defaultValue={row.text}
-                    fullWidth
-                    variant="standard"
-                    onChange={handleQuestionTitle}
-                />
-                <br/>
-                <TextField
-                    autoFocus={true}
-                    margin="dense"
-                    id="مدت زمان انتظار"
-                    label="مدت زمان انتظار (ms)"
-                    fullWidth
-                    defaultValue={row.waitTime}
-                    variant="standard"
-                    onChange={handleWaitTime}
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button disabled={!changeTitleFlag || !changeWaitTimeFlag} variant={"contained"} color={"primary"} onClick={handleEdit} >ویرایش</Button>
-                <Button className={style.deleteBtn} onClick={handleClose}>لغو</Button>
-            </DialogActions>
-        </Dialog>
-
-
+      <Dialog
+        className={style.addDialog}
+        open={openEditDialog}
+        onClose={handleClose}
+      >
+        <DialogTitle>ویرایش سوال</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus={true}
+            margin="dense"
+            id="عنوان سوال"
+            label="عنوان سوال"
+            type="text"
+            defaultValue={row.text}
+            fullWidth
+            variant="standard"
+            onChange={handleQuestionTitle}
+          />
+          <br />
+          <TextField
+            autoFocus={true}
+            margin="dense"
+            id="مدت زمان انتظار"
+            label="مدت زمان انتظار (ms)"
+            fullWidth
+            defaultValue={row.waitTime}
+            variant="standard"
+            onChange={handleWaitTime}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            disabled={!changeTitleFlag || !changeWaitTimeFlag}
+            variant={"contained"}
+            color={"primary"}
+            onClick={handleEdit}
+          >
+            ویرایش
+          </Button>
+          <Button className={style.deleteBtn} onClick={handleClose}>
+            لغو
+          </Button>
+        </DialogActions>
+      </Dialog>
     </React.Fragment>
   );
 }
@@ -482,53 +514,53 @@ const QuestionsList = () => {
       options.forEach((item) => {
         if (item.trim() === "") {
           flag = true;
-        }
-        else if(options == false){
-            toast.error('پاسخی یافت نشد.')
-        }else{
-            let flag = false
-            options.forEach(item=>{
-                if(item.trim() === ''){
-                    flag = true
-                }
-            })
-            if (flag === true){
-                toast.error('پاسخ نمی‌تواند خالی باشد.')
-            }else {
-                let answers = []
-                options.map(item=>{
-                    answers.push(item.trim())
-                })
-                const data = {
-                    "applicationId": APPLICATIONID,
-                    "text": questionTitle.trim(),
-                    "waitTime": faToEnDigits(waitTime.trim()),
-                    "statusCode": 1,
-                    "isQuestion": true,
-                    "responses":answers
-                }
-                addQuestion(data,{
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    }
-                }).then(()=>{
-                    toast.success('سوال با موفقیت اضافه شد.')
-                    setOpen(false)
-                    setOptions([])
-                    setQuestionTitle('')
-                    setWaitTime('')
-                    handleChange()
-                }).catch((err)=>{
-                    if (err.response.status == 409){
-                        toast.error('عنوان سوال تکراری می‌باشد.')
-                    }
-                    else{
-                        toast.error('خطا')
-                    }
-                })
+        } else if (options == false) {
+          toast.error("پاسخی یافت نشد.");
+        } else {
+          let flag = false;
+          options.forEach((item) => {
+            if (item.trim() === "") {
+              flag = true;
             }
           });
-      }
+          if (flag === true) {
+            toast.error("پاسخ نمی‌تواند خالی باشد.");
+          } else {
+            let answers = [];
+            options.map((item) => {
+              answers.push(item.trim());
+            });
+            const data = {
+              applicationId: APPLICATIONID,
+              text: questionTitle.trim(),
+              waitTime: faToEnDigits(waitTime.trim()),
+              statusCode: 1,
+              isQuestion: true,
+              responses: answers,
+            };
+            addQuestion(data, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            })
+              .then(() => {
+                toast.success("سوال با موفقیت اضافه شد.");
+                setOpen(false);
+                setOptions([]);
+                setQuestionTitle("");
+                setWaitTime("");
+                handleChange();
+              })
+              .catch((err) => {
+                if (err.response.status == 409) {
+                  toast.error("عنوان سوال تکراری می‌باشد.");
+                } else {
+                  toast.error("خطا");
+                }
+              });
+          }
+        }
+      });
     }
   };
 
