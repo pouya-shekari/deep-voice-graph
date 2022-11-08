@@ -1,5 +1,11 @@
+.hara {
+  a {
+    color: #fff !important;
+  }
+}
 .haraCard {
   cursor: pointer;
+
   &.announcement {
     background-color: #42a5f6;
   }
