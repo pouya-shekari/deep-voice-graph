@@ -26,6 +26,12 @@ const RTL = (props) => {
 
 const theme = createTheme({
   direction: "rtl",
+  palette: {
+    cancel: {
+      main: "#64748B",
+      contrastText: "#fff",
+    },
+  },
 });
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

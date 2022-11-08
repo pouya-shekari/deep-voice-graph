@@ -215,7 +215,9 @@ function Row(props) {
             color={"error"}
             variant="contained"
             startIcon={<DeleteIcon />}
-            onClick={()=>{deleteHandler(row.announcementId)}}
+            onClick={() => {
+              deleteHandler(row.announcementId);
+            }}
           >
             حذف سوال
           </Button>
@@ -451,9 +453,9 @@ const QuestionsList = () => {
     setPage(0);
   };
 
-  const handleChange = ()=>{
-      setUpdateList(!updateList)
-  }
+  const handleChange = () => {
+    setUpdateList(!updateList);
+  };
 
     const openAddDialogHandler = () => {
         setOpen(true);
@@ -639,7 +641,11 @@ const QuestionsList = () => {
                     )
                   : questionsList
                 ).map((row) => (
-                  <Row onChange={handleChange} key={row.announcementId} row={row} />
+                  <Row
+                    onChange={handleChange}
+                    key={row.announcementId}
+                    row={row}
+                  />
                 ))}
               </TableBody>
 
