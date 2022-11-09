@@ -146,7 +146,7 @@ const List = () => {
           },
         }
       );
-      mutate([res.data, ...data], { revalidate: false });
+      mutate([...data, res.data], { revalidate: false });
       setSnak({
         open: true,
         type: "success",
