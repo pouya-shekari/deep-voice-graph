@@ -6,3 +6,4 @@ export { Actions } from "./Actions/Actions.page";
 export { Questions } from "./Questions/Questions.page";
 export { Announcements } from "./Announcements/Announcements.page";
 export { Flows } from "./Flows/Flows.page";
+export { DrawFlow } from "./Flows/DrawFlow/DrawFlow.page";

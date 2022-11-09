@@ -42,6 +42,19 @@ const renderOperators = (action, row) => {
           {action.label}
         </Button>
       );
+    case "draw":
+      return (
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<EditIcon />}
+          onClick={action.onClick.bind(this, row.id)}
+          sx={{ mx: 1 }}
+          data-id={row.id}
+        >
+          {action.label}
+        </Button>
+      );
     case "enable":
       if (row.enable) {
         return (
