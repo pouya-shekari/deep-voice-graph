@@ -31,9 +31,9 @@ const renderOperators = (action, id) => {
       return (
         <Button
           variant="contained"
-          color="warning"
+          color="primary"
           startIcon={<EditIcon />}
-          onClick={action.onClick}
+          onClick={action.onClick.bind(this, id)}
           sx={{ mx: 1 }}
           data-id={id}
         >
