@@ -6,12 +6,14 @@ import {
   getAnnouncements,
   deleteAnnouncement,
   addAnnouncement,
+  editAnnouncement,
 } from "../../api/announcement.api";
 import { BASE_URL } from "../../config/variables.config";
 import { SimpleTable } from "../UI/Table/Tabel";
 import Modal from "../UI/Modal/Modal";
 import Snak from "../Snak/Snak";
 import faToEnDigits from "../../helpers/faToEnDigits";
+
 const getAllAnn = async (url) => {
   const { data } = await getAnnouncements(url, {
     headers: {
@@ -36,6 +38,9 @@ const List = () => {
   const titleRef = useRef(null);
   const waitTimeRef = useRef(null);
 
+  const titleEditRef = useRef(null);
+  const waitTimeEditRef = useRef(null);
+
   const [titleError, setTitleError] = useState({
     isError: false,
     errorText: "",
@@ -44,6 +49,11 @@ const List = () => {
   const [waitTimeError, setWaitTimeError] = useState({
     isError: false,
     errorText: "",
+  });
+
+  const [annDefaultValues, setAnnDefaultValues] = useState({
+    title: "",
+    waitTime: "",
   });
 
   const [snak, setSnak] = useState({
@@ -59,6 +69,7 @@ const List = () => {
   const [modalState, setModalState] = useState({
     deleteModal: false,
     addModal: false,
+    editModal: false,
   });
 
   const showDeleteModal = (id, event) => {
@@ -67,10 +78,31 @@ const List = () => {
     });
     setDeleteId(id);
   };
+
+  const showEditModal = (id, event) => {
+    // TODO: must be raname.
+    setDeleteId(id);
+    const annItem = data.find((item) => item.announcementId === id);
+    setAnnDefaultValues({
+      title: annItem.text,
+      waitTime: annItem.waitTime,
+    });
+    setModalState((prevState) => {
+      return { ...prevState, editModal: true };
+    });
+  };
   const closeModal = () => {
     setModalState((prevState) => {
-      return { ...prevState, deleteModal: false, addModal: false };
+      return {
+        ...prevState,
+        deleteModal: false,
+        addModal: false,
+        editModal: false,
+      };
     });
+    setDeleteId(null);
+    setTitleError({ errorText: "", isError: false });
+    setWaitTimeError({ errorText: "", isError: false });
   };
 
   const confirmAdd = async () => {
@@ -154,6 +186,95 @@ const List = () => {
         open: true,
         type: "error",
         message: "افزودن اعلان با خطا مواجه شد.",
+      });
+    }
+  };
+
+  const confirmEdit = async () => {
+    setWaitTimeError({
+      isError: false,
+      errorText: "",
+    });
+    setTitleError({
+      isError: false,
+      errorText: "",
+    });
+    const titleValue = titleEditRef.current.value.trim();
+    const waitTimeValue = waitTimeEditRef.current.value.trim();
+    let isValid = true;
+    if (
+      isNaN(faToEnDigits(waitTimeValue)) ||
+      faToEnDigits(waitTimeValue) <= 0
+    ) {
+      isValid = false;
+      setWaitTimeError({
+        isError: true,
+        errorText: "مدت زمان انتظار وارد شده معتبر نیست.",
+      });
+    }
+    if (titleValue === "") {
+      isValid = false;
+      setTitleError({
+        isError: true,
+        errorText: "لطفا عنوان اعلان را وارد کنید.",
+      });
+    }
+    if (waitTimeValue === "") {
+      isValid = false;
+      setWaitTimeError({
+        isError: true,
+        errorText: "لطفا مدت زمان انتظار را وارد کنید.",
+      });
+    }
+    if (!isValid) {
+      return;
+    }
+    setSnak({
+      open: true,
+      type: "warning",
+      message: "در حال ویرایش اعلان...",
+    });
+    try {
+      const res = await editAnnouncement(
+        `${BASE_URL}/announcement/update`,
+        {
+          announcementId: deleteId,
+          text: titleValue,
+          waitTime: waitTimeValue,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      console.log(res);
+      const newData = data.map((item) => {
+        if (item.announcementId === deleteId) {
+          return { ...item, text: titleValue, waitTime: waitTimeValue };
+        }
+        return item;
+      });
+      mutate([...newData], { revalidate: false });
+      setSnak({
+        open: true,
+        type: "success",
+        message: "اعلان با موفقیت ویرایش شد.",
+      });
+      closeModal();
+    } catch (error) {
+      if (error.message === "409") {
+        setSnak({
+          open: true,
+          type: "error",
+          message: "نام اعلان تکراری می‌باشد.",
+        });
+        return;
+      }
+      setSnak({
+        open: true,
+        type: "error",
+        message: "ویرایش اعلان با خطا مواجه شد.",
       });
     }
   };
@@ -298,6 +419,47 @@ const List = () => {
           />
         </div>
       </Modal>
+      <Modal
+        open={modalState.editModal}
+        onClose={closeModal}
+        title={"ویرایش اعلان"}
+        description={
+          "برای ویرایش اعلان، وارد کردن عنوان اعلان و مدت زمان انتظار (ms) الزامی می‌باشد."
+        }
+        actions={[
+          { type: "edit", label: "ویرایش", onClick: confirmEdit },
+          { type: "cancel", label: "انصراف", onClick: closeModal },
+        ]}
+      >
+        <div className="mb-3">
+          <TextField
+            id="ann-title-edit"
+            label="عنوان اعلان"
+            type="text"
+            fullWidth
+            variant="standard"
+            autoComplete={"off"}
+            defaultValue={annDefaultValues.title}
+            inputRef={titleEditRef}
+            error={titleError.isError}
+            helperText={titleError.errorText}
+          />
+        </div>
+        <div className="mb-3">
+          <TextField
+            id="ann-wait-time-edit"
+            label="مدت زمان انتظار (ms)"
+            type="text"
+            fullWidth
+            variant="standard"
+            autoComplete={"off"}
+            defaultValue={annDefaultValues.waitTime}
+            inputRef={waitTimeEditRef}
+            error={waitTimeError.isError}
+            helperText={waitTimeError.errorText}
+          />
+        </div>
+      </Modal>
       <div aria-label="add new announcement" className="mb-3">
         <Button
           variant="contained"
@@ -313,7 +475,7 @@ const List = () => {
         data={tableData}
         hasAction={true}
         actions={[
-          // { type: "edit", label: "ویرایش اعلان" },
+          { type: "edit", label: "ویرایش اعلان", onClick: showEditModal },
           { type: "delete", label: "حذف اعلان", onClick: showDeleteModal },
         ]}
         tableHeaders={tableHeaders}

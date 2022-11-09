@@ -16,6 +16,14 @@ export async function addChecker(url, data, config) {
   }
 }
 
+export async function editChecker(url, data, config) {
+  try {
+    return await http.put(url, data, config);
+  } catch (e) {
+    throw Error(e.response.status);
+  }
+}
+
 export async function deleteChecker(url, config) {
   try {
     return await http.delete(url, config);

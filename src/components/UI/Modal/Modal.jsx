@@ -11,6 +11,7 @@ import Transition from "./Transition";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
 
 const renderActions = (action) => {
   switch (action.type) {
@@ -42,6 +43,17 @@ const renderActions = (action) => {
           variant="contained"
           color="success"
           startIcon={<AddIcon />}
+          onClick={action.onClick}
+        >
+          {action.label}
+        </Button>
+      );
+    case "edit":
+      return (
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<EditIcon />}
           onClick={action.onClick}
         >
           {action.label}
