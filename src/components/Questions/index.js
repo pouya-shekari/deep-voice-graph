@@ -40,6 +40,7 @@ import AddIcon from "@mui/icons-material/Add";
 import TextField from "@mui/material/TextField";
 import { CircularProgress } from "@mui/material";
 import { APPLICATIONID } from "../../config/variables.config";
+import {Close} from "@mui/icons-material";
 
 function Row(props) {
   const { row } = props;
@@ -278,11 +279,11 @@ function Row(props) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="error" onClick={handleExit}>
+          <Button startIcon={<DeleteIcon />} variant="contained" color="error" onClick={handleExit}>
             حذف
           </Button>
-          <Button className={style.deleteBtn} onClick={handleClose}>
-            لغو
+          <Button startIcon={<Close />} className={style.deleteBtn} onClick={handleClose}>
+            انصراف
           </Button>
         </DialogActions>
       </Dialog>
@@ -323,11 +324,12 @@ function Row(props) {
             variant={"contained"}
             color={"primary"}
             onClick={handleEdit}
+            startIcon={<EditIcon />}
           >
             ویرایش
           </Button>
-          <Button className={style.deleteBtn} onClick={handleClose}>
-            لغو
+          <Button startIcon={<Close />} className={style.deleteBtn} onClick={handleClose}>
+            انصراف
           </Button>
         </DialogActions>
       </Dialog>
@@ -617,14 +619,12 @@ const QuestionsList = () => {
                 margin="dense"
                 id="عنوان سوال"
                 label="عنوان سوال"
-                type="text"
                 fullWidth
                 variant="standard"
                 onChange={handleQuestionTitle}
               />
               <br />
               <TextField
-                autoFocus={true}
                 margin="dense"
                 id="مدت زمان انتظار"
                 label="مدت زمان انتظار (ms)"
@@ -640,6 +640,7 @@ const QuestionsList = () => {
                 variant={"contained"}
                 color={"primary"}
                 onClick={handleAddOption}
+                startIcon={<AddIcon />}
               >
                 افزودن پاسخ
               </Button>
@@ -682,11 +683,12 @@ const QuestionsList = () => {
                 variant={"contained"}
                 color={"success"}
                 onClick={handleSendQuestion}
+                startIcon={<AddIcon />}
               >
                 افزودن
               </Button>
-              <Button className={style.deleteBtn} onClick={handleClose}>
-                لغو
+              <Button startIcon={<Close />} className={style.deleteBtn} onClick={handleClose}>
+                انصراف
               </Button>
             </DialogActions>
           </Dialog>

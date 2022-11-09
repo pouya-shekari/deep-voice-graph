@@ -32,6 +32,7 @@ import TextField from '@mui/material/TextField';
 import {CircularProgress} from "@mui/material";
 import {addAction, deleteAction, editAction, getActions} from "../../api/actions.api";
 import {APPLICATIONID} from "../../config/variables.config";
+import {Close} from "@mui/icons-material";
 
 function Row(props) {
     const { row } = props;
@@ -199,8 +200,8 @@ function Row(props) {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" color="error" onClick={handleExit}>حذف</Button>
-                    <Button className={style.deleteBtn} onClick={handleClose}>لغو</Button>
+                    <Button startIcon={<DeleteIcon />} variant="contained" color="error" onClick={handleExit}>حذف</Button>
+                    <Button startIcon={<Close />} className={style.deleteBtn} onClick={handleClose}>انصراف</Button>
                 </DialogActions>
             </Dialog>
 
@@ -231,8 +232,8 @@ function Row(props) {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button disabled={!changeTitleFlag || !changeURLFlag} variant={"contained"} color={"primary"} onClick={handleEdit} >ویرایش</Button>
-                    <Button className={style.deleteBtn} onClick={handleClose}>لغو</Button>
+                    <Button startIcon={<EditIcon />} disabled={!changeTitleFlag || !changeURLFlag} variant={"contained"} color={"primary"} onClick={handleEdit} >ویرایش</Button>
+                    <Button startIcon={<Close />} className={style.deleteBtn} onClick={handleClose}>انصراف</Button>
                 </DialogActions>
             </Dialog>
 
@@ -464,8 +465,8 @@ const ActionsList = () => {
                         </DialogContent>
 
                         <DialogActions>
-                            <Button variant={"contained"} color={"success"} onClick={handleSenAction}>افزودن</Button>
-                            <Button className={style.deleteBtn} onClick={handleClose}>لغو</Button>
+                            <Button startIcon={<AddIcon />} variant={"contained"} color={"success"} onClick={handleSenAction}>افزودن</Button>
+                            <Button startIcon={<Close />} className={style.deleteBtn} onClick={handleClose}>انصراف</Button>
                         </DialogActions>
                     </Dialog>
                     <TableContainer component={Paper}>
