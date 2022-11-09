@@ -7,6 +7,7 @@ import { BASE_URL } from "../../config/variables.config";
 import { SimpleTable } from "../UI/Table/Tabel";
 import Modal from "../UI/Modal/Modal";
 import Snak from "../Snak/Snak";
+import { useNavigate } from "react-router-dom";
 
 const getFlows = async (url) => {
   const { data } = await getAllFlows(url, {
@@ -30,6 +31,8 @@ const tableHeaders = [
 ];
 
 const List = () => {
+  const navigate = useNavigate();
+
   const nameEnRef = useRef(null);
   const nameFaRef = useRef(null);
   const descriptionRef = useRef(null);
@@ -328,7 +331,13 @@ const List = () => {
         hasAction={true}
         actions={[
           { type: "enable", label: "غیرفعال سازی", onClick: enableDisableFlow },
-          { type: "edit", label: "ویرایش فلوچارت", onClick: () => {} },
+          {
+            type: "draw",
+            label: "ویرایش فلوچارت",
+            onClick: (id) => {
+              navigate(`/flows/${id}`, { replace: true });
+            },
+          },
         ]}
         tableHeaders={tableHeaders}
         options={{}}

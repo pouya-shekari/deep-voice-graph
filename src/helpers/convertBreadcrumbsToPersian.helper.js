@@ -42,7 +42,7 @@ const convertBreadcrumbs = (value) => {
         </>
       );
     default:
-      return value;
+      return <>ویرایش فلوچارت</>;
   }
 };
 

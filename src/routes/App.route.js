@@ -49,6 +49,12 @@ class AppRoute extends Component {
             <PrivateRoute component={(props) => <Page.Flows {...props} />} />
           }
         />
+        <Route
+          path={`${PATHS.FLOWS}/:id`}
+          element={
+            <PrivateRoute component={(props) => <Page.DrawFlow {...props} />} />
+          }
+        />
         {/* ProtectedRoutes */}
         <Route
           path={PATHS.LOGIN}
