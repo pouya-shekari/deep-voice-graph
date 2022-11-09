@@ -21,7 +21,7 @@ const renderOperators = (action, id) => {
           color="error"
           startIcon={<DeleteIcon />}
           onClick={action.onClick.bind(this, id)}
-          sx={{ mx: 1 }}
+          sx={{ m: 1 }}
           data-id={id}
         >
           {action.label}
