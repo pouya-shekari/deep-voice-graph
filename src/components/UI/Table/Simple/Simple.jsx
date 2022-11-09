@@ -12,7 +12,9 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-const renderOperators = (action, id) => {
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import CheckIcon from "@mui/icons-material/Check";
+const renderOperators = (action, row) => {
   switch (action.type) {
     case "delete":
       return (
@@ -20,9 +22,9 @@ const renderOperators = (action, id) => {
           variant="contained"
           color="error"
           startIcon={<DeleteIcon />}
-          onClick={action.onClick.bind(this, id)}
+          onClick={action.onClick.bind(this, row.id)}
           sx={{ m: 1 }}
-          data-id={id}
+          data-id={row.id}
         >
           {action.label}
         </Button>
@@ -33,11 +35,38 @@ const renderOperators = (action, id) => {
           variant="contained"
           color="primary"
           startIcon={<EditIcon />}
-          onClick={action.onClick.bind(this, id)}
+          onClick={action.onClick.bind(this, row.id)}
           sx={{ mx: 1 }}
-          data-id={id}
+          data-id={row.id}
         >
           {action.label}
+        </Button>
+      );
+    case "enable":
+      if (row.enable) {
+        return (
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<ErrorOutlineIcon />}
+            onClick={action.onClick.bind(this, row.id)}
+            sx={{ mx: 1 }}
+            data-id={row.id}
+          >
+            غیرفعال سازی
+          </Button>
+        );
+      }
+      return (
+        <Button
+          variant="contained"
+          color="success"
+          startIcon={<CheckIcon />}
+          onClick={action.onClick.bind(this, row.id)}
+          sx={{ mx: 1 }}
+          data-id={row.id}
+        >
+          فعال‌ سازی
         </Button>
       );
     default:
@@ -92,7 +121,7 @@ const Simple = ({ label, data, hasAction, actions, tableHeaders, options }) => {
                   <TableCell align="center">
                     {actions.map((action) => (
                       <Fragment key={uuidv4()}>
-                        {renderOperators(action, row.id)}
+                        {renderOperators(action, row)}
                       </Fragment>
                     ))}
                   </TableCell>

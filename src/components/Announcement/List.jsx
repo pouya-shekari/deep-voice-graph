@@ -166,7 +166,7 @@ const List = () => {
           },
         }
       );
-      mutate([res.data, ...data], { revalidate: false });
+      mutate([...data, res.data], { revalidate: false });
       setSnak({
         open: true,
         type: "success",
@@ -248,7 +248,6 @@ const List = () => {
           },
         }
       );
-      console.log(res);
       const newData = data.map((item) => {
         if (item.announcementId === deleteId) {
           return { ...item, text: titleValue, waitTime: waitTimeValue };
