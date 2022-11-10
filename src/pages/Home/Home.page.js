@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet";
 import { UserLayout } from "../../layouts";
 import HaraBreadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import Media from "../../components/Media/Media";
+import List from "../../components/Flow/List";
 
 const HomeWrapper = () => {
   return (
@@ -21,8 +22,11 @@ const HomeWrapper = () => {
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3">
             <Media title={"Checker"} />
           </div>
-          <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3">
+          {/* <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3">
             <Media title={"Flow"} />
+          </div> */}
+          <div className="col-12 mt-5">
+            <List />
           </div>
         </div>
       </div>

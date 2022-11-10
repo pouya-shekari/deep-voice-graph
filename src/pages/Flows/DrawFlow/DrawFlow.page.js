@@ -1,8 +1,7 @@
 import { Helmet } from "react-helmet";
 import { UserLayout } from "../../../layouts";
 import HaraBreadcrumb from "../../../components/Breadcrumb/Breadcrumb";
-import List from "../../../components/Flow/List";
-import Draw from "../../../components/Flow/DrawFlow/Draw";
+import DrawWrapper from "../../../components/Flow/DrawFlow/DrawWrapper";
 
 const FlowsWrapper = (props) => {
   return (
@@ -11,7 +10,7 @@ const FlowsWrapper = (props) => {
       <div className="container-fluid mt-3">
         <div className="row">
           <div className="col-12">
-            <Draw {...props} />
+            <DrawWrapper {...props} />
           </div>
         </div>
       </div>

@@ -14,6 +14,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import CheckIcon from "@mui/icons-material/Check";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 const renderOperators = (action, row) => {
   switch (action.type) {
     case "delete":
@@ -47,7 +48,7 @@ const renderOperators = (action, row) => {
         <Button
           variant="contained"
           color="primary"
-          startIcon={<EditIcon />}
+          startIcon={<RemoveRedEyeIcon />}
           onClick={action.onClick.bind(this, row.id)}
           sx={{ mx: 1 }}
           data-id={row.id}
