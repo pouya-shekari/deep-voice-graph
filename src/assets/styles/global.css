@@ -19,3 +19,7 @@ body {
 a {
   text-decoration: none !important;
 }
+
+div[data-message] {
+  display: none !important;
+}

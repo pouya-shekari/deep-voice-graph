@@ -333,7 +333,7 @@ const List = () => {
           { type: "enable", label: "غیرفعال سازی", onClick: enableDisableFlow },
           {
             type: "draw",
-            label: "ویرایش فلوچارت",
+            label: "مشاهده فلوچارت",
             onClick: (id) => {
               navigate(`/flows/${id}`, { replace: true });
             },
