@@ -8,6 +8,7 @@ import ReactFlow, {
   Background,
   ReactFlowProvider,
   MiniMap,
+  useStore,
 } from "reactflow";
 import "reactflow/dist/style.css";
 
@@ -28,7 +29,7 @@ const defaultEdgeOptions = {
     height: 20,
   },
 };
-
+const snapGrid = [20, 20];
 const Chart = () => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -44,14 +45,22 @@ const Chart = () => {
       event.preventDefault();
 
       const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+      console.log(reactFlowBounds);
+      console.log(event.clientX);
+      console.log(event.clientY);
       const type = event.dataTransfer.getData("application/reactflow");
       if (typeof type === "undefined" || !type) {
         return;
       }
+      console.log(reactFlowInstance.getZoom());
       const position = reactFlowInstance.project({
-        x: event.clientX - reactFlowBounds.left - 1650,
-        y: event.clientY - reactFlowBounds.top - 30,
+        x:
+          event.clientX -
+          reactFlowBounds.left -
+          1650 * reactFlowInstance.getZoom(),
+        y: event.clientY - reactFlowBounds.top,
       });
+      console.log(position);
       const newNode = {
         id: Math.random().toString(),
         type: "default",
@@ -64,24 +73,27 @@ const Chart = () => {
   );
   return (
     <div className="mt-3">
-      <ReactFlowProvider>
-        <div style={{ height: "100vh" }} ref={reactFlowWrapper}>
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onDrop={dropHandler}
-            onDragOver={dragOverHandler}
-            onInit={setReactFlowInstance}
-            connectionLineType={ConnectionLineType.SmoothStep}
-            panOnScroll={true}
-          >
-            <Controls showFitView={false} showZoom={false} />
-            <Background />
-            <MiniMap />
-          </ReactFlow>
-        </div>
-      </ReactFlowProvider>
+      <div style={{ height: "100vh" }}>
+        <ReactFlow
+          ref={reactFlowWrapper}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onDrop={dropHandler}
+          onDragOver={dragOverHandler}
+          onInit={setReactFlowInstance}
+          connectionLineType={ConnectionLineType.SmoothStep}
+          panOnScroll={false}
+          defaultZoom={1.5}
+          snapToGrid={true}
+          snapGrid={snapGrid}
+          attributionPosition="top-right"
+        >
+          <Controls showFitView={false} />
+          <Background />
+          <MiniMap />
+        </ReactFlow>
+      </div>
     </div>
   );
 };
