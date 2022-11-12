@@ -8,11 +8,14 @@
   padding: 0;
   box-sizing: border-box;
   font-family: IRAN-Sans !important;
+  /* TODO: Refactor this -> pouya-shekari */
+  /* direction: rtl; */
 }
 
 body {
   background: rgb(241, 243, 246);
   direction: rtl;
+  overflow-x: hidden;
 }
 
 a {

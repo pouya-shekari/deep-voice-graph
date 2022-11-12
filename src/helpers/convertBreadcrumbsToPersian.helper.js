@@ -3,6 +3,7 @@ import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import SettingsInputComponentIcon from "@mui/icons-material/SettingsInputComponent";
 import CheckIcon from "@mui/icons-material/Check";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import EditIcon from "@mui/icons-material/Edit";
 
 const convertBreadcrumbs = (value) => {
   switch (value) {
@@ -42,7 +43,12 @@ const convertBreadcrumbs = (value) => {
         </>
       );
     default:
-      return <>ویرایش فلوچارت</>;
+      return (
+        <>
+          <EditIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+          ویرایش فلوچارت
+        </>
+      );
   }
 };
 

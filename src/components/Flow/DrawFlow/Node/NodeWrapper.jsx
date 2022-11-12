@@ -4,12 +4,12 @@ import Node from "./DragableNode/Node";
 import styles from "./NodeWrapper.module.scss";
 
 const nodeTypes = [
-  { title: "شروع", type: "start", bgColor: "PaleGoldenRod" },
-  { title: "سوال", type: "question", bgColor: "gold" },
-  { title: "اعلان", type: "announcement", bgColor: "skyblue" },
-  { title: "عملکرد", type: "action", bgColor: "lightgreen" },
-  { title: "چکر", type: "checker", bgColor: "lightgray" },
-  { title: "پایان", type: "end", bgColor: "Moccasin" },
+  { title: "شروع", type: "Start", bgColor: "PaleGoldenRod" },
+  { title: "سوال", type: "Question", bgColor: "gold" },
+  { title: "اعلان", type: "Announcement", bgColor: "skyblue" },
+  { title: "عملکرد", type: "Action", bgColor: "lightgreen" },
+  { title: "چکر", type: "Checker", bgColor: "lightgray" },
+  { title: "پایان", type: "End", bgColor: "Moccasin" },
 ];
 
 const NodeWrapper = () => {

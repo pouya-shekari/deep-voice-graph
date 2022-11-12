@@ -7,7 +7,8 @@ import HomeIcon from "@mui/icons-material/Home";
 import convertBreadcrumbs from "../../helpers/convertBreadcrumbsToPersian.helper";
 const HaraBreadcrumb = () => {
   const location = useLocation();
-  const pathnames = location.pathname.split("/").filter((x) => x);
+  let pathnames = location.pathname.split("/").filter((x) => x);
+  pathnames = pathnames.filter((x) => x !== "flows");
   return (
     <div className="container-fluid">
       <div className="row">

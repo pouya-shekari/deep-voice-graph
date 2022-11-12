@@ -2,35 +2,26 @@ import React, { useRef, useCallback, useState } from "react";
 import ReactFlow, {
   useEdgesState,
   useNodesState,
-  MarkerType,
   ConnectionLineType,
   Controls,
   Background,
   ReactFlowProvider,
   MiniMap,
+  addEdge,
 } from "reactflow";
+import { v4 as uuidv4 } from "uuid";
 import "reactflow/dist/style.css";
-const initialNodes = [
-  {
-    id: "1",
-    data: { label: "Hello" },
-    position: { x: 0, y: 0 },
-    type: "input",
-  },
-  {
-    id: "2",
-    data: { label: "World" },
-    position: { x: 100, y: 100 },
-  },
-];
 
-const initialEdges = [
-  { id: "1-2", source: "1", target: "2", label: "to the", type: "step" },
-];
+import getNodeTypes from "../../../../helpers/getNodeTypes";
+import GetDefaultEdgeOptions from "../../../../helpers/getDefaultEdgeOptions";
+import convertNodeNames from "../../../../helpers/convertNodeNames";
+
+const defaultEdgeOptions = GetDefaultEdgeOptions();
+const nodeTypes = getNodeTypes();
 const Chart = () => {
   const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   const dragOverHandler = useCallback((event) => {
@@ -50,36 +41,47 @@ const Chart = () => {
         x:
           event.clientX -
           reactFlowBounds.left -
-          1650 * reactFlowInstance.getZoom(),
+          100 * reactFlowInstance.getZoom(),
         y: event.clientY - reactFlowBounds.top,
       });
       const newNode = {
-        id: Math.random().toString(),
-        type: "default",
+        id: uuidv4(),
+        type,
         position,
-        data: { label: type },
+        data: { label: convertNodeNames(type) },
       };
       setNodes((nds) => nds.concat(newNode));
     },
     [reactFlowInstance, setNodes]
   );
+
+  const onconnect = useCallback(
+    (params) => setEdges(addEdge({ ...params, type: "smoothstep" }, edges)),
+    [setEdges, edges]
+  );
+
   return (
     <div className="mt-3">
       <div style={{ height: "100vh", direction: "ltr" }}>
-        <ReactFlow
-          ref={reactFlowWrapper}
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onDrop={dropHandler}
-          onDragOver={dragOverHandler}
-          onInit={setReactFlowInstance}
-          connectionLineType={ConnectionLineType.SmoothStep}
-        >
-          <Controls showFitView={false} />
-          <Background />
-          <MiniMap />
-        </ReactFlow>
+        <ReactFlowProvider>
+          <ReactFlow
+            nodeTypes={nodeTypes}
+            ref={reactFlowWrapper}
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            defaultEdgeOptions={defaultEdgeOptions}
+            onDrop={dropHandler}
+            onDragOver={dragOverHandler}
+            onInit={setReactFlowInstance}
+            connectionLineType={ConnectionLineType.SmoothStep}
+            onConnect={onconnect}
+          >
+            <Controls />
+            <Background />
+            <MiniMap />
+          </ReactFlow>
+        </ReactFlowProvider>
       </div>
     </div>
   );
