@@ -10,8 +10,23 @@ import ReactFlow, {
   MiniMap,
 } from "reactflow";
 import "reactflow/dist/style.css";
-const initialNodes = [];
-const initialEdges = [];
+const initialNodes = [
+  {
+    id: "1",
+    data: { label: "Hello" },
+    position: { x: 0, y: 0 },
+    type: "input",
+  },
+  {
+    id: "2",
+    data: { label: "World" },
+    position: { x: 100, y: 100 },
+  },
+];
+
+const initialEdges = [
+  { id: "1-2", source: "1", target: "2", label: "to the", type: "step" },
+];
 const Chart = () => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -50,7 +65,7 @@ const Chart = () => {
   );
   return (
     <div className="mt-3">
-      <div style={{ height: "100vh" }}>
+      <div style={{ height: "100vh", direction: "ltr" }}>
         <ReactFlow
           ref={reactFlowWrapper}
           nodes={nodes}
