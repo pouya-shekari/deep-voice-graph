@@ -21,6 +21,10 @@ import Modal from "../../../UI/Modal/Modal";
 import getNodeTypes from "../../../../helpers/getNodeTypes";
 import GetDefaultEdgeOptions from "../../../../helpers/getDefaultEdgeOptions";
 import convertNodeNames from "../../../../helpers/convertNodeNames";
+import {getAnnouncements} from "../../../../api/announcement.api";
+import {getQuestion} from "../../../../api/question.api";
+import {getActions} from "../../../../api/actions.api";
+import {getCheckers} from "../../../../api/checker.api";
 
 const defaultEdgeOptions = GetDefaultEdgeOptions();
 const nodeTypes = getNodeTypes();
@@ -31,6 +35,9 @@ const Chart = ({ flow }) => {
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [showResourceModal, setShowResourceModal] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [availableResources , setAvailableResources] = useState([]);
+  const [updateResourcesFlag , setUpdateResourcesFlag] = useState(false)
+  const [nodeType , setNodeType] = useState('')
   const [snak, setSnak] = useState({
     message: "",
     type: "",
@@ -86,8 +93,107 @@ const Chart = ({ flow }) => {
       });
       return;
     }
+    setNodeType(node.type)
+    setUpdateResourcesFlag(!updateResourcesFlag)
     setShowResourceModal(true);
   };
+
+
+  useEffect(()=>{
+    switch (nodeType){
+      case 'Announcement': getAnnouncements("/announcement/list",{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        params: {
+          applicationId: 14,
+          isQuestion: false,
+        },
+      }).then((res)=>{
+        let options = []
+        res.data.forEach((item)=>{
+          options.push({label:item.text , id:item.announcementId})
+        })
+        setAvailableResources(options)
+      }).catch(()=>{
+        setSnak({
+          type: "error",
+          message: "دریافت Resource با خطا مواجه شد.",
+          open: true,
+        });
+
+      })
+            break;
+
+      case 'Question': getQuestion({
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        params: {
+          applicationId: 14,
+          isQuestion: true,
+        },
+      }).then((res)=>{
+        let options = []
+        res.data.forEach((item)=>{
+          options.push({label:item.text , id:item.questionId})
+        })
+        setAvailableResources(options)
+      }).catch(()=>{
+        setSnak({
+          type: "error",
+          message: "دریافت Resource با خطا مواجه شد.",
+          open: true,
+        });
+      })
+            break;
+
+      case 'Action': getActions({
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        params: {
+          applicationId: 14
+        },
+      }).then((res)=>{
+        let options = []
+        res.data.forEach((item)=>{
+          options.push({label:item.text , id:item.actionId})
+        })
+        setAvailableResources(options)
+      }).catch(()=>{
+        setSnak({
+          type: "error",
+          message: "دریافت Resource با خطا مواجه شد.",
+          open: true,
+        });
+      })
+            break;
+
+      case 'Checker': getCheckers("/checker/list",{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        params: {
+          applicationId: 14
+        },
+      }).then((res)=>{
+        let options = []
+        res.data.forEach((item)=>{
+          options.push({label:item.text , id:item.checkerId})
+        })
+        setAvailableResources(options)
+      }).catch(()=>{
+        setSnak({
+          type: "error",
+          message: "دریافت Resource با خطا مواجه شد.",
+          open: true,
+        });
+      })
+        break;
+    }
+
+  },[updateResourcesFlag])
 
   const closeModal = () => {
     setShowResourceModal(false);
@@ -126,7 +232,7 @@ const Chart = ({ flow }) => {
       >
         <div className="mb-3">
           <Autocomplete
-            options={[]}
+            options={availableResources}
             noOptionsText="داده‌ای یافت نشد."
             renderInput={(params) => {
               return (
