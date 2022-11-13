@@ -38,6 +38,7 @@ const Chart = ({ flow }) => {
   const [availableResources, setAvailableResources] = useState([]);
   const [updateResourcesFlag, setUpdateResourcesFlag] = useState(false);
   const [nodeType, setNodeType] = useState("");
+  const [resource, setResource] = React.useState(null);
   const [snak, setSnak] = useState({
     message: "",
     type: "",
@@ -139,7 +140,7 @@ const Chart = ({ flow }) => {
           .then((res) => {
             let options = [];
             res.data.forEach((item) => {
-              options.push({ label: item.text, id: item.questionId });
+              options.push({ label: item.text, id: item.announcementId });
             });
             setAvailableResources(options);
           })
@@ -219,6 +220,7 @@ const Chart = ({ flow }) => {
 
   const confirmResource = () => {
     console.log(selectedNodeId);
+    console.log(resource)
   };
 
   return (
@@ -244,6 +246,9 @@ const Chart = ({ flow }) => {
         <div className="mb-3">
           <Autocomplete
             options={availableResources}
+            onChange={(event, newValue) => {
+              setResource(newValue);
+            }}
             noOptionsText="داده‌ای یافت نشد."
             renderInput={(params) => {
               return (
