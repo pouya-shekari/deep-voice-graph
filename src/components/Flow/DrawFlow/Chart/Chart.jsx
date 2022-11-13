@@ -8,6 +8,7 @@ import ReactFlow, {
   ReactFlowProvider,
   MiniMap,
   addEdge,
+  useUpdateNodeInternals,
 } from "reactflow";
 import { v4 as uuidv4 } from "uuid";
 import "reactflow/dist/style.css";
@@ -29,6 +30,7 @@ import { getCheckers } from "../../../../api/checker.api";
 const defaultEdgeOptions = GetDefaultEdgeOptions();
 const nodeTypes = getNodeTypes();
 const Chart = ({ flow }) => {
+  const updateNodeInternals = useUpdateNodeInternals();
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -70,7 +72,7 @@ const Chart = ({ flow }) => {
         id: uuidv4(),
         type,
         position,
-        data: { label: convertNodeNames(type) },
+        data: { label: convertNodeNames(type), responses: [] },
       };
       setNodes((nds) => nds.concat(newNode));
     },
@@ -78,13 +80,14 @@ const Chart = ({ flow }) => {
   );
 
   const onconnect = useCallback(
-    (params) => setEdges(addEdge({ ...params, type: "smoothstep" }, edges)),
+    (params) => {
+      console.log(params);
+      return setEdges(addEdge({ ...params, type: "smoothstep" }, edges));
+    },
     [setEdges, edges]
   );
 
   const addResourceHandler = (event, node) => {
-    // Can use node type and update data, label, ...
-    console.log(node);
     setSelectedNodeId(node.id);
     if (node.type === "Start" || node.type === "End") {
       setSnak({
@@ -140,7 +143,11 @@ const Chart = ({ flow }) => {
           .then((res) => {
             let options = [];
             res.data.forEach((item) => {
-              options.push({ label: item.text, id: item.announcementId });
+              options.push({
+                label: item.text,
+                id: item.announcementId,
+                responses: item.responses,
+              });
             });
             setAvailableResources(options);
           })
@@ -192,7 +199,7 @@ const Chart = ({ flow }) => {
             res.data.forEach((item) => {
               options.push({ label: item.text, id: item.checkerId });
             });
-            setAvailableResources(options);
+            setAvailableResources(res);
           })
           .catch(() => {
             setSnak({
@@ -219,8 +226,35 @@ const Chart = ({ flow }) => {
   };
 
   const confirmResource = () => {
-    console.log(selectedNodeId);
-    console.log(resource)
+    if (!resource) {
+      setSnak({
+        type: "error",
+        message: "لطفا Resource را از لیست انتخاب کنید.",
+        open: true,
+      });
+      return;
+    }
+    closeModal();
+    updateNode(selectedNodeId, resource);
+  };
+
+  const updateNode = (nodeId, resource) => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id === nodeId) {
+          node.data = {
+            ...node.data,
+            label: resource.label,
+            resourceId: resource.id,
+            responses: resource.responses
+              ? [...resource.responses]
+              : node.responses,
+          };
+        }
+        return node;
+      })
+    );
+    updateNodeInternals(nodeId);
   };
 
   return (
@@ -270,27 +304,25 @@ const Chart = ({ flow }) => {
           </Button>
         </div>
         <div style={{ height: "100vh", direction: "ltr" }}>
-          <ReactFlowProvider>
-            <ReactFlow
-              nodeTypes={nodeTypes}
-              ref={reactFlowWrapper}
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              defaultEdgeOptions={defaultEdgeOptions}
-              onDrop={dropHandler}
-              onDragOver={dragOverHandler}
-              onInit={setReactFlowInstance}
-              connectionLineType={ConnectionLineType.SmoothStep}
-              onConnect={onconnect}
-              deleteKeyCode="Delete"
-              onNodeDoubleClick={addResourceHandler}
-            >
-              <Controls showFitView={false} />
-              <Background />
-              <MiniMap />
-            </ReactFlow>
-          </ReactFlowProvider>
+          <ReactFlow
+            nodeTypes={nodeTypes}
+            ref={reactFlowWrapper}
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            defaultEdgeOptions={defaultEdgeOptions}
+            onDrop={dropHandler}
+            onDragOver={dragOverHandler}
+            onInit={setReactFlowInstance}
+            connectionLineType={ConnectionLineType.SmoothStep}
+            onConnect={onconnect}
+            deleteKeyCode="Delete"
+            onNodeDoubleClick={addResourceHandler}
+          >
+            <Controls showFitView={false} />
+            <Background />
+            <MiniMap />
+          </ReactFlow>
         </div>
       </div>
     </>

@@ -5,6 +5,7 @@ import { getFlow } from "../../../api/flow.api";
 import { Alert, Box, CircularProgress } from "@mui/material";
 import NodeWrapper from "./Node/NodeWrapper";
 import Chart from "./Chart/Chart";
+import { ReactFlowProvider } from "reactflow";
 const getFlowHandler = async (url) => {
   const { data } = await getFlow(url, {
     headers: {
@@ -44,10 +45,10 @@ const DrawWrapper = (props) => {
     );
   }
   return (
-    <>
+    <ReactFlowProvider>
       <NodeWrapper />
       <Chart flow={data} />
-    </>
+    </ReactFlowProvider>
   );
 };
 
