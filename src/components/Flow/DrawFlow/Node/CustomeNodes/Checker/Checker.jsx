@@ -12,7 +12,8 @@ const Checker = (props) => {
     >
       <Handle type="target" position={Position.Top} />
       <span>{props.data.label}</span>
-      <Handle type="source" position={Position.Bottom} />
+      <Handle type="source" id="a" position={Position.Right} />
+      <Handle type="source" id="b" position={Position.Bottom} />
     </div>
   );
 };
