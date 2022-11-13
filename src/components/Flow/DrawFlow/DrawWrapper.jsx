@@ -46,7 +46,7 @@ const DrawWrapper = (props) => {
   return (
     <>
       <NodeWrapper />
-      <Chart />
+      <Chart flow={data} />
     </>
   );
 };

@@ -235,7 +235,7 @@ const List = () => {
       message: "در حال ویرایش اعلان...",
     });
     try {
-      const res = await editAnnouncement(
+      await editAnnouncement(
         `${BASE_URL}/announcement/update`,
         {
           announcementId: deleteId,
