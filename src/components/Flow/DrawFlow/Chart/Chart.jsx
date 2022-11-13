@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState } from "react";
+import React, { useRef, useCallback, useState, useEffect } from "react";
 import ReactFlow, {
   useEdgesState,
   useNodesState,
@@ -12,6 +12,9 @@ import ReactFlow, {
 import { v4 as uuidv4 } from "uuid";
 import "reactflow/dist/style.css";
 
+import { Autocomplete, Button, TextField } from "@mui/material";
+import SyncIcon from "@mui/icons-material/Sync";
+
 import Snak from "../../../Snak/Snak";
 import Modal from "../../../UI/Modal/Modal";
 
@@ -21,12 +24,13 @@ import convertNodeNames from "../../../../helpers/convertNodeNames";
 
 const defaultEdgeOptions = GetDefaultEdgeOptions();
 const nodeTypes = getNodeTypes();
-const Chart = () => {
+const Chart = ({ flow }) => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [showResourceModal, setShowResourceModal] = useState(false);
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [snak, setSnak] = useState({
     message: "",
     type: "",
@@ -73,6 +77,7 @@ const Chart = () => {
   const addResourceHandler = (event, node) => {
     // Can use node type and update data, label, ...
     console.log(node);
+    setSelectedNodeId(node.id);
     if (node.type === "Start" || node.type === "End") {
       setSnak({
         type: "error",
@@ -95,6 +100,10 @@ const Chart = () => {
     setSnak({ ...snak, open: false });
   };
 
+  const confirmResource = () => {
+    console.log(selectedNodeId);
+  };
+
   return (
     <>
       <Snak
@@ -108,14 +117,36 @@ const Chart = () => {
         onClose={closeModal}
         title={"افزودن Resource به Node"}
         actions={[
-          { type: "add", label: "افزودن", onClick: () => {} },
+          { type: "add", label: "افزودن", onClick: confirmResource },
           { type: "cancel", label: "انصراف", onClick: closeModal },
         ]}
         description={
           " برای افزودن Resource ابتدا آن را جستجو و سپس از لیست نمایش داده شده انتخاب نمایید."
         }
-      ></Modal>
+      >
+        <div className="mb-3">
+          <Autocomplete
+            options={[]}
+            noOptionsText="داده‌ای یافت نشد."
+            renderInput={(params) => {
+              return (
+                <TextField
+                  fullWidth
+                  variant="standard"
+                  {...params}
+                  label="Resources"
+                />
+              );
+            }}
+          />
+        </div>
+      </Modal>
       <div className="mt-3">
+        <div className="mb-3 text-end">
+          <Button variant="contained" color="success" startIcon={<SyncIcon />}>
+            به روز رسانی فلوچارت
+          </Button>
+        </div>
         <div style={{ height: "100vh", direction: "ltr" }}>
           <ReactFlowProvider>
             <ReactFlow
@@ -133,7 +164,7 @@ const Chart = () => {
               deleteKeyCode="Delete"
               onNodeDoubleClick={addResourceHandler}
             >
-              <Controls />
+              <Controls showFitView={false} />
               <Background />
               <MiniMap />
             </ReactFlow>
@@ -144,4 +175,4 @@ const Chart = () => {
   );
 };
 
-export default Chart;
+export default React.memo(Chart);
