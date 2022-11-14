@@ -10,10 +10,24 @@ const Checker = (props) => {
       }}
       className={styles.flowNode}
     >
-      <Handle type="target" position={Position.Top} />
+      <Handle
+        type="target"
+        position={Position.Top}
+        style={{ backgroundColor: "red" }}
+      />
       <span>{props.data.label}</span>
-      <Handle type="source" id="a" position={Position.Right} />
-      <Handle type="source" id="b" position={Position.Bottom} />
+      <Handle
+        type="source"
+        id="a"
+        position={Position.Right}
+        style={{ backgroundColor: "green" }}
+      />
+      <Handle
+        type="source"
+        id="b"
+        position={Position.Bottom}
+        style={{ backgroundColor: "green" }}
+      />
     </div>
   );
 };

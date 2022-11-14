@@ -23,3 +23,11 @@ export async function lockFlow(url, data, config) {
     throw Error(e.response.status);
   }
 }
+
+export async function updateFlow(url, data, config) {
+  try {
+    return await http.put(url, data, config);
+  } catch (e) {
+    throw Error(e.response.status);
+  }
+}

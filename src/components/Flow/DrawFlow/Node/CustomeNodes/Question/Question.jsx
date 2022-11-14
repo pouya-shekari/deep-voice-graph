@@ -4,20 +4,11 @@ import styles from "../customenode.module.scss";
 import { v4 as uuidv4 } from "uuid";
 
 const Question = (props) => {
-  const nodeRef = useRef();
-  const [dimensions, setDimensions] = useState({ width: 20, height: 20 });
-  useLayoutEffect(() => {
-    console.log(nodeRef.current.offsetWidth);
-    console.log(nodeRef.current.offsetHeight);
-    if (nodeRef.current) {
-      setDimensions({
-        width: nodeRef.current.offsetWidth + dimensions.width,
-        height: nodeRef.current.offsetHeight + dimensions.height,
-      });
-    }
-  }, []);
   const positionHandle = (index) => {
-    return (dimensions.height / 5) * index;
+    if (index % 2) {
+      return `calc(50% + ${(index - 1) * 15}px)`;
+    }
+    return `calc(50% - ${index * 15}px)`;
   };
   let handles = <></>;
   if (props.data.responses.length === 1) {
@@ -25,26 +16,83 @@ const Question = (props) => {
   } else if (props.data.responses.length === 2) {
     handles = (
       <>
-        <Handle type="source" id="a" position={Position.Bottom} />
-        <Handle type="source" id="b" position={Position.Right} />
+        <Handle
+          type="source"
+          id="a"
+          position={Position.Bottom}
+          style={{ backgroundColor: "green" }}
+        />
+        <Handle
+          type="source"
+          id="b"
+          position={Position.Right}
+          style={{ backgroundColor: "green" }}
+        />
       </>
     );
   } else if (props.data.responses.length === 3) {
     handles = (
       <>
-        <Handle type="source" id="a" position={Position.Bottom} />
-        <Handle type="source" id="b" position={Position.Right} />
-        <Handle type="source" id="c" position={Position.Left} />
+        <Handle
+          type="source"
+          id="a"
+          position={Position.Bottom}
+          style={{ backgroundColor: "green" }}
+        />
+        <Handle
+          type="source"
+          id="b"
+          position={Position.Right}
+          style={{ backgroundColor: "green" }}
+        />
+        <Handle
+          type="source"
+          id="c"
+          position={Position.Left}
+          style={{ backgroundColor: "green" }}
+        />
+      </>
+    );
+  } else if (props.data.responses.length === 4) {
+    handles = (
+      <>
+        <Handle
+          type="source"
+          id="a"
+          position={Position.Bottom}
+          style={{ backgroundColor: "green", left: `calc(50% - 15px)` }}
+        />
+        <Handle
+          type="source"
+          id="b"
+          position={Position.Bottom}
+          style={{ backgroundColor: "green", left: `calc(50% + 15px)` }}
+        />
+        <Handle
+          type="source"
+          id="c"
+          position={Position.Right}
+          style={{ backgroundColor: "green" }}
+        />
+        <Handle
+          type="source"
+          id="d"
+          position={Position.Left}
+          style={{ backgroundColor: "green" }}
+        />
       </>
     );
   } else {
     handles = props.data.responses.map((response, index) => (
       <Handle
-        key={response}
+        key={uuidv4()}
         type="source"
         position={Position.Bottom}
-        style={{ left: dimensions.width / 3 + positionHandle(index) }}
-        id={response}
+        style={{
+          left: positionHandle(index),
+          backgroundColor: "green",
+        }}
+        id={`handle-${index}-${response}`}
       />
     ));
   }
@@ -55,10 +103,17 @@ const Question = (props) => {
         borderColor: "#daa425",
       }}
       className={styles.flowNode}
-      ref={nodeRef}
     >
-      <Handle type="target" position={Position.Top} />
+      <Handle
+        type="target"
+        position={Position.Top}
+        style={{ backgroundColor: "red" }}
+      />
       <span>{props.data.label}</span>
+      <br />
+      {props.data.responses.length > 0 && (
+        <span>({props.data.responses.join(", ")})</span>
+      )}
       {handles}
     </div>
   );

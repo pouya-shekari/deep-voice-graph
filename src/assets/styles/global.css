@@ -25,3 +25,8 @@ a {
 div[data-message] {
   display: none !important;
 }
+
+.react-flow .react-flow__handle {
+  width: 8px;
+  height: 8px;
+}

@@ -5,9 +5,9 @@ import ReactFlow, {
   ConnectionLineType,
   Controls,
   Background,
-  ReactFlowProvider,
   MiniMap,
   addEdge,
+  updateEdge,
   useUpdateNodeInternals,
 } from "reactflow";
 import { v4 as uuidv4 } from "uuid";
@@ -26,27 +26,38 @@ import { getAnnouncements } from "../../../../api/announcement.api";
 import { getQuestion } from "../../../../api/question.api";
 import { getActions } from "../../../../api/actions.api";
 import { getCheckers } from "../../../../api/checker.api";
+import IsFlowValid from "../../../../helpers/isFlowValid";
+import ConvertFlowToNeo4j from "../../../../helpers/ConvertFlowToNeo4j";
+import { updateFlow } from "../../../../api/flows.api";
+import { BASE_URL } from "../../../../config/variables.config";
 
 const defaultEdgeOptions = GetDefaultEdgeOptions();
 const nodeTypes = getNodeTypes();
 const Chart = ({ flow }) => {
   const updateNodeInternals = useUpdateNodeInternals();
   const reactFlowWrapper = useRef(null);
+  const inputRef = useRef(null);
+  const edgeUpdateSuccessful = useRef(false);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [showResourceModal, setShowResourceModal] = useState(false);
+  const [showLabelModal, setShowLabelModal] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [selectedEdgeId, setSelectedEdgeId] = useState(null);
   const [availableResources, setAvailableResources] = useState([]);
   const [updateResourcesFlag, setUpdateResourcesFlag] = useState(false);
   const [nodeType, setNodeType] = useState("");
-  const [resource, setResource] = React.useState(null);
+  const [resource, setResource] = useState(null);
   const [snak, setSnak] = useState({
     message: "",
     type: "",
     open: false,
   });
-
+  const [inputError, setInputError] = useState({
+    isError: false,
+    errorText: "",
+  });
   const dragOverHandler = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
@@ -81,12 +92,26 @@ const Chart = ({ flow }) => {
 
   const onconnect = useCallback(
     (params) => {
-      console.log(params);
       return setEdges(addEdge({ ...params, type: "smoothstep" }, edges));
     },
     [setEdges, edges]
   );
+  const onEdgeUpdateStart = useCallback(() => {
+    edgeUpdateSuccessful.current = false;
+  }, []);
 
+  const onEdgeUpdate = useCallback((oldEdge, newConnection) => {
+    edgeUpdateSuccessful.current = true;
+    setEdges((els) => updateEdge(oldEdge, newConnection, els));
+  }, []);
+
+  const onEdgeUpdateEnd = useCallback((_, edge) => {
+    if (!edgeUpdateSuccessful.current) {
+      setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+    }
+
+    edgeUpdateSuccessful.current = true;
+  }, []);
   const addResourceHandler = (event, node) => {
     setSelectedNodeId(node.id);
     if (node.type === "Start" || node.type === "End") {
@@ -199,7 +224,7 @@ const Chart = ({ flow }) => {
             res.data.forEach((item) => {
               options.push({ label: item.text, id: item.checkerId });
             });
-            setAvailableResources(res);
+            setAvailableResources(options);
           })
           .catch(() => {
             setSnak({
@@ -216,6 +241,7 @@ const Chart = ({ flow }) => {
 
   const closeModal = () => {
     setShowResourceModal(false);
+    setShowLabelModal(false);
   };
 
   const handleSnakClose = (event, reason) => {
@@ -255,6 +281,75 @@ const Chart = ({ flow }) => {
       })
     );
     updateNodeInternals(nodeId);
+  };
+
+  const addEdgeLabelHandler = (event, edge) => {
+    const sourceId = edge.source;
+    const sourceNode = nodes.find((node) => node.id === sourceId);
+    if (sourceNode.type === "Checker" || sourceNode.type === "Question") {
+      setShowLabelModal(true);
+      setSelectedEdgeId(edge.id);
+      return;
+    }
+    setSnak({
+      type: "error",
+      message: "عملیات امکان‌پذیر نمی‌باشد.",
+      open: true,
+    });
+  };
+
+  const addLabelHandler = () => {
+    setInputError({
+      isError: false,
+      errorText: "",
+    });
+    const label = inputRef.current.value.trim();
+    if (label === "") {
+      setInputError({
+        isError: true,
+        errorText: "لطفا عنوان را وارد کنید.",
+      });
+      return;
+    }
+    setEdges((edges) =>
+      edges.map((edge) => {
+        if (edge.id === selectedEdgeId) {
+          edge.label = label;
+        }
+        return edge;
+      })
+    );
+    closeModal();
+  };
+
+  const updateFlowHandler = async () => {
+    const [valid, errors] = IsFlowValid(nodes, edges);
+    const flowStates = ConvertFlowToNeo4j(nodes, edges);
+    try {
+      const res = await updateFlow(
+        `${BASE_URL}/flow/update`,
+        {
+          flowId: flow.flowId,
+          flowStates,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setSnak({
+        type: "success",
+        message: "فلوچارت با موفقیت بروز شد.",
+        open: true,
+      });
+    } catch (error) {
+      setSnak({
+        type: "error",
+        message: "بروز رسانی با خطا مواجه شد. لطفا دوباره تلاش کنید.",
+        open: true,
+      });
+    }
   };
 
   return (
@@ -297,9 +392,38 @@ const Chart = ({ flow }) => {
           />
         </div>
       </Modal>
+      <Modal
+        open={showLabelModal}
+        onClose={closeModal}
+        title={"افزودن لیبل"}
+        actions={[
+          { type: "add", label: "افزودن", onClick: addLabelHandler },
+          { type: "cancel", label: "انصراف", onClick: closeModal },
+        ]}
+        description={"برای افزودن لیبل، وارد کردن عنوان الزامی می‌باشد."}
+      >
+        <div className="mb-3">
+          <TextField
+            id="edge-label"
+            label="عنوان"
+            type="text"
+            fullWidth
+            variant="standard"
+            error={inputError.isError}
+            helperText={inputError.errorText}
+            inputRef={inputRef}
+            autoComplete={"off"}
+          />
+        </div>
+      </Modal>
       <div className="mt-3">
         <div className="mb-3 text-end">
-          <Button variant="contained" color="success" startIcon={<SyncIcon />}>
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<SyncIcon />}
+            onClick={updateFlowHandler}
+          >
             به روز رسانی فلوچارت
           </Button>
         </div>
@@ -318,6 +442,10 @@ const Chart = ({ flow }) => {
             onConnect={onconnect}
             deleteKeyCode="Delete"
             onNodeDoubleClick={addResourceHandler}
+            onEdgeDoubleClick={addEdgeLabelHandler}
+            onEdgeUpdate={onEdgeUpdate}
+            onEdgeUpdateStart={onEdgeUpdateStart}
+            onEdgeUpdateEnd={onEdgeUpdateEnd}
           >
             <Controls showFitView={false} />
             <Background />

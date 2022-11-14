@@ -10,7 +10,11 @@ const End = (props) => {
       }}
       className={styles.flowNode}
     >
-      <Handle type="target" position={Position.Top} />
+      <Handle
+        type="target"
+        position={Position.Top}
+        style={{ backgroundColor: "red" }}
+      />
       <span>{props.data.label}</span>
     </div>
   );

@@ -11,7 +11,11 @@ const Start = (props) => {
       className={styles.flowNode}
     >
       <span>{props.data.label}</span>
-      <Handle type="source" position={Position.Bottom} />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        style={{ backgroundColor: "green" }}
+      />
     </div>
   );
 };
