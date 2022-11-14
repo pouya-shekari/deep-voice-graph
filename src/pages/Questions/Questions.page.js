@@ -7,7 +7,7 @@ const QuestionsWrapper = () => {
   return (
     <>
       <HaraBreadcrumb />
-      <div className="container-fluid mt-5">
+      <div className="container-fluid mt-3">
         <div className="row">
           <div className="col-12 mb-3">
             <QuestionsList />
