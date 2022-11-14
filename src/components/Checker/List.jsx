@@ -12,6 +12,7 @@ import { BASE_URL } from "../../config/variables.config";
 import { SimpleTable } from "../UI/Table/Tabel";
 import Modal from "../UI/Modal/Modal";
 import Snak from "../Snak/Snak";
+
 const getAllCheckers = async (url) => {
   const { data } = await getCheckers(url, {
     headers: {
@@ -25,10 +26,32 @@ const getAllCheckers = async (url) => {
 };
 
 const tableHeaders = [
-  { colNumber: 0, title: "شناسه چکر", field: "id" },
-  { colNumber: 1, title: "عنوان چکر", field: "title" },
-  { colNumber: 2, title: "URL", field: "url" },
-  { colNumber: 3, title: "وضعیت چکر", field: "isEnable" },
+  { colNumber: 0, title: "شناسه چکر", field: "id", style: {} },
+  {
+    colNumber: 1,
+    title: "عنوان چکر",
+    field: "title",
+    style: {
+      width: "15%",
+      maxWidth: 100,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      borderStyle: "border-box",
+    },
+  },
+  {
+    colNumber: 2,
+    title: "URL",
+    field: "url",
+    style: {
+      width: "15%",
+      maxWidth: 100,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      borderStyle: "border-box",
+    },
+  },
+  { colNumber: 3, title: "وضعیت چکر", field: "isEnable", style: {} },
 ];
 
 const List = () => {
@@ -59,7 +82,7 @@ const List = () => {
     url: "",
   });
 
-  const [deleteId, setDeleteId] = useState(0);
+  const [selectedId, setSelectedId] = useState(0);
   const { data, error, mutate } = useSWR(
     `${BASE_URL}/checker/list`,
     getAllCheckers
@@ -71,7 +94,7 @@ const List = () => {
   });
   const showEditModal = (id, event) => {
     // TODO: must be raname.
-    setDeleteId(id);
+    setSelectedId(id);
     const checkerItem = data.find((item) => item.checkerId === id);
     setCheckerDefaultValues({
       title: checkerItem.text,
@@ -85,7 +108,7 @@ const List = () => {
     setModalState((prevState) => {
       return { ...prevState, deleteModal: true };
     });
-    setDeleteId(id);
+    setSelectedId(id);
   };
   const closeModal = () => {
     setModalState((prevState) => {
@@ -183,7 +206,7 @@ const List = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         params: {
-          checkerId: deleteId,
+          checkerId: selectedId,
         },
       });
       setSnak({
@@ -192,7 +215,7 @@ const List = () => {
         message: "چکر با موفقیت حذف شد.",
       });
       mutate(
-        data.filter((checker) => checker.checkerId !== deleteId),
+        data.filter((checker) => checker.checkerId !== selectedId),
         { revalidate: false }
       );
     } catch (error) {
@@ -241,7 +264,7 @@ const List = () => {
       const res = await editChecker(
         `${BASE_URL}/checker/update`,
         {
-          checkerId: deleteId,
+          checkerId: selectedId,
           text: titleValue,
           url: URLValue,
         },
@@ -252,7 +275,7 @@ const List = () => {
         }
       );
       const newData = data.map((item) => {
-        if (item.checkerId === deleteId) {
+        if (item.checkerId === selectedId) {
           return { ...item, text: titleValue, url: URLValue };
         }
         return item;

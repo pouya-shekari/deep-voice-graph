@@ -37,7 +37,7 @@ const renderOperators = (action, row) => {
           color="primary"
           startIcon={<EditIcon />}
           onClick={action.onClick.bind(this, row.id)}
-          sx={{ mx: 1 }}
+          sx={{ m: 1 }}
           data-id={row.id}
         >
           {action.label}
@@ -50,7 +50,7 @@ const renderOperators = (action, row) => {
           color="primary"
           startIcon={<RemoveRedEyeIcon />}
           onClick={action.onClick.bind(this, row.id)}
-          sx={{ mx: 1 }}
+          sx={{ m: 1 }}
           data-id={row.id}
         >
           {action.label}
@@ -64,7 +64,7 @@ const renderOperators = (action, row) => {
             color="error"
             startIcon={<ErrorOutlineIcon />}
             onClick={action.onClick.bind(this, row.id)}
-            sx={{ mx: 1 }}
+            sx={{ m: 1 }}
             data-id={row.id}
           >
             غیرفعال سازی
@@ -77,7 +77,7 @@ const renderOperators = (action, row) => {
           color="success"
           startIcon={<CheckIcon />}
           onClick={action.onClick.bind(this, row.id)}
-          sx={{ mx: 1 }}
+          sx={{ m: 1 }}
           data-id={row.id}
         >
           فعال‌ سازی
@@ -96,7 +96,12 @@ const Simple = ({ label, data, hasAction, actions, tableHeaders, options }) => {
           <TableHead>
             <TableRow className="bg-light">
               {tableHeaders.map((header) => (
-                <TableCell align="center" key={uuidv4()} component="th">
+                <TableCell
+                  align="center"
+                  key={uuidv4()}
+                  component="th"
+                  sx={header.style}
+                >
                   {header.title}
                 </TableCell>
               ))}
@@ -127,7 +132,16 @@ const Simple = ({ label, data, hasAction, actions, tableHeaders, options }) => {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 {tableHeaders.map((header) => (
-                  <TableCell align="center" key={uuidv4()}>
+                  <TableCell
+                    align="center"
+                    key={uuidv4()}
+                    sx={header.style}
+                    title={
+                      typeof row[header.field] === "string"
+                        ? row[header.field]
+                        : ""
+                    }
+                  >
                     {row[header.field]}
                   </TableCell>
                 ))}

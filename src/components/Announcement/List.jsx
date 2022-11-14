@@ -28,10 +28,21 @@ const getAllAnn = async (url) => {
 };
 
 const tableHeaders = [
-  { colNumber: 0, title: "شناسه اعلان", field: "id" },
-  { colNumber: 1, title: "عنوان اعلان", field: "title" },
-  { colNumber: 2, title: "مدت زمان انتظار (ms)", field: "waitTime" },
-  { colNumber: 3, title: "وضعیت اعلان", field: "isEnable" },
+  { colNumber: 0, title: "شناسه اعلان", field: "id", style: {} },
+  {
+    colNumber: 1,
+    title: "عنوان اعلان",
+    field: "title",
+    style: {
+      width: "15%",
+      maxWidth: 100,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      borderStyle: "border-box",
+    },
+  },
+  { colNumber: 2, title: "مدت زمان انتظار (ms)", field: "waitTime", style: {} },
+  { colNumber: 3, title: "وضعیت اعلان", field: "isEnable", style: {} },
 ];
 
 const List = () => {
@@ -61,7 +72,7 @@ const List = () => {
     type: "",
     open: false,
   });
-  const [deleteId, setDeleteId] = useState(0);
+  const [selectedId, setSelectedId] = useState(0);
   const { data, error, mutate } = useSWR(
     `${BASE_URL}/announcement/list`,
     getAllAnn
@@ -76,12 +87,12 @@ const List = () => {
     setModalState((prevState) => {
       return { ...prevState, deleteModal: true };
     });
-    setDeleteId(id);
+    setSelectedId(id);
   };
 
   const showEditModal = (id, event) => {
     // TODO: must be raname.
-    setDeleteId(id);
+    setSelectedId(id);
     const annItem = data.find((item) => item.announcementId === id);
     setAnnDefaultValues({
       title: annItem.text,
@@ -100,7 +111,7 @@ const List = () => {
         editModal: false,
       };
     });
-    setDeleteId(null);
+    setSelectedId(null);
     setTitleError({ errorText: "", isError: false });
     setWaitTimeError({ errorText: "", isError: false });
   };
@@ -238,7 +249,7 @@ const List = () => {
       await editAnnouncement(
         `${BASE_URL}/announcement/update`,
         {
-          announcementId: deleteId,
+          announcementId: selectedId,
           text: titleValue,
           waitTime: waitTimeValue,
         },
@@ -249,7 +260,7 @@ const List = () => {
         }
       );
       const newData = data.map((item) => {
-        if (item.announcementId === deleteId) {
+        if (item.announcementId === selectedId) {
           return { ...item, text: titleValue, waitTime: waitTimeValue };
         }
         return item;
@@ -291,7 +302,7 @@ const List = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         params: {
-          announcementId: deleteId,
+          announcementId: selectedId,
         },
       });
       setSnak({
@@ -300,7 +311,7 @@ const List = () => {
         message: "اعلان با موفقیت حذف شد.",
       });
       mutate(
-        data.filter((ann) => ann.announcementId !== deleteId),
+        data.filter((ann) => ann.announcementId !== selectedId),
         { revalidate: false }
       );
     } catch (error) {

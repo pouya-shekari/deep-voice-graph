@@ -23,11 +23,22 @@ const getFlows = async (url) => {
 };
 
 const tableHeaders = [
-  { colNumber: 0, title: "شناسه فلوچارت", field: "id" },
-  { colNumber: 1, title: "نام انگلیسی", field: "nameEN" },
-  { colNumber: 2, title: "نام فارسی", field: "nameFA" },
-  { colNumber: 3, title: "توضیحات", field: "description" },
-  { colNumber: 3, title: "وضعیت فلوچارت", field: "isEnable" },
+  { colNumber: 0, title: "شناسه فلوچارت", field: "id", style: {} },
+  { colNumber: 1, title: "نام انگلیسی", field: "nameEN", style: {} },
+  { colNumber: 2, title: "نام فارسی", field: "nameFA", style: {} },
+  {
+    colNumber: 3,
+    title: "توضیحات",
+    field: "description",
+    style: {
+      width: "20%",
+      maxWidth: 100,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      borderStyle: "border-box",
+    },
+  },
+  { colNumber: 3, title: "وضعیت فلوچارت", field: "isEnable", style: {} },
 ];
 
 const List = () => {

@@ -7,7 +7,7 @@
 .vscode
 /.idea
 .idea
-
+/sample.json
 # testing
 /coverage
 
