@@ -8,7 +8,7 @@ import {
   addAnnouncement,
   editAnnouncement,
 } from "../../api/announcement.api";
-import { BASE_URL } from "../../config/variables.config";
+import { APPLICATIONID, BASE_URL } from "../../config/variables.config";
 import { SimpleTable } from "../UI/Table/Tabel";
 import Modal from "../UI/Modal/Modal";
 import Snak from "../Snak/Snak";
@@ -20,7 +20,7 @@ const getAllAnn = async (url) => {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     params: {
-      applicationId: 14,
+      applicationId: APPLICATIONID,
       isQuestion: false,
     },
   });
@@ -164,7 +164,7 @@ const List = () => {
       const res = await addAnnouncement(
         `${BASE_URL}/announcement/create`,
         {
-          applicationId: 14,
+          applicationId: APPLICATIONID,
           text: titleValue,
           waitTime: waitTimeValue,
           statusCode: 1,

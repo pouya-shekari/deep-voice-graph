@@ -3,7 +3,7 @@ import useSWR from "swr";
 import { Alert, Button, Box, CircularProgress, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { getAllFlows, addFlow, lockFlow } from "../../api/flows.api";
-import { BASE_URL } from "../../config/variables.config";
+import { APPLICATIONID, BASE_URL } from "../../config/variables.config";
 import { SimpleTable } from "../UI/Table/Tabel";
 import Modal from "../UI/Modal/Modal";
 import Snak from "../Snak/Snak";
@@ -15,8 +15,7 @@ const getFlows = async (url) => {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     params: {
-      applicationId: 14,
-      isQuestion: false,
+      applicationId: APPLICATIONID,
     },
   });
   return data;
@@ -147,7 +146,7 @@ const List = () => {
       const res = await addFlow(
         `${BASE_URL}/flow/create`,
         {
-          applicationId: 14,
+          applicationId: APPLICATIONID,
           nameEN: nameEn,
           nameFA: nameFa,
           description,

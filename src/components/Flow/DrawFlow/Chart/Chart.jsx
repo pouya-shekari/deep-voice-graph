@@ -29,7 +29,8 @@ import { getCheckers } from "../../../../api/checker.api";
 import IsFlowValid from "../../../../helpers/isFlowValid";
 import ConvertFlowToNeo4j from "../../../../helpers/ConvertFlowToNeo4j";
 import { updateFlow } from "../../../../api/flows.api";
-import { BASE_URL } from "../../../../config/variables.config";
+import { APPLICATIONID, BASE_URL } from "../../../../config/variables.config";
+import ConvertFlowFromNeo4j from "../../../../helpers/ConvertFlowFromNeo4j";
 
 const defaultEdgeOptions = GetDefaultEdgeOptions();
 const nodeTypes = getNodeTypes();
@@ -62,7 +63,11 @@ const Chart = ({ flow }) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
-
+  useEffect(() => {
+    const [nodes, edges] = ConvertFlowFromNeo4j(flow.flowStates);
+    setNodes(nodes);
+    setEdges(edges);
+  }, []);
   const dropHandler = useCallback(
     (event) => {
       event.preventDefault();
@@ -135,7 +140,7 @@ const Chart = ({ flow }) => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           params: {
-            applicationId: 14,
+            applicationId: APPLICATIONID,
             isQuestion: false,
           },
         })
@@ -161,7 +166,7 @@ const Chart = ({ flow }) => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           params: {
-            applicationId: 14,
+            applicationId: APPLICATIONID,
             isQuestion: true,
           },
         })
@@ -171,7 +176,7 @@ const Chart = ({ flow }) => {
               options.push({
                 label: item.text,
                 id: item.announcementId,
-                responses: item.responses,
+                responses: [...item.responses],
               });
             });
             setAvailableResources(options);
@@ -191,7 +196,7 @@ const Chart = ({ flow }) => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           params: {
-            applicationId: 14,
+            applicationId: APPLICATIONID,
           },
         })
           .then((res) => {
@@ -216,7 +221,7 @@ const Chart = ({ flow }) => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           params: {
-            applicationId: 14,
+            applicationId: APPLICATIONID,
           },
         })
           .then((res) => {
@@ -325,9 +330,10 @@ const Chart = ({ flow }) => {
   const updateFlowHandler = async () => {
     const [valid, errors] = IsFlowValid(nodes, edges);
     const flowStates = ConvertFlowToNeo4j(nodes, edges);
+    console.log(JSON.stringify(flowStates));
     try {
       const res = await updateFlow(
-        `${BASE_URL}/flow/update`,
+        `${BASE_URL}/flow/update/states`,
         {
           flowId: flow.flowId,
           flowStates,

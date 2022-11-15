@@ -4,6 +4,7 @@ import styles from "../customenode.module.scss";
 import { v4 as uuidv4 } from "uuid";
 
 const Question = (props) => {
+  console.log(props);
   const positionHandle = (index) => {
     if (index % 2) {
       return `calc(50% + ${(index - 1) * 15}px)`;
@@ -18,13 +19,13 @@ const Question = (props) => {
       <>
         <Handle
           type="source"
-          id="a"
+          id={props.data.responses[0]}
           position={Position.Bottom}
           style={{ backgroundColor: "green" }}
         />
         <Handle
           type="source"
-          id="b"
+          id={props.data.responses[1]}
           position={Position.Right}
           style={{ backgroundColor: "green" }}
         />
@@ -35,19 +36,19 @@ const Question = (props) => {
       <>
         <Handle
           type="source"
-          id="a"
+          id={props.data.responses[0]}
           position={Position.Bottom}
           style={{ backgroundColor: "green" }}
         />
         <Handle
           type="source"
-          id="b"
+          id={props.data.responses[1]}
           position={Position.Right}
           style={{ backgroundColor: "green" }}
         />
         <Handle
           type="source"
-          id="c"
+          id={props.data.responses[2]}
           position={Position.Left}
           style={{ backgroundColor: "green" }}
         />
@@ -58,25 +59,25 @@ const Question = (props) => {
       <>
         <Handle
           type="source"
-          id="a"
+          id={props.data.responses[0]}
           position={Position.Bottom}
           style={{ backgroundColor: "green", left: `calc(50% - 15px)` }}
         />
         <Handle
           type="source"
-          id="b"
+          id={props.data.responses[1]}
           position={Position.Bottom}
           style={{ backgroundColor: "green", left: `calc(50% + 15px)` }}
         />
         <Handle
           type="source"
-          id="c"
+          id={props.data.responses[2]}
           position={Position.Right}
           style={{ backgroundColor: "green" }}
         />
         <Handle
           type="source"
-          id="d"
+          id={props.data.responses[0]}
           position={Position.Left}
           style={{ backgroundColor: "green" }}
         />
@@ -92,7 +93,7 @@ const Question = (props) => {
           left: positionHandle(index),
           backgroundColor: "green",
         }}
-        id={`handle-${index}-${response}`}
+        id={response}
       />
     ));
   }

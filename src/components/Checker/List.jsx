@@ -8,7 +8,7 @@ import {
   getCheckers,
   editChecker,
 } from "../../api/checker.api";
-import { BASE_URL } from "../../config/variables.config";
+import { APPLICATIONID, BASE_URL } from "../../config/variables.config";
 import { SimpleTable } from "../UI/Table/Tabel";
 import Modal from "../UI/Modal/Modal";
 import Snak from "../Snak/Snak";
@@ -19,7 +19,7 @@ const getAllCheckers = async (url) => {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     params: {
-      applicationId: 14,
+      applicationId: APPLICATIONID,
     },
   });
   return data;
@@ -159,7 +159,7 @@ const List = () => {
       const res = await addChecker(
         `${BASE_URL}/checker/create`,
         {
-          applicationId: 14,
+          applicationId: APPLICATIONID,
           text: titleValue,
           url: URLValue,
         },

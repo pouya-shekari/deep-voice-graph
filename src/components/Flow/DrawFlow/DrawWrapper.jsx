@@ -18,7 +18,12 @@ const getFlowHandler = async (url) => {
 const DrawWrapper = (props) => {
   const { data, error, mutate } = useSWR(
     `${BASE_URL}/flow/${props.params.id}`,
-    getFlowHandler
+    getFlowHandler,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
   );
   if (error) {
     return (
