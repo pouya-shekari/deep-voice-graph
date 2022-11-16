@@ -291,7 +291,6 @@ const Chart = ({ flow }) => {
     setNodes((nds) =>
       nds.map((node) => {
         if (node.id === nodeId) {
-          node.id = uuidv4();
           node.data = {
             ...node.data,
             label: resource.label,
@@ -304,6 +303,9 @@ const Chart = ({ flow }) => {
         return node;
       })
     );
+    const updatedEdges = edges.filter((edge) => edge.source !== nodeId);
+    console.log(updatedEdges);
+    setEdges([...updatedEdges]);
     updateNodeInternals(nodeId);
   };
 
