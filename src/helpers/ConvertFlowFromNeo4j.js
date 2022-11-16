@@ -1,18 +1,16 @@
 const ConvertFlowFromNeo4j = (flowStates) => {
-  console.log(flowStates);
   const nodes = flowStates.map((state) => {
     let tempNode = {
       id: state.stateId,
       type: state.type,
-      position: JSON.parse(state.meta),
-      data: { label: state.label, responses: [] },
+      position: JSON.parse(state.meta).position,
+      data: {
+        label: state.label,
+        responses: [...JSON.parse(state.meta).responses],
+      },
     };
-    if (state.relations.length > 0) {
-      tempNode.data.responses = state.relations.map((rel) => rel.relationValue);
-    }
     return tempNode;
   });
-
   let edges = [];
   flowStates.forEach((state) => {
     const tempEdges = state.relations.map((rel) => {
@@ -26,9 +24,7 @@ const ConvertFlowFromNeo4j = (flowStates) => {
       };
     });
     edges = [...edges, ...tempEdges];
-    console.log(edges);
   });
-  console.log(nodes);
   return [nodes, edges];
 };
 

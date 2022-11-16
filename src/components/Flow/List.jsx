@@ -139,7 +139,7 @@ const List = () => {
     if (!isValid) return;
     setSnak({
       open: true,
-      type: "warning",
+      type: "cancel",
       message: "در حال افزودن فلوچارت...",
     });
     try {
@@ -214,7 +214,7 @@ const List = () => {
       setSnak({
         open: true,
         type: "error",
-        message: "ویرایش اعلان با خطا مواجه شد.",
+        message: "درخواست شما با خطا مواجه شد.",
       });
     }
   };

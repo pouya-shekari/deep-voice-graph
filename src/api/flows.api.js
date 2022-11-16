@@ -4,7 +4,7 @@ export async function getAllFlows(url, config) {
   try {
     return await http.getAll(url, config);
   } catch (e) {
-    return e;
+    throw Error(e.response.status);
   }
 }
 

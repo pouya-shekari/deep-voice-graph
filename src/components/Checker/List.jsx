@@ -152,7 +152,7 @@ const List = () => {
     }
     setSnak({
       open: true,
-      type: "warning",
+      type: "cancel",
       message: "در حال افزودن چکر...",
     });
     try {
@@ -197,7 +197,7 @@ const List = () => {
     closeModal();
     setSnak({
       open: true,
-      type: "warning",
+      type: "cancel",
       message: "در حال حذف چکر...",
     });
     try {
@@ -257,7 +257,7 @@ const List = () => {
     }
     setSnak({
       open: true,
-      type: "warning",
+      type: "cancel",
       message: "در حال ویرایش چکر...",
     });
     try {

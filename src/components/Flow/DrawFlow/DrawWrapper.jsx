@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import useSWR from "swr";
 import { BASE_URL } from "../../../config/variables.config";
 import { getFlow } from "../../../api/flow.api";
@@ -20,9 +20,7 @@ const DrawWrapper = (props) => {
     `${BASE_URL}/flow/${props.params.id}`,
     getFlowHandler,
     {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
+      revalidateOnMount: true,
     }
   );
   if (error) {
@@ -49,6 +47,7 @@ const DrawWrapper = (props) => {
       </Box>
     );
   }
+  console.log(data);
   return (
     <ReactFlowProvider>
       <NodeWrapper />

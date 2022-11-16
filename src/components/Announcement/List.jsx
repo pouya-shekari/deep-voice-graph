@@ -157,7 +157,7 @@ const List = () => {
     }
     setSnak({
       open: true,
-      type: "warning",
+      type: "cancel",
       message: "در حال افزودن اعلان...",
     });
     try {
@@ -242,7 +242,7 @@ const List = () => {
     }
     setSnak({
       open: true,
-      type: "warning",
+      type: "cancel",
       message: "در حال ویرایش اعلان...",
     });
     try {
@@ -293,7 +293,7 @@ const List = () => {
     closeModal();
     setSnak({
       open: true,
-      type: "warning",
+      type: "cancel",
       message: "در حال حذف اعلان...",
     });
     try {

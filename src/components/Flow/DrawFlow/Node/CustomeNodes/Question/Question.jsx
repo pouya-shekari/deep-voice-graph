@@ -13,19 +13,28 @@ const Question = (props) => {
   };
   let handles = <></>;
   if (props.data.responses.length === 1) {
-    handles = <Handle type="source" position={Position.Bottom} />;
+    handles = (
+      <Handle
+        type="source"
+        id={props.data.responses[0]}
+        title={props.data.responses[0]}
+        position={Position.Bottom}
+      />
+    );
   } else if (props.data.responses.length === 2) {
     handles = (
       <>
         <Handle
           type="source"
           id={props.data.responses[0]}
+          title={props.data.responses[0]}
           position={Position.Bottom}
           style={{ backgroundColor: "green" }}
         />
         <Handle
           type="source"
           id={props.data.responses[1]}
+          title={props.data.responses[1]}
           position={Position.Right}
           style={{ backgroundColor: "green" }}
         />
@@ -37,18 +46,21 @@ const Question = (props) => {
         <Handle
           type="source"
           id={props.data.responses[0]}
+          title={props.data.responses[0]}
           position={Position.Bottom}
           style={{ backgroundColor: "green" }}
         />
         <Handle
           type="source"
           id={props.data.responses[1]}
+          title={props.data.responses[1]}
           position={Position.Right}
           style={{ backgroundColor: "green" }}
         />
         <Handle
           type="source"
           id={props.data.responses[2]}
+          title={props.data.responses[2]}
           position={Position.Left}
           style={{ backgroundColor: "green" }}
         />
@@ -60,24 +72,28 @@ const Question = (props) => {
         <Handle
           type="source"
           id={props.data.responses[0]}
+          title={props.data.responses[0]}
           position={Position.Bottom}
           style={{ backgroundColor: "green", left: `calc(50% - 15px)` }}
         />
         <Handle
           type="source"
           id={props.data.responses[1]}
+          title={props.data.responses[1]}
           position={Position.Bottom}
           style={{ backgroundColor: "green", left: `calc(50% + 15px)` }}
         />
         <Handle
           type="source"
           id={props.data.responses[2]}
+          title={props.data.responses[2]}
           position={Position.Right}
           style={{ backgroundColor: "green" }}
         />
         <Handle
           type="source"
-          id={props.data.responses[0]}
+          id={props.data.responses[3]}
+          title={props.data.responses[3]}
           position={Position.Left}
           style={{ backgroundColor: "green" }}
         />
@@ -94,6 +110,7 @@ const Question = (props) => {
           backgroundColor: "green",
         }}
         id={response}
+        title={response}
       />
     ));
   }

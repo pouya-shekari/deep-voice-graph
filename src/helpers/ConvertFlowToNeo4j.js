@@ -5,7 +5,10 @@ const ConvertFlowToNeo4j = (nodes, edges) => {
       label: nds.data?.label,
       stateId: nds.id,
       type: nds.type,
-      meta: JSON.stringify(nds.position),
+      meta: JSON.stringify({
+        position: { ...nds.position },
+        responses: [...nds.data.responses],
+      }),
       resourceId: nds.data.resourceId ? nds.data.resourceId : 1,
       stateChildren: edgs.map((edge) => ({
         targetId: edge.target,
