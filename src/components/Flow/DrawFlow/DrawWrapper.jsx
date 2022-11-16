@@ -47,7 +47,6 @@ const DrawWrapper = (props) => {
       </Box>
     );
   }
-  console.log(data);
   return (
     <ReactFlowProvider>
       <NodeWrapper />

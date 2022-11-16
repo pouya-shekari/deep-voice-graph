@@ -4,7 +4,6 @@ import styles from "../customenode.module.scss";
 import { v4 as uuidv4 } from "uuid";
 
 const Question = (props) => {
-  console.log(props);
   const positionHandle = (index) => {
     if (index % 2) {
       return `calc(50% + ${(index - 1) * 15}px)`;
@@ -137,4 +136,4 @@ const Question = (props) => {
   );
 };
 
-export default Question;
+export default React.memo(Question);
