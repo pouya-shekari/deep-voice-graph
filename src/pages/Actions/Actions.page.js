@@ -6,7 +6,7 @@ import { ActionsList } from "../../components/Actions";
 
 const breadcrumbItems = [
   { title: "پیشخوان", isActive: false, href: PATHS.HOME },
-  { title: "مدیریت عملکردها", isActive: true, href: PATHS.ACTINOS },
+  { title: "مدیریت اکشن‌ها", isActive: true, href: PATHS.ACTINOS },
 ];
 
 const ActionsWrapper = () => {
@@ -28,7 +28,7 @@ const Actions = () => {
   return (
     <>
       <Helmet>
-        <title>مدیریت عملکردها</title>
+        <title>مدیریت اکشن‌ها</title>
       </Helmet>
       <UserLayout children={<ActionsWrapper />} />
     </>

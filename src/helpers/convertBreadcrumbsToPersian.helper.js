@@ -25,7 +25,7 @@ const convertBreadcrumbs = (value) => {
       return (
         <>
           <SettingsInputComponentIcon sx={{ mr: 0.5 }} fontSize="inherit" />
-          مدیریت عملکردها
+          مدیریت اکشن‌ها
         </>
       );
     case "checkers":

@@ -558,7 +558,7 @@ const QuestionsList = () => {
               if (err.response.status == 409) {
                 toast.error("عنوان سوال تکراری می‌باشد.");
               } else if(err.response.status == 400){
-                toast.error("عنوان سوال بیش از ۵۰۰ حرف می‌باشد.");
+                toast.error("عنوان سوال بیش از حد مجاز می‌باشد.");
               } else {
                 toast.error("خطا");
               }
