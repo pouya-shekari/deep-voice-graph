@@ -2,7 +2,7 @@ const convertNodeNames = (name) => {
   const mapName = {
     Start: "شروع",
     Announcement: "اعلان",
-    Action: "عملکرد",
+    Action: "اکشن",
     Question: "سوال",
     Checker: "چکر",
     End: "پایان",

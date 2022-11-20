@@ -23,7 +23,7 @@ const Actions = () => {
   return (
     <>
       <Helmet>
-        <title>مدیریت عملکردها</title>
+        <title>مدیریت اکشن‌ها</title>
       </Helmet>
       <UserLayout children={<ActionsWrapper />} />
     </>

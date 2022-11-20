@@ -7,7 +7,7 @@ const nodeTypes = [
   { title: "شروع", type: "Start", bgColor: "PaleGoldenRod" },
   { title: "سوال", type: "Question", bgColor: "gold" },
   { title: "اعلان", type: "Announcement", bgColor: "skyblue" },
-  { title: "عملکرد", type: "Action", bgColor: "lightgreen" },
+  { title: "اکشن", type: "Action", bgColor: "lightgreen" },
   { title: "چکر", type: "Checker", bgColor: "lightgray" },
   { title: "پایان", type: "End", bgColor: "Moccasin" },
   { title: "ارجاع", type: "Forward", bgColor: "Thistle" },

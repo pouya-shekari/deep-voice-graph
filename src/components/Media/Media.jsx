@@ -59,7 +59,7 @@ const Media = ({ title }) => {
                   <SettingsInputComponentIcon fontSize="large" />
                 </div>
                 <div className={styles.contentWrapper}>
-                  <h5 className="m-0 text-white">مدیریت عملکردها</h5>
+                  <h5 className="m-0 text-white">مدیریت اکشن‌ها</h5>
                 </div>
               </CardBody>
             </Card>

@@ -76,12 +76,12 @@ function Row(props) {
                 actionId: itemIdNumberForDelete,
             },
         }).then(()=>{
-            toast.success("عملکرد با موفقیت حذف شد.")
+            toast.success("اکشن با موفقیت حذف شد.")
             setItemIdNumberForDelete(null)
             props.onChange()
         }).catch((err)=>{
             if (err.response.status == 404){
-                toast.error('این عملکرد قابل حذف نمی‌باشد.')
+                toast.error('این اکشن قابل حذف نمی‌باشد.')
             }
             else{
                 toast.error('عملیات با خطا مواجه شد.')
@@ -106,7 +106,7 @@ function Row(props) {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 }
             }).then((res)=>{
-                toast.success('ویرایش عملکرد با موفقیت انجام شد.')
+                toast.success('ویرایش اکشن با موفقیت انجام شد.')
                 setChangeURLFlag(false)
                 setChangeTitleFlag(false)
                 setOpenEditDialog(false);
@@ -164,7 +164,7 @@ function Row(props) {
                 <TableCell align="center">
                     <div className="d-flex flex-wrap justify-content-center align-items-center gap-3">
                         <Button onClick={()=>{editHandler(row.actionId)}} variant="contained" startIcon={<EditIcon />}>
-                            ویرایش عملکرد
+                            ویرایش اکشن
                         </Button>
                         <Button
                             color={"error"}
@@ -172,7 +172,7 @@ function Row(props) {
                             startIcon={<DeleteIcon />}
                             onClick={()=>{deleteHandler(row.actionId)}}
                         >
-                            حذف عملکرد
+                            حذف اکشن
                         </Button>
                     </div>
                 </TableCell>
@@ -185,11 +185,11 @@ function Row(props) {
                 aria-describedby="alert-dialog-slide-description"
             >
                 <DialogTitle>
-                    {"آیا از حذف این عملکرد اطمینان دارید؟"}
+                    {"آیا از حذف این اکشن اطمینان دارید؟"}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-slide-description">
-                        در صورت انتخاب گزینه حذف، اگر این عملکرد در هیچ فلوچارتی مورد استفاده قرار نگرفته باشد، از لیست عملکردهای شما حذف خواهد شد.
+                        در صورت انتخاب گزینه حذف، اگر این اکشن در هیچ فلوچارتی مورد استفاده قرار نگرفته باشد، از لیست عملکردهای شما حذف خواهد شد.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -199,13 +199,13 @@ function Row(props) {
             </Dialog>
 
             <Dialog className={style.addDialog} open={openEditDialog} onClose={handleClose}>
-                <DialogTitle>ویرایش عملکرد</DialogTitle>
+                <DialogTitle>ویرایش اکشن</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus={true}
                         margin="dense"
-                        id="عنوان عملکرد"
-                        label="عنوان عملکرد"
+                        id="عنوان اکشن"
+                        label="عنوان اکشن"
                         type="text"
                         defaultValue={row.text}
                         fullWidth
@@ -388,14 +388,17 @@ const ActionsList = () => {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     }
                 }).then(()=>{
-                    toast.success('عملکرد با موفقیت اضافه شد.')
+                    toast.success('اکشن با موفقیت اضافه شد.')
                     setOpen(false)
                     setActionTitle('')
                     setActionURL('')
                     handleChange()
                 }).catch((err)=>{
                     if (err.response.status == 409){
-                        toast.error('عنوان عملکرد تکراری می‌باشد.')
+                        toast.error('عنوان اکشن تکراری می‌باشد.')
+                    }
+                    else if(err.response.status == 400){
+                        toast.error("عنوان اکشن بیش از حد مجاز می‌باشد.");
                     }
                     else{
                         toast.error('خطا')
@@ -429,17 +432,17 @@ const ActionsList = () => {
                             startIcon={<AddIcon />}
                             onClick={openAddDialogHandler}
                         >
-                            افزودن عملکرد جدید
+                            افزودن اکشن جدید
                         </Button>
                     </div>
                     <Dialog className={style.addDialog} open={open} onClose={handleClose}>
-                        <DialogTitle>افزودن عملکرد</DialogTitle>
+                        <DialogTitle>افزودن اکشن</DialogTitle>
                         <DialogContent>
                             <TextField
                                 autoFocus={true}
                                 margin="dense"
-                                id="عنوان عملکرد"
-                                label="عنوان عملکرد"
+                                id="عنوان اکشن"
+                                label="عنوان اکشن"
                                 type="text"
                                 fullWidth
                                 variant="standard"
@@ -466,10 +469,10 @@ const ActionsList = () => {
                         <Table aria-label="table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align={"center"}>شناسه عملکرد</TableCell>
-                                    <TableCell align={"center"}>عنوان عملکرد</TableCell>
+                                    <TableCell align={"center"}>شناسه اکشن</TableCell>
+                                    <TableCell align={"center"}>عنوان اکشن</TableCell>
                                     <TableCell align={"center"}>URL</TableCell>
-                                    <TableCell align={"center"}>وضعیت عملکرد</TableCell>
+                                    <TableCell align={"center"}>وضعیت اکشن</TableCell>
                                     <TableCell align={"center"}>عملیات</TableCell>
                                 </TableRow>
                             </TableHead>
