@@ -41,6 +41,7 @@ import TextField from "@mui/material/TextField";
 import { CircularProgress } from "@mui/material";
 import { APPLICATIONID } from "../../config/variables.config";
 import {Close} from "@mui/icons-material";
+import {useEffect} from "react";
 
 function Row(props) {
   const { row } = props;
@@ -209,35 +210,29 @@ function Row(props) {
             <strong>{row.isEnable == true ? "فعال" : "غیر فعال"}</strong>
           </Alert>
         </TableCell>
-        <TableCell align="center">
-          <Button
-            onClick={() => {
-              editHandler(row.announcementId);
-            }}
-            variant="contained"
-            startIcon={<EditIcon />}
-          >
-            ویرایش سوال
-          </Button>
-          <button
-            className="btn btn-primary"
-            style={{
-              border: "none",
-              outline: "none",
-              cursor: "default",
-              backgroundColor: "transparent",
-            }}
-          ></button>
-          <Button
-            color={"error"}
-            variant="contained"
-            startIcon={<DeleteIcon />}
-            onClick={() => {
-              deleteHandler(row.announcementId);
-            }}
-          >
-            حذف سوال
-          </Button>
+        <TableCell align="center" >
+          <div className="d-flex flex-wrap gap-3 justify-content-center align-items-center">
+            <Button
+                onClick={() => {
+                  editHandler(row.announcementId);
+                }}
+                variant="contained"
+                startIcon={<EditIcon />}
+            >
+              ویرایش سوال
+            </Button>
+            <Button
+                color={"error"}
+                variant="contained"
+                startIcon={<DeleteIcon />}
+                onClick={() => {
+                  deleteHandler(row.announcementId);
+                }}
+            >
+              حذف سوال
+            </Button>
+
+          </div>
         </TableCell>
       </TableRow>
       <TableRow>
@@ -403,7 +398,7 @@ function TablePaginationActions(props) {
 const QuestionsList = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+  const [isDisableAdd , setIsDisableAdd] = React.useState(true)
   const [questionsList, setQuestionsList] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const [updateList, setUpdateList] = React.useState(false);
@@ -511,58 +506,65 @@ const QuestionsList = () => {
       toast.error("زمان انتظار معتبر نیست.");
     } else if (options == false) {
       toast.error("پاسخی یافت نشد.");
-    } else {
+    }
+    else if(options.length < 2){
+      toast.error("تعداد جواب‌ها باید حداقل ۲ مورد باشد.");
+    }
+    else {
       let flag = false;
-      options.forEach((item) => {
+      let repeatAnswer=false;
+      options.forEach((item,index) => {
         if (item.trim() === "") {
           flag = true;
-        } else if (options == false) {
-          toast.error("پاسخی یافت نشد.");
-        } else {
-          let flag = false;
-          options.forEach((item) => {
-            if (item.trim() === "") {
-              flag = true;
-            }
-          });
-          if (flag === true) {
-            toast.error("پاسخ نمی‌تواند خالی باشد.");
-          } else {
-            let answers = [];
-            options.map((item) => {
-              answers.push(item.trim());
-            });
-            const data = {
-              applicationId: APPLICATIONID,
-              text: questionTitle.trim(),
-              waitTime: faToEnDigits(waitTime.trim()),
-              statusCode: 1,
-              isQuestion: true,
-              responses: answers,
-            };
-            addQuestion(data, {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            })
-              .then(() => {
-                toast.success("سوال با موفقیت اضافه شد.");
-                setOpen(false);
-                setOptions([]);
-                setQuestionTitle("");
-                setWaitTime("");
-                handleChange();
-              })
-              .catch((err) => {
-                if (err.response.status == 409) {
-                  toast.error("عنوان سوال تکراری می‌باشد.");
-                } else {
-                  toast.error("خطا");
-                }
-              });
-          }
+        }
+        let arr = options.filter(elem=>elem.trim()==item.trim())
+        if(arr.length > 1){
+          repeatAnswer = true
         }
       });
+      if (flag === true) {
+        toast.error("پاسخ نمی‌تواند خالی باشد.");
+      }
+      else if(repeatAnswer === true){
+        toast.error("جواب‌ها نمی‌توانند تکراری باشند.");
+      }
+      else {
+        let answers = [];
+        options.map((item) => {
+          answers.push(item.trim());
+        });
+        const data = {
+          applicationId: APPLICATIONID,
+          text: questionTitle.trim(),
+          waitTime: faToEnDigits(waitTime.trim()),
+          statusCode: 1,
+          isQuestion: true,
+          responses: answers,
+        };
+        addQuestion(data, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+            .then(() => {
+              toast.success("سوال با موفقیت اضافه شد.");
+              setOpen(false);
+              setOptions([]);
+              setQuestionTitle("");
+              setWaitTime("");
+              handleChange();
+            })
+            .catch((err) => {
+              if (err.response.status == 409) {
+                toast.error("عنوان سوال تکراری می‌باشد.");
+              } else if(err.response.status == 400){
+                toast.error("عنوان سوال بیش از ۵۰۰ حرف می‌باشد.");
+              } else {
+                toast.error("خطا");
+              }
+            });
+
+      }
     }
   };
 
@@ -592,6 +594,14 @@ const QuestionsList = () => {
   const handleWaitTime = (event) => {
     setWaitTime(event.target.value);
   };
+
+  useEffect(()=>{
+    if(options.length > 1){
+      setIsDisableAdd(false)
+    }else{
+      setIsDisableAdd(true)
+    }
+  },[options])
 
   return (
     <>
@@ -633,18 +643,6 @@ const QuestionsList = () => {
                 onChange={handleWaitTime}
               />
             </DialogContent>
-            <DialogActions
-              sx={{ justifyContent: "start", padding: "0.5rem 1.5rem 0" }}
-            >
-              <Button
-                variant={"contained"}
-                color={"primary"}
-                onClick={handleAddOption}
-                startIcon={<AddIcon />}
-              >
-                افزودن پاسخ
-              </Button>
-            </DialogActions>
             <DialogContent>
               {options.map((_option, i) => (
                 <div
@@ -678,12 +676,25 @@ const QuestionsList = () => {
                 </div>
               ))}
             </DialogContent>
+            <DialogActions
+                sx={{ justifyContent: "start", padding: "0.5rem 1.5rem 0" }}
+            >
+              <Button
+                  variant={"contained"}
+                  color={"primary"}
+                  onClick={handleAddOption}
+                  startIcon={<AddIcon />}
+              >
+                افزودن پاسخ
+              </Button>
+            </DialogActions>
             <DialogActions>
               <Button
                 variant={"contained"}
                 color={"success"}
                 onClick={handleSendQuestion}
                 startIcon={<AddIcon />}
+                disabled={isDisableAdd}
               >
                 افزودن
               </Button>
