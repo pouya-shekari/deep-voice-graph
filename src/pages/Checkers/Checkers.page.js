@@ -7,7 +7,7 @@ const CheckersWrapper = () => {
   return (
     <>
       {/* <HaraBreadcrumb /> */}
-      <div className="container-fluid">
+      <div className="container-fluid p-0">
         <div className="row">
           <div className="col-sm-12">
             <List />

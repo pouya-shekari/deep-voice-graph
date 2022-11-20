@@ -7,7 +7,7 @@ const AnnouncementsWrapper = () => {
   return (
     <>
       {/* <HaraBreadcrumb /> */}
-      <div className="container-fluid">
+      <div className="container-fluid p-0">
         <div className="row">
           <div className="col-12">
             <List />

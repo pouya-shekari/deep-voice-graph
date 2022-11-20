@@ -8,7 +8,7 @@ const HomeWrapper = () => {
   return (
     <>
       {/* <HaraBreadcrumb /> */}
-      <div className="container-fluid">
+      <div className="container-fluid p-0">
         <div className="row">
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3">
             <Media title={"Announcement"} />
