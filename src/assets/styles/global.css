@@ -30,3 +30,8 @@ div[data-message] {
   width: 8px;
   height: 8px;
 }
+
+.react-flow {
+  background-color: #fff;
+  border-radius: 3px;
+}
