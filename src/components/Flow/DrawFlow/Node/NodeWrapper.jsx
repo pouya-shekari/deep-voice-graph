@@ -10,6 +10,7 @@ const nodeTypes = [
   { title: "عملکرد", type: "Action", bgColor: "lightgreen" },
   { title: "چکر", type: "Checker", bgColor: "lightgray" },
   { title: "پایان", type: "End", bgColor: "Moccasin" },
+  { title: "ارجاع", type: "Forward", bgColor: "Thistle" },
 ];
 
 const NodeWrapper = () => {

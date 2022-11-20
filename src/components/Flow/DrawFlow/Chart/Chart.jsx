@@ -126,10 +126,15 @@ const Chart = ({ flow }) => {
   }, []);
   const addResourceHandler = (event, node) => {
     setSelectedNodeId(node.id);
-    if (node.type === "Start" || node.type === "End") {
+    if (
+      node.type === "Start" ||
+      node.type === "End" ||
+      node.type === "Forward"
+    ) {
       setSnak({
         type: "error",
-        message: "افزودن Resource به نقاط شروع و پایان امکان‌پذیر نمی‌باشد.",
+        message:
+          "افزودن Resource به نقاط شروع، پایان و ارجاع امکان‌پذیر نمی‌باشد.",
         open: true,
       });
       return;
