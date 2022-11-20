@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import LOGO from "../../../../assets/media/hara.png";
 import { PATHS } from "../../../../config/routes.config";
 import { IS_LOGGED_IN, TOKEN } from "../../../../config/variables.config";
+import HaraBreadcrumb from "../../../../components/Breadcrumb/Breadcrumb";
 
 const Header = (props) => {
   const [open, setOpen] = React.useState(false);
@@ -107,8 +108,9 @@ const Header = (props) => {
             </DialogActions>
           </Dialog>
         </Toolbar>
+        <HaraBreadcrumb />
       </AppBar>
-      <Box component="main" sx={{ p: 3 }}>
+      <Box component="main" sx={{ p: 3, mt: 6 }}>
         <Toolbar />
         {props.children}
       </Box>
