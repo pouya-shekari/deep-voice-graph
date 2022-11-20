@@ -6,8 +6,8 @@ import List from "../../components/Checker/List";
 const CheckersWrapper = () => {
   return (
     <>
-      <HaraBreadcrumb />
-      <div className="container-fluid mt-3">
+      {/* <HaraBreadcrumb /> */}
+      <div className="container-fluid">
         <div className="row">
           <div className="col-sm-12">
             <List />

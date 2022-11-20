@@ -6,8 +6,8 @@ import DrawWrapper from "../../../components/Flow/DrawFlow/DrawWrapper";
 const FlowsWrapper = (props) => {
   return (
     <>
-      <HaraBreadcrumb />
-      <div className="container-fluid mt-3">
+      {/* <HaraBreadcrumb /> */}
+      <div className="container-fluid">
         <div className="row">
           <div className="col-12">
             <DrawWrapper {...props} />
