@@ -22,7 +22,7 @@ const HomeWrapper = () => {
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-3">
             <Media title={"Checker"} />
           </div>
-          <div className="col-12 mt-5">
+          <div className="col-12 mt-3">
             <List />
           </div>
         </div>
