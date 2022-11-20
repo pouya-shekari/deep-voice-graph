@@ -1,5 +1,5 @@
 .paginationTable{
-  direction: ltr;
+  direction: rtl;
   p{
     margin-bottom: 0!important;
     margin-left: 0.5rem!important;
@@ -21,4 +21,5 @@
 
 .addDialog div {
   min-width: 35%;
+  padding-top: 0;
 }

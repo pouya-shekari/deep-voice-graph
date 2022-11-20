@@ -162,26 +162,19 @@ function Row(props) {
                     </Alert>
                 </TableCell>
                 <TableCell align="center">
-                    <Button onClick={()=>{editHandler(row.actionId)}} variant="contained" startIcon={<EditIcon />}>
-                        ویرایش عملکرد
-                    </Button>
-                    <button
-                        className="btn btn-primary"
-                        style={{
-                            border: "none",
-                            outline: "none",
-                            cursor: "default",
-                            backgroundColor: "transparent",
-                        }}
-                    ></button>
-                    <Button
-                        color={"error"}
-                        variant="contained"
-                        startIcon={<DeleteIcon />}
-                        onClick={()=>{deleteHandler(row.actionId)}}
-                    >
-                        حذف عملکرد
-                    </Button>
+                    <div className="d-flex flex-wrap justify-content-center align-items-center gap-3">
+                        <Button onClick={()=>{editHandler(row.actionId)}} variant="contained" startIcon={<EditIcon />}>
+                            ویرایش عملکرد
+                        </Button>
+                        <Button
+                            color={"error"}
+                            variant="contained"
+                            startIcon={<DeleteIcon />}
+                            onClick={()=>{deleteHandler(row.actionId)}}
+                        >
+                            حذف عملکرد
+                        </Button>
+                    </div>
                 </TableCell>
             </TableRow>
             <Dialog
