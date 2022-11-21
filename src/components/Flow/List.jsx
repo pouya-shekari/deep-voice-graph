@@ -246,7 +246,13 @@ const List = () => {
             },
           }
       );
-      mutate([...data, res.data], { revalidate: false });
+      const newData = data.map((item) => {
+        if (item.flowId === rowForUpdate.flowId) {
+          return { ...item, nameEN: nameEn , nameFA:nameFa ,description:description  };
+        }
+        return item;
+      });
+      mutate([...newData], { revalidate: false });
       setSnak({
         open: true,
         type: "success",
