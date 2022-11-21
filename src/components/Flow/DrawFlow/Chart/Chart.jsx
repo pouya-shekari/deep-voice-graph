@@ -33,6 +33,7 @@ import { APPLICATIONID, BASE_URL } from "../../../../config/variables.config";
 import ConvertFlowFromNeo4j from "../../../../helpers/ConvertFlowFromNeo4j";
 
 import styles from "./chart.module.scss";
+import {toast} from "react-toastify";
 
 const defaultEdgeOptions = GetDefaultEdgeOptions();
 const nodeTypes = getNodeTypes();
@@ -317,34 +318,41 @@ const Chart = ({ flow }) => {
   const updateFlowHandler = async () => {
     setLoading(true);
     // eslint-disable-next-line no-unused-vars
-    const [valid, errors] = IsFlowValid(nodes, edges);
-    const flowStates = ConvertFlowToNeo4j(nodes, edges);
-    try {
-      await updateFlow(
-        `${BASE_URL}/flow/update/states`,
-        {
-          flowId: flow.flowId,
-          flowStates,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setSnak({
-        type: "success",
-        message: "فلوچارت با موفقیت بروز شد.",
-        open: true,
-      });
-    } catch (error) {
-      setSnak({
-        type: "error",
-        message: "بروز رسانی با خطا مواجه شد. لطفا دوباره تلاش کنید.",
-        open: true,
-      });
+    const [isValid, errors] = IsFlowValid(nodes, edges);
+    if(isValid){
+      const flowStates = ConvertFlowToNeo4j(nodes, edges);
+      try {
+        await updateFlow(
+            `${BASE_URL}/flow/update/states`,
+            {
+              flowId: flow.flowId,
+              flowStates,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+        );
+        setSnak({
+          type: "success",
+          message: "فلوچارت با موفقیت بروز شد.",
+          open: true,
+        });
+      } catch (error) {
+        setSnak({
+          type: "error",
+          message: "بروز رسانی با خطا مواجه شد. لطفا دوباره تلاش کنید.",
+          open: true,
+        });
+      }
+    }else{
+      errors.forEach(item=>{
+        toast.error(item)
+      })
     }
     setLoading(false);
+
   };
 
   return (

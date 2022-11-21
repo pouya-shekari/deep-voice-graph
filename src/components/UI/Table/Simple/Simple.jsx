@@ -88,7 +88,7 @@ const renderOperators = (action, row) => {
   }
 };
 
-const Simple = ({ label, data, hasAction, actions, tableHeaders, options }) => {
+const Simple = ({ label, data, hasAction, actions, tableHeaders, options  , handleEdit}) => {
   return (
     <>
       <TableContainer component={Paper}>
@@ -129,6 +129,7 @@ const Simple = ({ label, data, hasAction, actions, tableHeaders, options }) => {
             {data.map((row) => (
               <TableRow
                 key={uuidv4()}
+                onClick={handleEdit.bind(this,row)}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 {tableHeaders.map((header) => (

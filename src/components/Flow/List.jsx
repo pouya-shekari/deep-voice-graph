@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import useSWR from "swr";
 import { Alert, Button, Box, CircularProgress, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { getAllFlows, addFlow, lockFlow } from "../../api/flows.api";
+import {getAllFlows, addFlow, lockFlow, updateFlow} from "../../api/flows.api";
 import { APPLICATIONID, BASE_URL } from "../../config/variables.config";
 import { SimpleTable } from "../UI/Table/Tabel";
 import Modal from "../UI/Modal/Modal";
@@ -44,8 +44,11 @@ const List = () => {
   const navigate = useNavigate();
 
   const nameEnRef = useRef(null);
+  const editNameEnRef = useRef(null);
   const nameFaRef = useRef(null);
+  const editNameFaRef = useRef(null)
   const descriptionRef = useRef(null);
+  const editDescriptionRef = useRef(null);
 
   const { data, error, mutate } = useSWR(`${BASE_URL}/flow/list`, getFlows);
   const [modalState, setModalState] = useState({
@@ -65,6 +68,9 @@ const List = () => {
     isError: false,
     errorText: "",
   });
+
+  const [rowForUpdate , setRowForUpdate] = useState(null)
+
   const [snak, setSnak] = useState({
     message: "",
     type: "",
@@ -180,7 +186,94 @@ const List = () => {
       });
     }
   };
-  const enableDisableFlow = async (id) => {
+
+  const confirmEdit = async () => {
+    setNameEnError({
+      isError: false,
+      errorText: "",
+    });
+    setNameFaError({
+      isError: false,
+      errorText: "",
+    });
+    setDescriptionError({
+      isError: false,
+      errorText: "",
+    });
+    const nameEn = editNameEnRef.current.value.trim();
+    const nameFa = editNameFaRef.current.value.trim();
+    const description = editDescriptionRef.current.value.trim();
+    let isValid = true;
+    if (nameEn === "") {
+      isValid = false;
+      setNameEnError({
+        isError: true,
+        errorText: "لطفا عنوان فلوچارت را وارد کنید.",
+      });
+    }
+    if (nameFa === "") {
+      isValid = false;
+      setNameFaError({
+        isError: true,
+        errorText: "لطفا عنوان فلوچارت را وارد کنید.",
+      });
+    }
+    if (description === "") {
+      isValid = false;
+      setDescriptionError({
+        isError: true,
+        errorText: "لطفا توضیحات فلوچارت را وارد کنید.",
+      });
+    }
+    if (!isValid) return;
+    setSnak({
+      open: true,
+      type: "cancel",
+      message: "در حال ویرایش فلوچارت...",
+    });
+    /*try {
+      const res = await updateFlow(
+          `${BASE_URL}/flow/update`,
+          {
+            applicationId: APPLICATIONID,
+            nameEN: nameEn,
+            nameFA: nameFa,
+            description,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+      );
+      mutate([...data, res.data], { revalidate: false });
+      setSnak({
+        open: true,
+        type: "success",
+        message: "فلوچارت با موفقیت ویرایش شد.",
+      });
+      setRowForUpdate(null)
+      closeModal();
+    } catch (error) {
+      if (error.message === "409") {
+        setSnak({
+          open: true,
+          type: "error",
+          message: "نام فلوچارت تکراری می‌باشد.",
+        });
+        return;
+      }
+      setSnak({
+        open: true,
+        type: "error",
+        message: "ویرایش فلوچارت با خطا مواجه شد.",
+      });
+    }*/
+  };
+
+
+  const enableDisableFlow = async (id , event) => {
+    event.stopPropagation()
     const flowToEdit = data.find((item) => item.flowId === id);
     try {
       const res = await lockFlow(
@@ -262,6 +355,14 @@ const List = () => {
       actions: ["delete", "edit"],
     };
   });
+
+  const handleEdit = (row,event)=>{
+    setModalState((prevState) => {
+      return { ...prevState, editModal: true };
+    });
+    setRowForUpdate(row)
+  }
+
   return (
     <>
       <Snak
@@ -323,7 +424,64 @@ const List = () => {
             />
           </div>
         </div>
-        <div className="mb-3"></div>
+      </Modal>
+
+      <Modal
+          open={modalState.editModal}
+          onClose={closeModal}
+          title={"ویرایش فلوچارت"}
+          description={
+            "برای ویرایش فلوچارت، وارد کردن نام فارسی و انگلیسی به همراه توضیحات فلوچارت الزامی می‌باشد."
+          }
+          actions={[
+            { type: "edit", label: "ویرایش", onClick: confirmEdit },
+            { type: "cancel", label: "انصراف", onClick: closeModal },
+          ]}
+      >
+        <div className="row">
+          <div className="col-md-6 mb-3">
+            <TextField
+                id="flow-fa-title"
+                label="عنوان فارسی فلوچارت"
+                type="text"
+                fullWidth
+                variant="standard"
+                autoComplete={"off"}
+                inputRef={editNameFaRef}
+                error={nameFaError.isError}
+                helperText={nameFaError.errorText}
+                defaultValue={rowForUpdate !== null ? rowForUpdate.nameFA :  ""}
+            />
+          </div>
+          <div className="col-md-6 mb-3">
+            <TextField
+                id="flow-en-title"
+                label="عنوان انگلیسی فلوچارت"
+                type="text"
+                fullWidth
+                variant="standard"
+                autoComplete={"off"}
+                inputRef={editNameEnRef}
+                error={nameEnError.isError}
+                helperText={nameEnError.errorText}
+                defaultValue={rowForUpdate !== null ? rowForUpdate.nameEN : ""}
+            />
+          </div>
+          <div className="col-md-12 mb-3">
+            <TextField
+                id="flow-description"
+                label="توضیحات"
+                type="text"
+                fullWidth
+                variant="standard"
+                autoComplete={"off"}
+                inputRef={editDescriptionRef}
+                error={descriptionError.isError}
+                helperText={descriptionError.errorText}
+                defaultValue={rowForUpdate !== null ? rowForUpdate.description : ""}
+            />
+          </div>
+        </div>
       </Modal>
       <div aria-label="add new announcement" className="mb-3">
         <Button
@@ -338,13 +496,15 @@ const List = () => {
       <SimpleTable
         label={"Flow Table"}
         data={tableData}
+        handleEdit={handleEdit}
         hasAction={true}
         actions={[
-          { type: "enable", label: "غیرفعال سازی", onClick: enableDisableFlow },
+          { type: "enable", label: "غیرفعال سازی", onClick: (event,id)=>enableDisableFlow(event,id) },
           {
             type: "draw",
             label: "مشاهده فلوچارت",
-            onClick: (id) => {
+            onClick: (id , event) => {
+              event.stopPropagation()
               navigate(`/flows/${id}`, { replace: true });
             },
           },

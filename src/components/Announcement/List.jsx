@@ -483,6 +483,7 @@ const List = () => {
       <SimpleTable
         label={"Annoucement Table"}
         data={tableData}
+        handleEdit={()=>{}}
         hasAction={true}
         actions={[
           { type: "edit", label: "ویرایش اعلان", onClick: showEditModal },
