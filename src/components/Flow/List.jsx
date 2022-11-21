@@ -231,14 +231,14 @@ const List = () => {
       type: "cancel",
       message: "در حال ویرایش فلوچارت...",
     });
-    /*try {
+    try {
       const res = await updateFlow(
           `${BASE_URL}/flow/update`,
           {
-            applicationId: APPLICATIONID,
             nameEN: nameEn,
             nameFA: nameFa,
-            description,
+            description:description,
+            flowId:rowForUpdate.flowId
           },
           {
             headers: {
@@ -268,7 +268,7 @@ const List = () => {
         type: "error",
         message: "ویرایش فلوچارت با خطا مواجه شد.",
       });
-    }*/
+    }
   };
 
 
