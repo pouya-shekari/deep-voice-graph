@@ -22,6 +22,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
+import exportFromJSON from 'export-from-json'
 import style from "./index.module.scss";
 import { toast } from "react-toastify";
 import {
@@ -37,6 +38,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
 import AddIcon from "@mui/icons-material/Add";
+import DownloadIcon from '@mui/icons-material/Download';
 import TextField from "@mui/material/TextField";
 import { CircularProgress } from "@mui/material";
 import { APPLICATIONID } from "../../config/variables.config";
@@ -530,6 +532,13 @@ const QuestionsList = () => {
     }
   },[options])
 
+  const downloadJson = ()=>{
+    const data = [{ foo: 'foo'}, { bar: 'bar' }]
+    const fileName = 'questions'
+    const exportType =  exportFromJSON.types.json
+    exportFromJSON({ data, fileName, exportType })
+  }
+
   return (
     <>
       {loading ? (
@@ -538,7 +547,7 @@ const QuestionsList = () => {
         </div>
       ) : (
         <div dir="rtl">
-          <div aria-label="add new announcement" className="mb-3">
+          <div aria-label="add new announcement" className="mb-3 d-flex justify-content-between flex-wrap gap-3">
             <Button
               variant="contained"
               color="success"
@@ -546,6 +555,14 @@ const QuestionsList = () => {
               onClick={openAddDialogHandler}
             >
               افزودن سوال جدید
+            </Button>
+            <Button
+                variant="contained"
+                color="primary"
+                startIcon={<DownloadIcon />}
+                onClick={downloadJson}
+            >
+              دانلود سوالات استفاده شده در فلوچارت‌ها
             </Button>
           </div>
           <Dialog className={style.addDialog} open={open} onClose={handleClose}>
