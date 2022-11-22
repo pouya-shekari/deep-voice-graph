@@ -463,6 +463,7 @@ const List = () => {
       <SimpleTable
         label={"Checker Table"}
         data={tableData}
+        handleEdit={()=>{}}
         hasAction={true}
         actions={[
           { type: "edit", label: "ویرایش چکر", onClick: showEditModal },

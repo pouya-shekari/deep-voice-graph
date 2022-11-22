@@ -2,6 +2,7 @@ const ConvertFlowToNeo4j = (nodes, edges) => {
   return nodes.map((nds) => {
     const edgs = edges.filter((edg) => edg.source === nds.id);
     return {
+      waitTime: +nds.data.waitTime ? +nds.data.waitTime : 0,
       label: nds.data?.label,
       stateId: nds.id,
       type: nds.type,

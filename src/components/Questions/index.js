@@ -52,9 +52,7 @@ function Row(props) {
     React.useState(null);
   const [itemIdNumberForEdit, setItemIdNumberForEdit] = React.useState(null);
   const [questionTitle, setQuestionTitle] = React.useState("");
-  const [waitTime, setWaitTime] = React.useState("");
   const [changeTitleFlag, setChangeTitleFlag] = React.useState(false);
-  const [changeWaitTimeFlag, setChangeWaitTimeFlag] = React.useState(false);
 
   const deleteHandler = (id) => {
     setOpenDialog(true);
@@ -72,7 +70,6 @@ function Row(props) {
     setOpenDialog(false);
     setOpenEditDialog(false);
     setChangeTitleFlag(false);
-    setChangeWaitTimeFlag(false);
   };
 
   const handleExit = () => {
@@ -104,19 +101,10 @@ function Row(props) {
   const handleEdit = () => {
     if (questionTitle.trim() == "") {
       toast.error("عنوان نمی‌تواند خالی باشد.");
-    } else if (waitTime.trim() == "") {
-      toast.error("زمان انتظار نمی‌تواند خالی باشد.");
-    } else if (
-      isNaN(faToEnDigits(waitTime.trim())) ||
-      faToEnDigits(waitTime.trim()) <= 0
-    ) {
-      toast.error("زمان انتظار معتبر نیست.");
     } else {
       const data = {
         announcementId: itemIdNumberForEdit,
         text: questionTitle.trim(),
-        waitTime: faToEnDigits(waitTime.trim()),
-        statusCode: 1,
       };
       editQuestion(data, {
         headers: {
@@ -125,15 +113,19 @@ function Row(props) {
       })
         .then((res) => {
           toast.success("ویرایش سوال با موفقیت انجام شد.");
-          setChangeWaitTimeFlag(false);
           setChangeTitleFlag(false);
           setOpenEditDialog(false);
           setItemIdNumberForEdit(null);
           props.onChange();
         })
         .catch((err) => {
-          toast.error("عملیات با خطا مواجه شد.");
-          setChangeWaitTimeFlag(false);
+          if (err.response.status == 409) {
+            toast.error("عنوان سوال تکراری می‌باشد.");
+          } else if(err.response.status == 400){
+            toast.error("عنوان سوال بیش از حد مجاز می‌باشد.");
+          } else {
+            toast.error("عملیات با خطا مواجه شد.");
+          }
           setChangeTitleFlag(false);
           setOpenEditDialog(false);
           setItemIdNumberForEdit(null);
@@ -143,42 +135,7 @@ function Row(props) {
 
   const handleQuestionTitle = (event) => {
     setChangeTitleFlag(true);
-    if (!changeWaitTimeFlag) {
-      setWaitTime("" + row.waitTime);
-      setChangeWaitTimeFlag(true);
-    }
     setQuestionTitle(event.target.value);
-  };
-
-  const handleWaitTime = (event) => {
-    setChangeWaitTimeFlag(true);
-    if (!changeTitleFlag) {
-      setQuestionTitle(row.text);
-      setChangeTitleFlag(true);
-    }
-    setWaitTime(event.target.value);
-  };
-
-  const faToEnDigits = function (input) {
-    if (input == undefined) return;
-    var returnModel = "",
-      symbolMap = {
-        "۱": "1",
-        "۲": "2",
-        "۳": "3",
-        "۴": "4",
-        "۵": "5",
-        "۶": "6",
-        "۷": "7",
-        "۸": "8",
-        "۹": "9",
-        "۰": "0",
-      };
-    input = input.toString();
-    for (let i = 0; i < input.length; i++)
-      if (symbolMap[input[i]]) returnModel += symbolMap[input[i]];
-      else returnModel += input[i];
-    return returnModel;
   };
 
   return (
@@ -198,9 +155,6 @@ function Row(props) {
         </TableCell>
         <TableCell align="center" component="th" scope="row">
           {row.text}
-        </TableCell>
-        <TableCell align="center" component="th" scope="row">
-          {row.waitTime}
         </TableCell>
         <TableCell align="center" component="th" scope="row">
           <Alert
@@ -301,21 +255,10 @@ function Row(props) {
             variant="standard"
             onChange={handleQuestionTitle}
           />
-          <br />
-          <TextField
-            autoFocus={true}
-            margin="dense"
-            id="مدت زمان انتظار"
-            label="مدت زمان انتظار (ms)"
-            fullWidth
-            defaultValue={row.waitTime}
-            variant="standard"
-            onChange={handleWaitTime}
-          />
         </DialogContent>
         <DialogActions>
           <Button
-            disabled={!changeTitleFlag || !changeWaitTimeFlag}
+            disabled={!changeTitleFlag}
             variant={"contained"}
             color={"primary"}
             onClick={handleEdit}
@@ -405,7 +348,6 @@ const QuestionsList = () => {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const [questionTitle, setQuestionTitle] = React.useState("");
-  const [waitTime, setWaitTime] = React.useState("");
 
   React.useEffect(() => {
     getQuestion({
@@ -491,19 +433,11 @@ const QuestionsList = () => {
     setOpen(false);
     setOptions([]);
     setQuestionTitle("");
-    setWaitTime("");
   };
 
   const handleSendQuestion = () => {
     if (questionTitle.trim() === "") {
       toast.error("عنوان نمی‌تواند خالی باشد.");
-    } else if (waitTime.trim() === "") {
-      toast.error("زمان انتظار نمی‌تواند خالی باشد.");
-    } else if (
-      isNaN(faToEnDigits(waitTime.trim())) ||
-      faToEnDigits(waitTime.trim()) <= 0
-    ) {
-      toast.error("زمان انتظار معتبر نیست.");
     } else if (options == false) {
       toast.error("پاسخی یافت نشد.");
     }
@@ -536,8 +470,6 @@ const QuestionsList = () => {
         const data = {
           applicationId: APPLICATIONID,
           text: questionTitle.trim(),
-          waitTime: faToEnDigits(waitTime.trim()),
-          statusCode: 1,
           isQuestion: true,
           responses: answers,
         };
@@ -551,7 +483,6 @@ const QuestionsList = () => {
               setOpen(false);
               setOptions([]);
               setQuestionTitle("");
-              setWaitTime("");
               handleChange();
             })
             .catch((err) => {
@@ -591,10 +522,6 @@ const QuestionsList = () => {
     setQuestionTitle(event.target.value);
   };
 
-  const handleWaitTime = (event) => {
-    setWaitTime(event.target.value);
-  };
-
   useEffect(()=>{
     if(options.length > 1){
       setIsDisableAdd(false)
@@ -632,15 +559,6 @@ const QuestionsList = () => {
                 fullWidth
                 variant="standard"
                 onChange={handleQuestionTitle}
-              />
-              <br />
-              <TextField
-                margin="dense"
-                id="مدت زمان انتظار"
-                label="مدت زمان انتظار (ms)"
-                fullWidth
-                variant="standard"
-                onChange={handleWaitTime}
               />
             </DialogContent>
             <DialogContent>
@@ -710,7 +628,6 @@ const QuestionsList = () => {
                   <TableCell />
                   <TableCell align={"center"}>شناسه سوال</TableCell>
                   <TableCell align={"center"}>عنوان سوال</TableCell>
-                  <TableCell align={"center"}>مدت زمان انتظار (ms)</TableCell>
                   <TableCell align={"center"}>وضعیت سوال</TableCell>
                   <TableCell align={"center"}>عملیات</TableCell>
                 </TableRow>

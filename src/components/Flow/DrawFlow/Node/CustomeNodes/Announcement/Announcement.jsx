@@ -16,6 +16,10 @@ const Announcement = (props) => {
         style={{ backgroundColor: "red" }}
       />
       <span>{props.data.label}</span>
+        {props.data.waitTime?
+            <div>
+                <span>زمان انتظار: {props.data.waitTime}ms</span>
+            </div> : <></>}
       <Handle
         type="source"
         position={Position.Bottom}

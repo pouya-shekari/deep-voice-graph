@@ -33,6 +33,8 @@ import { APPLICATIONID, BASE_URL } from "../../../../config/variables.config";
 import ConvertFlowFromNeo4j from "../../../../helpers/ConvertFlowFromNeo4j";
 
 import styles from "./chart.module.scss";
+import {toast} from "react-toastify";
+import faToEnDigits from "../../../../helpers/faToEnDigits";
 
 const defaultEdgeOptions = GetDefaultEdgeOptions();
 const nodeTypes = getNodeTypes();
@@ -49,6 +51,7 @@ const Chart = ({ flow }) => {
   const [updateResourcesFlag, setUpdateResourcesFlag] = useState(false);
   const [nodeType, setNodeType] = useState("");
   const [resource, setResource] = useState(null);
+  const [waitTime,setWaitTime] = useState('')
   const [loading, setLoading] = useState(false);
   const [snak, setSnak] = useState({
     message: "",
@@ -141,6 +144,7 @@ const Chart = ({ flow }) => {
     }
     setNodeType(node.type);
     setUpdateResourcesFlag(!updateResourcesFlag);
+    setWaitTime('')
     setShowResourceModal(true);
   };
 
@@ -280,13 +284,43 @@ const Chart = ({ flow }) => {
   };
 
   const confirmResource = () => {
-    if (!resource) {
-      setSnak({
-        type: "error",
-        message: "لطفا Resource را از لیست انتخاب کنید.",
-        open: true,
-      });
-      return;
+    if(nodeType === "Announcement" || nodeType === "Question"){ //TODO refactor
+      if (!resource) {
+        setSnak({
+          type: "error",
+          message: "لطفا Resource را از لیست انتخاب کنید.",
+          open: true,
+        });
+        return;
+      }
+      else if (waitTime.trim() === "") {
+        setSnak({
+          type: "error",
+          message: "زمان انتظار نمی‌تواند خالی باشد.",
+          open: true,
+        });
+        return;
+      } else if (
+          isNaN(faToEnDigits(waitTime.trim())) ||
+          faToEnDigits(waitTime.trim()) <= 0
+      ) {
+        setSnak({
+          type: "error",
+          message: "زمان انتظار معتبر نیست.",
+          open: true,
+        });
+        return;
+      }
+      resource.waitTime = waitTime
+    }else {
+      if (!resource) {
+        setSnak({
+          type: "error",
+          message: "لطفا Resource را از لیست انتخاب کنید.",
+          open: true,
+        });
+        return;
+      }
     }
     closeModal();
     updateNode(selectedNodeId, resource);
@@ -300,6 +334,7 @@ const Chart = ({ flow }) => {
             ...node.data,
             label: resource.label,
             resourceId: resource.id,
+            waitTime: faToEnDigits(resource.waitTime) ?? 0,
             responses: resource.responses
               ? [...resource.responses]
               : node.responses,
@@ -309,7 +344,6 @@ const Chart = ({ flow }) => {
       })
     );
     const updatedEdges = edges.filter((edge) => edge.source !== nodeId);
-    console.log(updatedEdges);
     setEdges([...updatedEdges]);
     updateNodeInternals(nodeId);
   };
@@ -317,34 +351,45 @@ const Chart = ({ flow }) => {
   const updateFlowHandler = async () => {
     setLoading(true);
     // eslint-disable-next-line no-unused-vars
-    const [valid, errors] = IsFlowValid(nodes, edges);
-    const flowStates = ConvertFlowToNeo4j(nodes, edges);
-    try {
-      await updateFlow(
-        `${BASE_URL}/flow/update/states`,
-        {
-          flowId: flow.flowId,
-          flowStates,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setSnak({
-        type: "success",
-        message: "فلوچارت با موفقیت بروز شد.",
-        open: true,
-      });
-    } catch (error) {
-      setSnak({
-        type: "error",
-        message: "بروز رسانی با خطا مواجه شد. لطفا دوباره تلاش کنید.",
-        open: true,
-      });
+    const [isValid, errors] = IsFlowValid(nodes, edges);
+    if(isValid){
+      const flowStates = ConvertFlowToNeo4j(nodes, edges);
+      try {
+        await updateFlow(
+            `${BASE_URL}/flow/update/states`,
+            {
+              flowId: flow.flowId,
+              flowStates,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+        );
+        setSnak({
+          type: "success",
+          message: "فلوچارت با موفقیت بروز شد.",
+          open: true,
+        });
+      } catch (error) {
+        setSnak({
+          type: "error",
+          message: "بروز رسانی با خطا مواجه شد. لطفا دوباره تلاش کنید.",
+          open: true,
+        });
+      }
+    }else{
+      errors.forEach(item=>{
+        toast.error(item)
+      })
     }
     setLoading(false);
+
+  };
+
+  const handleWaitTime = (event) => {
+    setWaitTime(event.target.value);
   };
 
   return (
@@ -385,6 +430,15 @@ const Chart = ({ flow }) => {
               );
             }}
           />
+          {(nodeType === "Announcement" || nodeType === "Question") ?
+              <TextField
+                  margin="dense"
+                  id="مدت زمان انتظار"
+                  label="مدت زمان انتظار (ms)"
+                  fullWidth
+                  variant="standard"
+                  onChange={handleWaitTime} />
+             : <></>}
         </div>
       </Modal>
       <div className="mt-3">

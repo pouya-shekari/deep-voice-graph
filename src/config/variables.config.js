@@ -1,4 +1,4 @@
 export const BASE_URL = "http://172.16.12.231:8091";
 export const IS_LOGGED_IN = "IS_LOGGED_IN";
 export const TOKEN = "token";
-export const APPLICATIONID = 14;
+export const APPLICATIONID = 5;

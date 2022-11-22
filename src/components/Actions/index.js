@@ -113,7 +113,13 @@ function Row(props) {
                 setItemIdNumberForEdit(null)
                 props.onChange()
             }).catch((err)=>{
-                toast.error('عملیات با خطا مواجه شد.')
+                if (err.response.status == 409) {
+                    toast.error("عنوان اکشن تکراری می‌باشد.");
+                } else if(err.response.status == 400){
+                    toast.error("عنوان اکشن بیش از حد مجاز می‌باشد.");
+                } else {
+                    toast.error("عملیات با خطا مواجه شد.");
+                }
                 setChangeURLFlag(false)
                 setChangeTitleFlag(false)
                 setOpenEditDialog(false);
