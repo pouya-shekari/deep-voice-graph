@@ -393,6 +393,13 @@ const Chart = ({ flow }) => {
               );
             }}
           />
+          {(nodeType === "Announcement" || nodeType === "Question") ?
+            <TextField
+            fullWidth
+            variant="standard"
+            label="Resources"
+            />
+             : <></>}
         </div>
       </Modal>
       <div className="mt-3">

@@ -12,7 +12,6 @@ import { APPLICATIONID, BASE_URL } from "../../config/variables.config";
 import { SimpleTable } from "../UI/Table/Tabel";
 import Modal from "../UI/Modal/Modal";
 import Snak from "../Snak/Snak";
-import faToEnDigits from "../../helpers/faToEnDigits";
 
 const getAllAnn = async (url) => {
   const { data } = await getAnnouncements(url, {
@@ -41,30 +40,21 @@ const tableHeaders = [
       borderStyle: "border-box",
     },
   },
-  { colNumber: 2, title: "مدت زمان انتظار (ms)", field: "waitTime", style: {} },
-  { colNumber: 3, title: "وضعیت اعلان", field: "isEnable", style: {} },
+  { colNumber: 2, title: "وضعیت اعلان", field: "isEnable", style: {} },
 ];
 
 const List = () => {
   const titleRef = useRef(null);
-  const waitTimeRef = useRef(null);
 
   const titleEditRef = useRef(null);
-  const waitTimeEditRef = useRef(null);
 
   const [titleError, setTitleError] = useState({
     isError: false,
     errorText: "",
   });
 
-  const [waitTimeError, setWaitTimeError] = useState({
-    isError: false,
-    errorText: "",
-  });
-
   const [annDefaultValues, setAnnDefaultValues] = useState({
-    title: "",
-    waitTime: "",
+    title: ""
   });
 
   const [snak, setSnak] = useState({
@@ -95,8 +85,7 @@ const List = () => {
     setSelectedId(id);
     const annItem = data.find((item) => item.announcementId === id);
     setAnnDefaultValues({
-      title: annItem.text,
-      waitTime: annItem.waitTime,
+      title: annItem.text
     });
     setModalState((prevState) => {
       return { ...prevState, editModal: true };
@@ -113,43 +102,20 @@ const List = () => {
     });
     setSelectedId(null);
     setTitleError({ errorText: "", isError: false });
-    setWaitTimeError({ errorText: "", isError: false });
   };
 
   const confirmAdd = async () => {
-    setWaitTimeError({
-      isError: false,
-      errorText: "",
-    });
     setTitleError({
       isError: false,
       errorText: "",
     });
     const titleValue = titleRef.current.value.trim();
-    const waitTimeValue = waitTimeRef.current.value.trim();
     let isValid = true;
-    if (
-      isNaN(faToEnDigits(waitTimeValue)) ||
-      faToEnDigits(waitTimeValue) <= 0
-    ) {
-      isValid = false;
-      setWaitTimeError({
-        isError: true,
-        errorText: "مدت زمان انتظار وارد شده معتبر نیست.",
-      });
-    }
     if (titleValue === "") {
       isValid = false;
       setTitleError({
         isError: true,
         errorText: "لطفا عنوان اعلان را وارد کنید.",
-      });
-    }
-    if (waitTimeValue === "") {
-      isValid = false;
-      setWaitTimeError({
-        isError: true,
-        errorText: "لطفا مدت زمان انتظار را وارد کنید.",
       });
     }
     if (!isValid) {
@@ -166,8 +132,6 @@ const List = () => {
         {
           applicationId: APPLICATIONID,
           text: titleValue,
-          waitTime: waitTimeValue,
-          statusCode: 1,
           isQuestion: false,
           responses: [],
         },
@@ -202,39 +166,17 @@ const List = () => {
   };
 
   const confirmEdit = async () => {
-    setWaitTimeError({
-      isError: false,
-      errorText: "",
-    });
     setTitleError({
       isError: false,
       errorText: "",
     });
     const titleValue = titleEditRef.current.value.trim();
-    const waitTimeValue = waitTimeEditRef.current.value.trim();
     let isValid = true;
-    if (
-      isNaN(faToEnDigits(waitTimeValue)) ||
-      faToEnDigits(waitTimeValue) <= 0
-    ) {
-      isValid = false;
-      setWaitTimeError({
-        isError: true,
-        errorText: "مدت زمان انتظار وارد شده معتبر نیست.",
-      });
-    }
     if (titleValue === "") {
       isValid = false;
       setTitleError({
         isError: true,
         errorText: "لطفا عنوان اعلان را وارد کنید.",
-      });
-    }
-    if (waitTimeValue === "") {
-      isValid = false;
-      setWaitTimeError({
-        isError: true,
-        errorText: "لطفا مدت زمان انتظار را وارد کنید.",
       });
     }
     if (!isValid) {
@@ -251,7 +193,6 @@ const List = () => {
         {
           announcementId: selectedId,
           text: titleValue,
-          waitTime: waitTimeValue,
         },
         {
           headers: {
@@ -261,7 +202,7 @@ const List = () => {
       );
       const newData = data.map((item) => {
         if (item.announcementId === selectedId) {
-          return { ...item, text: titleValue, waitTime: waitTimeValue };
+          return { ...item, text: titleValue };
         }
         return item;
       });
@@ -353,7 +294,7 @@ const List = () => {
         <CircularProgress />
       </Box>
     );
-  const tableData = data.map(({ announcementId, isEnable, text, waitTime }) => {
+  const tableData = data.map(({ announcementId, isEnable, text }) => {
     return {
       id: announcementId,
       title: text,
@@ -365,7 +306,6 @@ const List = () => {
           {isEnable ? "فعال" : "غیرفعال"}
         </Alert>
       ),
-      waitTime,
       actions: ["delete", "edit"],
     };
   });
@@ -395,7 +335,7 @@ const List = () => {
         onClose={closeModal}
         title={"افزودن اعلان جدید"}
         description={
-          "برای افزودن اعلان جدید، وارد کردن عنوان اعلان و مدت زمان انتظار (ms) الزامی می‌باشد."
+          "برای افزودن اعلان جدید، وارد کردن عنوان اعلان الزامی می‌باشد."
         }
         actions={[
           { type: "add", label: "افزودن", onClick: confirmAdd },
@@ -415,26 +355,13 @@ const List = () => {
             autoComplete={"off"}
           />
         </div>
-        <div className="mb-3">
-          <TextField
-            id="ann-wait-time"
-            label="مدت زمان انتظار (ms)"
-            type="text"
-            fullWidth
-            variant="standard"
-            error={waitTimeError.isError}
-            helperText={waitTimeError.errorText}
-            inputRef={waitTimeRef}
-            autoComplete={"off"}
-          />
-        </div>
       </Modal>
       <Modal
         open={modalState.editModal}
         onClose={closeModal}
         title={"ویرایش اعلان"}
         description={
-          "برای ویرایش اعلان، وارد کردن عنوان اعلان و مدت زمان انتظار (ms) الزامی می‌باشد."
+          "برای ویرایش اعلان، وارد کردن عنوان اعلان الزامی می‌باشد."
         }
         actions={[
           { type: "edit", label: "ویرایش", onClick: confirmEdit },
@@ -453,20 +380,6 @@ const List = () => {
             inputRef={titleEditRef}
             error={titleError.isError}
             helperText={titleError.errorText}
-          />
-        </div>
-        <div className="mb-3">
-          <TextField
-            id="ann-wait-time-edit"
-            label="مدت زمان انتظار (ms)"
-            type="text"
-            fullWidth
-            variant="standard"
-            autoComplete={"off"}
-            defaultValue={annDefaultValues.waitTime}
-            inputRef={waitTimeEditRef}
-            error={waitTimeError.isError}
-            helperText={waitTimeError.errorText}
           />
         </div>
       </Modal>
