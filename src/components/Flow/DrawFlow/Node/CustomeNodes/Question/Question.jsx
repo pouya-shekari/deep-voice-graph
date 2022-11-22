@@ -132,6 +132,10 @@ const Question = (props) => {
         <span>({props.data.responses.join(", ")})</span>
       )}
       {handles}
+        {props.data.waitTime?
+        <div>
+            <span>زمان انتظار: {props.data.waitTime}ms</span>
+        </div> : <></>}
     </div>
   );
 };

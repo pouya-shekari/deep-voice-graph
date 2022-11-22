@@ -6,6 +6,7 @@ const ConvertFlowFromNeo4j = (flowStates) => {
       position: JSON.parse(state.meta).position,
       data: {
         label: state.label,
+        waitTime:state.waitTime,
         responses: [...JSON.parse(state.meta).responses],
       },
     };
