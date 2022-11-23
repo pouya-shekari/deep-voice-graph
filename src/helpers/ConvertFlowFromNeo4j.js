@@ -1,4 +1,5 @@
 const ConvertFlowFromNeo4j = (flowStates) => {
+  //console.log(flowStates)
   const nodes = flowStates.map((state) => {
     let tempNode = {
       id: state.stateId,
@@ -8,6 +9,7 @@ const ConvertFlowFromNeo4j = (flowStates) => {
         label: state.label,
         waitTime:state.waitTime,
         responses: [...JSON.parse(state.meta).responses],
+        resourceId: state.resourceId,
       },
     };
     return tempNode;

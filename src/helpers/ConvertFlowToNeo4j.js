@@ -1,4 +1,5 @@
 const ConvertFlowToNeo4j = (nodes, edges) => {
+  console.log(nodes)
   return nodes.map((nds) => {
     const edgs = edges.filter((edg) => edg.source === nds.id);
     return {

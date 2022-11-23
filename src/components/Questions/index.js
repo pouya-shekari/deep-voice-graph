@@ -22,13 +22,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
+import exportFromJSON from 'export-from-json'
 import style from "./index.module.scss";
 import { toast } from "react-toastify";
 import {
   addQuestion,
   deleteQuestion,
   editQuestion,
-  getQuestion,
+  getQuestion, getQuestionList,
 } from "../../api/question.api";
 import Transition from "../ModalTransition/Transition";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -37,6 +38,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
 import AddIcon from "@mui/icons-material/Add";
+import DownloadIcon from '@mui/icons-material/Download';
 import TextField from "@mui/material/TextField";
 import { CircularProgress } from "@mui/material";
 import { APPLICATIONID } from "../../config/variables.config";
@@ -349,6 +351,8 @@ const QuestionsList = () => {
   const [options, setOptions] = React.useState([]);
   const [questionTitle, setQuestionTitle] = React.useState("");
 
+  const [questionUsedList , setQuestionUsedList] = React.useState([])
+
   React.useEffect(() => {
     getQuestion({
       headers: {
@@ -530,6 +534,27 @@ const QuestionsList = () => {
     }
   },[options])
 
+  useEffect(()=>{
+    getQuestionList({
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      }
+    })
+        .then((res) => {
+          setQuestionUsedList(res.data);
+        })
+        .catch((err) => {
+          setQuestionUsedList([]);
+        });
+  },[])
+
+  const downloadJson = ()=>{
+    const data = questionUsedList
+    const fileName = 'questions'
+    const exportType =  exportFromJSON.types.json
+    exportFromJSON({ data, fileName, exportType })
+  }
+
   return (
     <>
       {loading ? (
@@ -538,7 +563,7 @@ const QuestionsList = () => {
         </div>
       ) : (
         <div dir="rtl">
-          <div aria-label="add new announcement" className="mb-3">
+          <div aria-label="add new announcement" className="mb-3 d-flex justify-content-between flex-wrap gap-3">
             <Button
               variant="contained"
               color="success"
@@ -546,6 +571,14 @@ const QuestionsList = () => {
               onClick={openAddDialogHandler}
             >
               افزودن سوال جدید
+            </Button>
+            <Button
+                variant="contained"
+                color="primary"
+                startIcon={<DownloadIcon />}
+                onClick={downloadJson}
+            >
+              دانلود سوالات استفاده شده در فلوچارت‌ها
             </Button>
           </div>
           <Dialog className={style.addDialog} open={open} onClose={handleClose}>
