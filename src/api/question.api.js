@@ -35,3 +35,12 @@ export async function editQuestion(data,config){
         return Promise.reject(e)
     }
 }
+
+export async function getQuestionList(config){
+    try{
+        const response = await http.getAll('/announcement/list/usedQuestions',config)
+        return response
+    }catch (e){
+        return Promise.reject(e)
+    }
+}

@@ -29,7 +29,7 @@ import {
   addQuestion,
   deleteQuestion,
   editQuestion,
-  getQuestion,
+  getQuestion, getQuestionList,
 } from "../../api/question.api";
 import Transition from "../ModalTransition/Transition";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -351,6 +351,8 @@ const QuestionsList = () => {
   const [options, setOptions] = React.useState([]);
   const [questionTitle, setQuestionTitle] = React.useState("");
 
+  const [questionUsedList , setQuestionUsedList] = React.useState([])
+
   React.useEffect(() => {
     getQuestion({
       headers: {
@@ -532,8 +534,22 @@ const QuestionsList = () => {
     }
   },[options])
 
+  useEffect(()=>{
+    getQuestionList({
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      }
+    })
+        .then((res) => {
+          setQuestionUsedList(res.data);
+        })
+        .catch((err) => {
+          setQuestionUsedList([]);
+        });
+  },[])
+
   const downloadJson = ()=>{
-    const data = [{ foo: 'foo'}, { bar: 'bar' }]
+    const data = questionUsedList
     const fileName = 'questions'
     const exportType =  exportFromJSON.types.json
     exportFromJSON({ data, fileName, exportType })
