@@ -1,0 +1,11 @@
+.node {
+  height: 40px;
+  cursor: pointer;
+  flex: 0 0 150px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  border: 1px solid #fff;
+}
