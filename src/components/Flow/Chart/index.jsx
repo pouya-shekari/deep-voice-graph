@@ -27,12 +27,10 @@ import Save from "@cmp/Flow/Chart/Save";
 import useSnak from "@hooks/useSnak";
 import allowToAddResource from "@utils/flowValidator/allowToAddResource";
 import AddResource from "@cmp/Flow/Chart/AddResource";
-import useModal from "@hooks/useModal";
 import faToEnDigits from "@utils/faToEnDigits";
 
 const Chart = () => {
   const { showSnak } = useSnak();
-  const modal = useModal();
 
   const { id } = useParams();
   const reactFlowWrapper = useRef(null);
@@ -45,11 +43,10 @@ const Chart = () => {
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [nodeToAddResource, setNodeToAddResource] = useState(null);
 
-  const {
-    data: flow,
-    error: flowError,
-    mutate: mutateFlow,
-  } = useSWR([`/flow/${id}`, localStorageHelper.load("token")], getFlowById);
+  const { data: flow, error: flowError } = useSWR(
+    [`/flow/${id}`, localStorageHelper.load("token")],
+    getFlowById
+  );
 
   useEffect(() => {
     if (!flow) return;

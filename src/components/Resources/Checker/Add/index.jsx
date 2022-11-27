@@ -5,7 +5,7 @@ import React, { useRef, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 
-import { Button, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import useSnak from "@hooks/useSnak";
 import localStorageHelper from "@utils/localStrogeHelper";
 import checkerValidator from "@utils/checkerValidator";

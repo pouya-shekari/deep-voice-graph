@@ -6,7 +6,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 
 import { TextField } from "@mui/material";
-import useSnak from "@hooks/useSnak";
 import flowValidator from "@utils/flowValidator";
 
 const Edit = ({ nameFA, nameEN, description, onEdit }) => {

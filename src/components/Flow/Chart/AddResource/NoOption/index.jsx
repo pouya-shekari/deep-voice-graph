@@ -1,19 +1,13 @@
 import { Button } from "@mui/material";
 import convertNodeNames from "@utils/convertors/convertNodeNames";
-import React, { useState } from "react";
+import React from "react";
 import AddIcon from "@mui/icons-material/Add";
-import Add from "@cmp/Resources/Checker/Add";
 import useModal from "@hooks/useModal";
 
 const NoOption = ({ type }) => {
   const modal = useModal();
-  const [isOpen, setIsOpen] = useState(false);
-  const updateList = () => {
-    console.log("Mohamad");
-  };
 
   const showModalHandler = () => {
-    // const hideResourceModal = { isAddResourceModalOpen: false };
     switch (type) {
       case "Checker":
         modal.show({
