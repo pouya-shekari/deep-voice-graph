@@ -118,6 +118,7 @@ const Add = ({ updateListHandler, onClose }) => {
           />
         </div>
       </Modal>
+
     </>
   );
 };
