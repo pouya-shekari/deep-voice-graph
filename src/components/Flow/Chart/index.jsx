@@ -28,6 +28,7 @@ import useSnak from "@hooks/useSnak";
 import allowToAddResource from "@utils/flowValidator/allowToAddResource";
 import AddResource from "@cmp/Flow/Chart/AddResource";
 import faToEnDigits from "@utils/faToEnDigits";
+import Reset from "@cmp/Flow/Chart/Reset";
 
 const Chart = () => {
   const { showSnak } = useSnak();
@@ -43,10 +44,13 @@ const Chart = () => {
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [nodeToAddResource, setNodeToAddResource] = useState(null);
 
-  const { data: flow, error: flowError } = useSWR(
-    [`/flow/${id}`, localStorageHelper.load("token")],
-    getFlowById
-  );
+  const [isLoading, setIsLoading] = useState(false);
+
+  let {
+    data: flow,
+    error: flowError,
+    mutate: mutateFlow,
+  } = useSWR([`/flow/${id}`, localStorageHelper.load("token")], getFlowById);
 
   useEffect(() => {
     if (!flow) return;
@@ -166,6 +170,20 @@ const Chart = () => {
     clearNodeToAddResource();
   };
 
+  const resetFlow = async () => {
+    setIsLoading(true);
+    try {
+      const res = await mutateFlow();
+      const [nodes, edges] = convertFlowFromNeo4j(res.flowStates);
+      setNodes([...nodes]);
+      setEdges([...edges]);
+      showSnak({ type: "success", message: "فلوچارت با موفقیت بازنشانی شد." });
+    } catch (error) {
+      showSnak({ type: "error", message: "بازنشانی فلوچارت با خطا مواجه شد." });
+    }
+    setIsLoading(false);
+  };
+
   if (flowError)
     return (
       <Alert
@@ -179,8 +197,13 @@ const Chart = () => {
   if (!flow) return <Loading />;
   return (
     <>
-      <Save nodes={nodes} edges={edges} flowId={id} />
-
+      <div
+        aria-label="add new flow"
+        className="mb-3 text-start d-flex gap-3 flex-row-reverse"
+      >
+        <Reset onClick={resetFlow} isLoading={isLoading} />
+        <Save nodes={nodes} edges={edges} flowId={id} />
+      </div>
       <AddResource
         selectedNode={nodeToAddResource}
         onClear={clearNodeToAddResource}

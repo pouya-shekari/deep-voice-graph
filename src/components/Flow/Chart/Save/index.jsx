@@ -45,7 +45,7 @@ const Save = ({ nodes, edges, flowId }) => {
     setLoading(false);
   };
   return (
-    <div aria-label="add new flow" className="mb-3 text-start">
+    <>
       <Button
         variant="contained"
         color="success"
@@ -61,7 +61,7 @@ const Save = ({ nodes, edges, flowId }) => {
       >
         ذخیره‌ فلوچارت
       </Button>
-    </div>
+    </>
   );
 };
 
