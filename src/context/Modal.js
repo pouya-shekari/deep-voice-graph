@@ -6,6 +6,8 @@ const ModalProvider = ({ children }) => {
   const [modalStates, setModalStates] = useState({
     isLogoutModalOpen: false,
 
+    isExitEditFlowModalOpen: false,
+
     isDeleteAnnouncementModalOpen: false,
     isAddAnnouncementModalOpen: false,
     isEditAnnouncementModalOpen: false,
