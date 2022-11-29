@@ -5,7 +5,7 @@ import AppRoutes from "@routes/App.routes";
 import Theme from "@cmp/UI/Theme";
 
 import "@assets/styles/global.css";
-
+import "bootstrap/dist/css/bootstrap.rtl.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
