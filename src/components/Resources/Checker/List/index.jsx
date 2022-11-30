@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import useSWR from "swr";
-import { Alert, Button } from "@mui/material";
+import { Alert, Button, Chip, Stack } from "@mui/material";
 
 import Table from "@cmp/UI/Table";
 
@@ -46,6 +46,7 @@ const tableHeaders = [
     },
   },
   { title: "وضعیت چکر", field: "isEnable", style: {} },
+  { title: "فلوچارت‌های استفاده کننده", field: "flowNames", style: {} },
 ];
 
 const List = () => {
@@ -139,6 +140,19 @@ const List = () => {
       ...item,
       id: item.checkerId,
       title: item.text,
+      flowNames: (
+        <Stack direction={"row"} spacing={1} justifyContent="center">
+          {item.flowNames.map((name) => (
+            <Chip
+              label={name}
+              key={name}
+              color="success"
+              size="small"
+              className="english"
+            />
+          ))}
+        </Stack>
+      ),
       isEnable: (
         <Alert
           severity={item.isEnable ? "success" : "error"}
