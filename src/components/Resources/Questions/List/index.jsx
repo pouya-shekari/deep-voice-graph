@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useSWR from "swr";
 
-import { Alert } from "@mui/material";
+import { Alert, Chip, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -40,6 +40,7 @@ const tableHeaders = [
     },
   },
   { title: "وضعیت سوال", field: "isEnable", style: {} },
+  { title: "فلوچارت‌های استفاده کننده", field: "flowNames", style: {} },
 ];
 
 const List = () => {
@@ -149,6 +150,19 @@ const List = () => {
       ...item,
       id: item.announcementId,
       title: item.text,
+      flowNames: (
+        <Stack direction={"row"} spacing={1} justifyContent="center">
+          {item.flowNames.map((name) => (
+            <Chip
+              label={name}
+              key={name}
+              color="success"
+              size="small"
+              className="english"
+            />
+          ))}
+        </Stack>
+      ),
       isEnable: (
         <Alert
           severity={item.isEnable ? "success" : "error"}

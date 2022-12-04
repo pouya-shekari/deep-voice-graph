@@ -3,6 +3,11 @@
   src: url("../fonts/IRANSansWeb.cdb118d6.woff2") format("woff2");
 }
 
+@font-face {
+  font-family: Roboto;
+  src: url("../fonts/Roboto-Regular.ttf");
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -34,4 +39,14 @@ div[data-message] {
 .react-flow {
   background-color: #fff;
   border-radius: 3px;
+}
+
+.english .MuiChip-label {
+  font-family: Roboto !important;
+  padding: 3px 7px;
+  font-size: 11px;
+}
+
+.MuiChip-root {
+  height: auto !important;
 }
