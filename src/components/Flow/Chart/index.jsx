@@ -29,6 +29,7 @@ import allowToAddResource from "@utils/flowValidator/allowToAddResource";
 import AddResource from "@cmp/Flow/Chart/AddResource";
 import faToEnDigits from "@utils/faToEnDigits";
 import Reset from "@cmp/Flow/Chart/Reset";
+import Validate from "./Validate";
 
 const Chart = () => {
   const { showSnak } = useSnak();
@@ -84,7 +85,7 @@ const Chart = () => {
         id: uuidv4(),
         type,
         position,
-        data: { label: convertNodeNames(type), responses: [] },
+        data: { label: convertNodeNames(type), responses: [], errors: [] },
       };
       setNodes((nds) => nds.concat(newNode));
     },
@@ -154,12 +155,13 @@ const Chart = () => {
             label: value.resource.label,
             resourceId: value.resource.id,
             waitTime: faToEnDigits(value.waitTime) ?? 0,
+            errors: [],
             responses: value.resource.responses
               ? [...value.resource.responses]
-              : node.responses,
+              : node.data.responses,
           };
         }
-        return node;
+        return { ...node };
       })
     );
     const updatedEdges = edges.filter(
@@ -184,6 +186,9 @@ const Chart = () => {
     setIsLoading(false);
   };
 
+  const updateValidatedNodes = (nodes) => {
+    setNodes([...nodes]);
+  };
   if (flowError)
     return (
       <Alert
@@ -199,10 +204,17 @@ const Chart = () => {
     <>
       <div
         aria-label="add new flow"
-        className="mb-3 text-start d-flex gap-3 flex-row-reverse"
+        className="mb-3 text-start d-flex gap-3 justify-content-between"
       >
-        <Reset onClick={resetFlow} isLoading={isLoading} />
-        <Save nodes={nodes} edges={edges} flowId={id} />
+        <Validate
+          nodes={nodes}
+          edges={edges}
+          onValidateEnd={updateValidatedNodes}
+        />
+        <div className="d-flex gap-3">
+          <Reset onClick={resetFlow} isLoading={isLoading} />
+          <Save nodes={nodes} edges={edges} flowId={id} />
+        </div>
       </div>
       <AddResource
         selectedNode={nodeToAddResource}
