@@ -18,20 +18,20 @@ const Checker = (props) => {
       />
       <span>{props.data.label}</span>
       <br />
-      <span>(yes, no)</span>
+      <span>(true, false)</span>
       <Handle
         type="source"
-        id="yes"
+        id="true"
         position={Position.Right}
         style={{ backgroundColor: "green" }}
-        title="yes"
+        title="true"
       />
       <Handle
         type="source"
-        id="no"
+        id="false"
         position={Position.Bottom}
         style={{ backgroundColor: "green" }}
-        title="no"
+        title="false"
       />
     </div>
   );
