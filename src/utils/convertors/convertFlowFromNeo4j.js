@@ -9,6 +9,7 @@ const convertFlowFromNeo4j = (flowStates) => {
         waitTime: state.waitTime,
         responses: [...JSON.parse(state.meta).responses],
         resourceId: state.resourceId,
+        errors: [...[]],
       },
     };
     return tempNode;

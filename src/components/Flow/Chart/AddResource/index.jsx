@@ -128,7 +128,6 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
 
   const fetchResource = useCallback(
     async (type) => {
-      console.log(type);
       const whichType = {
         Checker: loadCheckers,
         Action: loadActions,

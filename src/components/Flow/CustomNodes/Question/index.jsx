@@ -3,6 +3,7 @@ import { Handle, Position } from "reactflow";
 import styles from "@cmp/Flow/CustomNodes/index.module.scss";
 
 import { v4 as uuidv4 } from "uuid";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const Question = (props) => {
   const positionHandle = (index) => {
