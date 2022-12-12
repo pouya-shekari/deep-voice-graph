@@ -8,6 +8,9 @@ const ModalProvider = ({ children }) => {
 
     isExitEditFlowModalOpen: false,
 
+    isResetFlowModalOpen: false,
+    isSaveFlowModalOpen: false,
+
     isDeleteAnnouncementModalOpen: false,
     isAddAnnouncementModalOpen: false,
     isEditAnnouncementModalOpen: false,
