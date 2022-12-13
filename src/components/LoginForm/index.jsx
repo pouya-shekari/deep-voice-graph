@@ -72,7 +72,12 @@ const LoginForm = () => {
   };
 
   return (
-    <Box component={"form"} sx={{ width: "100%" }}>
+    <Box
+      component={"form"}
+      sx={{ width: "100%" }}
+      role="form"
+      name="hara-login-form"
+    >
       <TextField
         sx={{ mb: 3 }}
         required
@@ -86,6 +91,7 @@ const LoginForm = () => {
               <PersonIcon />
             </InputAdornment>
           ),
+          "aria-label": "login-phone-number",
         }}
         inputRef={usernameRef}
         error={error.username}

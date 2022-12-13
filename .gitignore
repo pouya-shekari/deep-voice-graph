@@ -10,6 +10,8 @@
 /sample.json
 # testing
 /coverage
+/jest.config.js
+/babel.config.js
 
 # production
 /build
