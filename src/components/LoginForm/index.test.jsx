@@ -1,12 +1,9 @@
-import { screen, render, waitFor } from "@utils/test-helper/test-utils";
+import { screen, render } from "@utils/test-helper/test-utils";
 import userEvent from "@testing-library/user-event";
 import * as router from "react-router";
 
 import LoginForm from ".";
 import Snak from "@cmp/UI/Snak";
-import { server } from "../../mock/server";
-import { rest } from "msw";
-import BASEURL from "@constants/BASEURL";
 
 test("login form is show in the page", () => {
   render(<LoginForm />);
