@@ -63,7 +63,6 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
   }, [checkers, showSnak]);
 
   const loadActions = useCallback(async () => {
-    console.log(actions);
     if (actions) {
       return actions;
     }
@@ -163,6 +162,26 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
   ]);
 
   const validateInputs = () => {
+    if(resource === null){
+      if(selectedNode.data.resourceId !== undefined){
+          let index = options.findIndex(item=>item.id === selectedNode.data.resourceId)
+          if(index !== -1){
+            if (
+                ["Announcement", "Question"].includes(selectedNode?.type) &&
+                !waitTimeValidator(waitTimeRef.current.value)
+            ) {
+              setWaitTimeError("زمان انتظار معتبر نمی‌باشد.");
+              return;
+            }
+            else{
+              let resource = options[index]
+              modal.close();
+              onUpdate({ resource, waitTime: waitTimeRef?.current?.value });
+              return;
+            }
+          }
+        }
+    }
     if (!resource) {
       showSnak({
         type: "error",
@@ -255,6 +274,9 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
         <div className="mb-3">
           <Autocomplete
             options={options}
+            defaultValue={selectedNode?
+                options.find(item=>item.label === selectedNode.data.label)
+                : undefined}
             onChange={(event, newValue) => {
               setResource(newValue);
             }}
@@ -283,6 +305,7 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
               error={waitTimeError !== ""}
               helperText={waitTimeError}
               inputRef={waitTimeRef}
+              defaultValue={selectedNode?.data.waitTime}
             />
           </div>
         )}
