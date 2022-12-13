@@ -164,10 +164,15 @@ const Chart = () => {
         return { ...node };
       })
     );
-    const updatedEdges = edges.filter(
-      (edge) => edge.source !== nodeToAddResource.id
-    );
-    setEdges([...updatedEdges]);
+    let index = nodes.findIndex((node)=>node.id === nodeToAddResource.id)
+    if(index !== -1){
+      if(nodes[index].type === 'Question'){
+        const updatedEdges = edges.filter(
+        (edge) => edge.source !== nodeToAddResource.id
+        );
+        setEdges([...updatedEdges]);
+      }
+    }
     updateNodeInternals(nodeToAddResource.id);
     clearNodeToAddResource();
   };
