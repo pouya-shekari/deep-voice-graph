@@ -70,6 +70,7 @@ const Simple = ({
   actions,
   tableHeaders,
   onRowClick,
+  onContextMenu
 }) => {
   return (
     <>
@@ -112,6 +113,7 @@ const Simple = ({
               <TableRow
                 key={uuidv4()}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                onContextMenu={onContextMenu}
               >
                 {tableHeaders.map((header) => (
                   <TableCell

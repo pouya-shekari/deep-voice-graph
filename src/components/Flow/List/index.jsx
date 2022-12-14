@@ -16,6 +16,8 @@ import Add from "@cmp/Flow/Add";
 import useModal from "@hooks/useModal";
 import Edit from "@cmp/Flow/Edit";
 import updateFlow from "@services/flows/updateFlow";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 const tableHeaders = [
   { title: "شناسه فلوچارت", field: "id", style: {} },
@@ -40,6 +42,7 @@ const List = () => {
   const { showSnak } = useSnak();
   const modal = useModal();
   const [selectedId, setSelectedId] = useState(0);
+  const [contextMenu, setContextMenu] = useState(null);
 
   const {
     data: flows,
@@ -131,6 +134,24 @@ const List = () => {
     }
     modal.close();
   };
+
+  const handleContextMenu = (event) => {
+    event.preventDefault();
+    setContextMenu(
+        contextMenu === null
+            ? {
+              mouseX: event.clientX + 2,
+              mouseY: event.clientY - 6,
+            }
+            :
+            null,
+    );
+  };
+
+  const handleClose = () => {
+    setContextMenu(null);
+  };
+
   return (
     <>
       <Add updateListHandler={updateList} />
@@ -149,6 +170,7 @@ const List = () => {
         hasAction={true}
         tableHeaders={tableHeaders}
         onRowClick={showEditModal}
+        onContextMenu={handleContextMenu}
         actions={[
           {
             type: "cancel",
@@ -166,6 +188,18 @@ const List = () => {
           },
         ]}
       />
+      <Menu
+          open={contextMenu !== null}
+          onClose={handleClose}
+          anchorReference="anchorPosition"
+          anchorPosition={
+            contextMenu !== null
+                ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+                : undefined
+          }
+      >
+        <MenuItem onClick={handleClose}>کپی از فلوچارت</MenuItem>
+      </Menu>
     </>
   );
 };
