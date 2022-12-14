@@ -63,7 +63,6 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
   }, [checkers, showSnak]);
 
   const loadActions = useCallback(async () => {
-    console.log(actions);
     if (actions) {
       return actions;
     }
@@ -164,22 +163,39 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
 
   const validateInputs = () => {
     if (!resource) {
-      showSnak({
-        type: "error",
-        message: "لطفا Resource را از لیست موجود انتخاب کنید.",
-      });
-      return;
+      if(selectedNode.data.resourceId !== undefined){
+        let index = options.findIndex(item=>item.id === selectedNode.data.resourceId)
+        if(index !== -1){
+          if(validateWaitTime()=== false) return;
+          else{
+            let resource = options[index]
+            onUpdate({ resource, waitTime: waitTimeRef?.current?.value });
+            closeModalHandler();
+            return;
+          }
+        }
+      }else {
+        showSnak({
+          type: "error",
+          message: "لطفا Resource را از لیست موجود انتخاب کنید.",
+        });
+        return;
+      }
     }
+    if(validateWaitTime()=== false) return;
+    onUpdate({ resource, waitTime: waitTimeRef?.current?.value });
+    closeModalHandler();
+  };
+
+  const validateWaitTime = ()=>{
     if (
-      ["Announcement", "Question"].includes(selectedNode?.type) &&
-      !waitTimeValidator(waitTimeRef.current.value)
+        ["Announcement", "Question"].includes(selectedNode?.type) &&
+        !waitTimeValidator(waitTimeRef.current.value)
     ) {
       setWaitTimeError("زمان انتظار معتبر نمی‌باشد.");
-      return;
+      return false;
     }
-    modal.close();
-    onUpdate({ resource, waitTime: waitTimeRef?.current?.value });
-  };
+  }
 
   return (
     <>
@@ -255,6 +271,9 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
         <div className="mb-3">
           <Autocomplete
             options={options}
+            defaultValue={selectedNode?
+                options.find(item=>item.label === selectedNode.data.label)
+                : undefined}
             onChange={(event, newValue) => {
               setResource(newValue);
             }}
@@ -283,6 +302,7 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
               error={waitTimeError !== ""}
               helperText={waitTimeError}
               inputRef={waitTimeRef}
+              defaultValue={selectedNode?.data.waitTime}
             />
           </div>
         )}

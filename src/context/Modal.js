@@ -34,7 +34,6 @@ const ModalProvider = ({ children }) => {
   });
 
   const show = (context) => {
-    console.log(context);
     setModalStates((prev) => ({
       ...prev,
       ...context,
