@@ -162,43 +162,40 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
   ]);
 
   const validateInputs = () => {
-    if(resource === null){
+    if (!resource) {
       if(selectedNode.data.resourceId !== undefined){
-          let index = options.findIndex(item=>item.id === selectedNode.data.resourceId)
-          if(index !== -1){
-            if (
-                ["Announcement", "Question"].includes(selectedNode?.type) &&
-                !waitTimeValidator(waitTimeRef.current.value)
-            ) {
-              setWaitTimeError("زمان انتظار معتبر نمی‌باشد.");
-              return;
-            }
-            else{
-              let resource = options[index]
-              modal.close();
-              onUpdate({ resource, waitTime: waitTimeRef?.current?.value });
-              return;
-            }
+        let index = options.findIndex(item=>item.id === selectedNode.data.resourceId)
+        if(index !== -1){
+          if(validateWaitTime()=== false) return;
+          else{
+            let resource = options[index]
+            onUpdate({ resource, waitTime: waitTimeRef?.current?.value });
+            closeModalHandler();
+            return;
           }
         }
+      }else {
+        showSnak({
+          type: "error",
+          message: "لطفا Resource را از لیست موجود انتخاب کنید.",
+        });
+        return;
+      }
     }
-    if (!resource) {
-      showSnak({
-        type: "error",
-        message: "لطفا Resource را از لیست موجود انتخاب کنید.",
-      });
-      return;
-    }
+    if(validateWaitTime()=== false) return;
+    onUpdate({ resource, waitTime: waitTimeRef?.current?.value });
+    closeModalHandler();
+  };
+
+  const validateWaitTime = ()=>{
     if (
-      ["Announcement", "Question"].includes(selectedNode?.type) &&
-      !waitTimeValidator(waitTimeRef.current.value)
+        ["Announcement", "Question"].includes(selectedNode?.type) &&
+        !waitTimeValidator(waitTimeRef.current.value)
     ) {
       setWaitTimeError("زمان انتظار معتبر نمی‌باشد.");
-      return;
+      return false;
     }
-    modal.close();
-    onUpdate({ resource, waitTime: waitTimeRef?.current?.value });
-  };
+  }
 
   return (
     <>
