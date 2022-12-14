@@ -16,7 +16,12 @@ const Snak = () => {
     closeSnak();
   };
   return (
-    <Snackbar open={snak.open} autoHideDuration={3000} onClose={onClose}>
+    <Snackbar
+      open={snak.open}
+      autoHideDuration={3000}
+      onClose={onClose}
+      aria-label="snakbar"
+    >
       <Alert severity={snak.type} sx={{ width: "100%" }} onClose={onClose}>
         {snak.message}
       </Alert>
