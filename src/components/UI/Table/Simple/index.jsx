@@ -131,14 +131,14 @@ const Simple = ({
                   </TableCell>
                 ))}
                 {hasAction && (
-                  <TableCell align={'center'} style={{width:'20%'}}>
-                    <div className={'d-flex justify-content-start flex-wrap'}>
+                  <TableCell align={'center'}>
+                    {/*<div className={'d-flex justify-content-between flex-wrap'}>*/}
                       {actions.map((action, index) => (
                           <Fragment key={index}>
                             {renderAction(action, row)}
                           </Fragment>
                       ))}
-                    </div>
+                    {/*</div>*/}
                   </TableCell>
                 )}
               </TableRow>
