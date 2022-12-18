@@ -3,4 +3,4 @@ import {checker} from './api/checker';
 import { login } from "./api/login";
 import { question } from "./api/question";
 
-export const handlers = [...login, ...action, ...question];
+export const handlers = [...login, ...action, ...question , ...checker];
