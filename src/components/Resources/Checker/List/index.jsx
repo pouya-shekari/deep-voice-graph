@@ -126,6 +126,7 @@ const List = () => {
   if (checkersError)
     return (
       <Alert
+        aria-label="checker-error"
         variant="filled"
         severity="error"
         sx={{ justifyContent: "center", gap: "5px" }}

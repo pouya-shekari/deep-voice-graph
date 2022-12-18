@@ -70,7 +70,7 @@ const Add = ({ updateListHandler, onClose }) => {
       <Modal
         open={modal.modalStates.isAddCheckerModalOpen}
         onClose={closeModalHandler}
-        label="delete-announcement-modal"
+        label="add-checker-modal"
         title={"افزودن چکر جدید"}
         description={
           "برای افزودن چکر جدید، وارد کردن عنوان چکر و URL الزامی می‌باشد."
