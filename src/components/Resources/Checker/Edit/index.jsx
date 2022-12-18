@@ -41,7 +41,7 @@ const Edit = ({ onEdit, title, url }) => {
   return (
     <Modal
       open={modal.modalStates.isEditCheckerModalOpen}
-      label="edit-announcement-modal"
+      label="edit-checker-modal"
       title={"ویرایش چکر "}
       onClose={closeModalHandler}
       description={
