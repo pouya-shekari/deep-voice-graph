@@ -113,7 +113,7 @@ const Simple = ({
               <TableRow
                 key={uuidv4()}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                onContextMenu={onContextMenu}
+                onContextMenu={onContextMenu.bind(this, row.id)}
               >
                 {tableHeaders.map((header) => (
                   <TableCell

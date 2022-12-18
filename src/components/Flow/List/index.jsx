@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, {useRef, useState} from "react";
 import useSWR from "swr";
-import { Alert } from "@mui/material";
+import {Alert, TextField} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import Table from "@cmp/UI/Table";
@@ -18,6 +18,16 @@ import Edit from "@cmp/Flow/Edit";
 import updateFlow from "@services/flows/updateFlow";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import Modal from "@cmp/UI/Modal";
+import flowValidator from "@utils/flowValidator";
+import createFlow from "@services/flows/createFlow";
+import axios from "@lib/axios";
+import {v4 as uuidv4} from "uuid";
+import updateFlowStates from "@services/flows/updateFlowStates";
+import convertFlowFromNeo4j from "@utils/convertors/convertFlowFromNeo4j";
+import convertFlowToNeo4j from "@utils/convertors/convertFlowToNeo4j";
 
 const tableHeaders = [
   { title: "شناسه فلوچارت", field: "id", style: {} },
@@ -43,6 +53,15 @@ const List = () => {
   const modal = useModal();
   const [selectedId, setSelectedId] = useState(0);
   const [contextMenu, setContextMenu] = useState(null);
+  const [duplicateId , setDuplicateId] = useState(null);
+
+  const [faNameError, setFaNameError] = useState("");
+  const [enNameError, setEnNameError] = useState("");
+  const [descError, setDescError] = useState("");
+
+  const faRef = useRef();
+  const enRef = useRef();
+  const descRef = useRef();
 
   const {
     data: flows,
@@ -135,8 +154,9 @@ const List = () => {
     modal.close();
   };
 
-  const handleContextMenu = (event) => {
+  const handleContextMenu = (id , event) => {
     event.preventDefault();
+    setDuplicateId(id)
     setContextMenu(
         contextMenu === null
             ? {
@@ -150,6 +170,94 @@ const List = () => {
 
   const handleClose = () => {
     setContextMenu(null);
+  };
+
+  const handleDuplicate = ()=>{
+    modal.show({ isFlowDuplicateModalOpen: true });
+    setContextMenu(null);
+  }
+
+  const closeModalHandler = () => {
+    setFaNameError("");
+    setEnNameError("");
+    setDescError("");
+    modal.close();
+  };
+
+  const onConfirm = async () => {
+    setFaNameError("");
+    setEnNameError("");
+    setDescError("");
+    let valid = true;
+    if (!flowValidator(faRef.current.value)) {
+      setFaNameError("عنوان فارسی فلوچارت نمی‌تواند خالی باشد.");
+      valid = false;
+    }
+    if (!flowValidator(enRef.current.value)) {
+      setEnNameError("عنوان انگلیسی فلوچارت نمی‌تواند خالی باشد.");
+      valid = false;
+    }
+    if (!flowValidator(descRef.current.value)) {
+      setDescError("توضیحات فلوچارت نمی‌تواند خالی باشد.");
+      valid = false;
+    }
+    if (!valid) return;
+    showSnak({ type: "warning", message: "در حال افزودن فلوچارت..." });
+
+    try {
+      const res = await createFlow(
+          `flow/create`,
+          localStorageHelper.load("token"),
+          {
+            en: enRef.current.value,
+            fa: faRef.current.value,
+            desc: descRef.current.value,
+          }
+      )
+        const config = {
+          headers: {
+            Authorization: `Bearer ${localStorageHelper.load("token")}`,
+          },
+        };
+        try {
+          const { data } = await axios.getAll(`/flow/${duplicateId}`, config)
+            let newFlowStates = JSON.parse(JSON.stringify(data.flowStates));
+            data.flowStates.forEach(item=>{
+              let temp = item.stateId
+              newFlowStates = JSON.parse(JSON.stringify(newFlowStates).replaceAll(temp,uuidv4()))
+            });
+          const [nodes , edges] = convertFlowFromNeo4j(newFlowStates)
+            try {
+              await updateFlowStates(
+                  `/flow/update/states`,
+                  localStorageHelper.load("token"),
+                  {
+                    flowId: res.flowId,
+                    flowStates: convertFlowToNeo4j(nodes , edges),
+                  }
+              );
+              updateList(res);
+              showSnak({ type: "success", message: "فلوچارت با موفقیت کپی شد." });
+              modal.close();
+            } catch (error) {
+
+            }
+        } catch (e) {
+
+        }
+    } catch (error) {
+      if (error.message === "409") {
+        showSnak({
+          type: "error",
+          message: "نام فلوچارت تکراری می‌باشد.",
+        });
+        return;
+      }
+      showSnak({
+        type: "error",
+        message: "افزودن فلوچارت با خطا مواجه شد.",
+      });
+    }
   };
 
   return (
@@ -198,8 +306,73 @@ const List = () => {
                 : undefined
           }
       >
-        <MenuItem onClick={handleClose}>کپی از فلوچارت</MenuItem>
+        <MenuItem onClick={handleDuplicate}>کپی از فلوچارت</MenuItem>
       </Menu>
+      <Modal
+          open={modal.modalStates.isFlowDuplicateModalOpen}
+          onClose={closeModalHandler}
+          label="copy-flow-modal"
+          title={"افزودن فلوچارت کپی"}
+          description={
+            "برای افزودن فلوچارت کپی، وارد کردن عنوان فارسی، عنوان انگلیسی و توضیحات الزامی می‌باشد."
+          }
+          actions={[
+            {
+              type: "success",
+              label: "افزودن فلوچارت کپی",
+              icon: <AddIcon />,
+              onClickHandler: onConfirm,
+            },
+            {
+              type: "cancel",
+              label: "انصراف",
+              icon: <CloseIcon />,
+              onClickHandler: closeModalHandler,
+            },
+          ]}
+      >
+        <div className="row">
+          <div className="col-md-6 mb-3">
+            <TextField
+                id="flow-fa-title"
+                label="عنوان فارسی فلوچارت"
+                type="text"
+                fullWidth
+                variant="standard"
+                autoComplete={"off"}
+                error={faNameError !== ""}
+                helperText={faNameError}
+                inputRef={faRef}
+            />
+          </div>
+          <div className="col-md-6 mb-3">
+            <TextField
+                id="flow-en-title"
+                label="عنوان انگلیسی فلوچارت"
+                type="text"
+                fullWidth
+                variant="standard"
+                autoComplete={"off"}
+                error={enNameError !== ""}
+                helperText={enNameError}
+                inputRef={enRef}
+            />
+          </div>
+          <div className="col-md-12 mb-3">
+            <TextField
+                id="flow-description"
+                label="توضیحات"
+                type="text"
+                fullWidth
+                variant="standard"
+                autoComplete={"off"}
+                error={descError !== ""}
+                helperText={descError}
+                inputRef={descRef}
+            />
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };
