@@ -41,8 +41,8 @@ const Edit = ({ onEdit, title, url }) => {
   return (
     <Modal
       open={modal.modalStates.isEditActionModalOpen}
-      label="edit-announcement-modal"
-      title={"ویرایش چکر "}
+      label="edit-action-modal"
+      title={"ویرایش اکشن "}
       onClose={closeModalHandler}
       description={
         "برای افزودن اکشن جدید، وارد کردن عنوان اکشن و URL الزامی می‌باشد."
