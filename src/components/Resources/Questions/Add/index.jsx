@@ -118,7 +118,7 @@ const Add = ({ updateListHandler, onClose }) => {
     <>
       <Modal
         open={modal.modalStates.isAddQuestionModalOpen}
-        label="delete-announcement-modal"
+        label="add-question-modal"
         onClose={closeModalHandler}
         title={"افزودن سوال جدید"}
         description={

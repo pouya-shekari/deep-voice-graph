@@ -51,8 +51,8 @@ const Edit = ({ onEdit, title }) => {
     >
       <div className="mb-3">
         <TextField
-          id="ann-title"
-          label="عنوان اعلان"
+          id="question-title"
+          label="عنوان سوال"
           type="text"
           fullWidth
           variant="standard"
