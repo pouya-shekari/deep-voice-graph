@@ -72,6 +72,7 @@ const Row = ({ hasAction, tableHeaders, row, actions, subTableItem }) => {
       <TableRow
         key={uuidv4()}
         sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+        aria-label="main"
       >
         <TableCell>
           <IconButton
