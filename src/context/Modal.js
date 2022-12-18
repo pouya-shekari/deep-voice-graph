@@ -2,7 +2,7 @@ import { createContext, useState } from "react";
 
 export const ModalContext = createContext(null);
 
-const ModalProvider = ({ children }) => {
+const ModalProvider = ({ children, defaultValues }) => {
   const [modalStates, setModalStates] = useState({
     isLogoutModalOpen: false,
 
@@ -31,6 +31,7 @@ const ModalProvider = ({ children }) => {
     isEditFlowModalOpen: false,
 
     isAddResourceModalOpen: false,
+    ...defaultValues,
   });
 
   const show = (context) => {
@@ -67,8 +68,12 @@ const ModalProvider = ({ children }) => {
     });
   };
 
-  const value = { modalStates, show, close };
-
+  const value = {
+    modalStates: { ...modalStates },
+    show,
+    close,
+  };
+  console.log(value);
   return (
     <ModalContext.Provider value={value}>{children}</ModalContext.Provider>
   );

@@ -21,6 +21,7 @@ const Add = ({ updateListHandler, onClose }) => {
 
   const modal = useModal();
   const { showSnak } = useSnak();
+
   const closeModalHandler = () => {
     setTitleError("");
     setUrlError("");
@@ -71,7 +72,7 @@ const Add = ({ updateListHandler, onClose }) => {
       <Modal
         open={modal.modalStates.isAddActionModalOpen}
         onClose={closeModalHandler}
-        label="delete-action-modal"
+        label="add-action-modal"
         title={"افزودن اکشن جدید"}
         description={
           "برای افزودن اکشن جدید، وارد کردن عنوان اکشن و URL الزامی می‌باشد."
@@ -118,7 +119,6 @@ const Add = ({ updateListHandler, onClose }) => {
           />
         </div>
       </Modal>
-
     </>
   );
 };

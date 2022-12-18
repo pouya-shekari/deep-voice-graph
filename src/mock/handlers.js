@@ -1,3 +1,4 @@
-const { login } = require("./api/login");
+import { action } from "./api/action";
+import { login } from "./api/login";
 
-export const handlers = [...login];
+export const handlers = [...login, ...action];

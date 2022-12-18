@@ -61,6 +61,7 @@ const LoginForm = () => {
           type: "error",
           message: "نام کاربری یا گذرواژه معتبر نمی‌باشد.",
         });
+        setIsLoading(false);
         return;
       }
       showSnak({

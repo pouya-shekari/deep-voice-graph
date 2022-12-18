@@ -127,6 +127,7 @@ const List = () => {
   if (actionsError)
     return (
       <Alert
+        aria-label="action-error"
         variant="filled"
         severity="error"
         sx={{ justifyContent: "center", gap: "5px" }}
