@@ -155,6 +155,8 @@ const List = () => {
     };
   });
 
+  const handleContextMenu=()=>{}
+
   return (
     <>
       <Add updateListHandler={updateList} />
@@ -181,6 +183,7 @@ const List = () => {
         label={"announcements table"}
         hasAction={true}
         tableHeaders={tableHeaders}
+        onContextMenu={handleContextMenu}
         actions={[
           {
             type: "primary",
