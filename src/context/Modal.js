@@ -11,6 +11,8 @@ const ModalProvider = ({ children, defaultValues }) => {
     isResetFlowModalOpen: false,
     isSaveFlowModalOpen: false,
 
+    isFlowDuplicateModalOpen: false,
+
     isDeleteAnnouncementModalOpen: false,
     isAddAnnouncementModalOpen: false,
     isEditAnnouncementModalOpen: false,
