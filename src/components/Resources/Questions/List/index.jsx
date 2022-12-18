@@ -136,6 +136,7 @@ const List = () => {
   if (questionsError)
     return (
       <Alert
+        aria-label="question-error"
         variant="filled"
         severity="error"
         sx={{ justifyContent: "center", gap: "5px" }}
