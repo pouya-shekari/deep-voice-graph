@@ -75,7 +75,6 @@ const ModalProvider = ({ children, defaultValues }) => {
     show,
     close,
   };
-  console.log(value);
   return (
     <ModalContext.Provider value={value}>{children}</ModalContext.Provider>
   );
