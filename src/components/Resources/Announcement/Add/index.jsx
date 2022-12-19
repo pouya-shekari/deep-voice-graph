@@ -59,7 +59,7 @@ const Add = ({ updateListHandler, onClose }) => {
       <Modal
         open={modal.modalStates.isAddAnnouncementModalOpen}
         onClose={closeModalHandler}
-        label="delete-announcement-modal"
+        label="add-announcement-modal"
         title={"افزودن اعلان جدید"}
         description={
           "برای افزودن اعلان جدید، وارد کردن عنوان اعلان الزامی می‌باشد."
