@@ -25,7 +25,7 @@ const Answer = ({ answer, index, onDelete, onEdit }) => {
       <TextField
         sx={{ flexGrow: 1 }}
         margin="dense"
-        id="عنوان پاسخ"
+        id={`عنوان پاسخ-${index}`}
         label="عنوان پاسخ"
         type="text"
         variant="standard"

@@ -24,4 +24,40 @@ export const question = [
       ])
     );
   }),
+  rest.post(`${BASEURL}/announcement/create`, async (req, res, ctx) => {
+    const questions = [
+      {
+        applicationId: 5,
+        text: "Question 1",
+        isQuestion: true,
+        responses: ["yes", "no"],
+      },
+      {
+        applicationId: 5,
+        text: "Question 2",
+        isQuestion: true,
+        responses: ["yes", "no"],
+      },
+    ];
+    const { text, responses } = await req.json();
+    const isDuplicate =
+      questions.findIndex((question) => question.text === text) > -1
+        ? true
+        : false;
+    console.log(isDuplicate);
+    if (isDuplicate) {
+      return res(ctx.status("409"));
+    }
+    return res(
+      ctx.status(200),
+      ctx.json({
+        announcementId: "test id",
+        text: text,
+        isQuestion: true,
+        responses: responses,
+        isEnable: true,
+        flowNames: null,
+      })
+    );
+  }),
 ];

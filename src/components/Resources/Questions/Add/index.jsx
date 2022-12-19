@@ -86,6 +86,8 @@ const Add = ({ updateListHandler, onClose }) => {
       }
     }
     if (!isValid) return;
+    showSnak({ type: "warning", message: "در حال افزودن سوال..." });
+
     try {
       const res = await createQuestion(
         `announcement/create`,
