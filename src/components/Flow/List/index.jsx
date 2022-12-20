@@ -75,6 +75,7 @@ const List = () => {
       <Alert
         variant="filled"
         severity="error"
+        aria-label="flow-error"
         sx={{ justifyContent: "center", gap: "5px" }}
       >
         دریافت اطلاعات با خطا مواجه شد! لطفا اتصال اینترنت خود را بررسی نمایید.
