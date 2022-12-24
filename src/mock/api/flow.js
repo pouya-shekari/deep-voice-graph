@@ -30,7 +30,7 @@ export const flow = [
         ];
         const { nameEN , nameFA , description } = await req.json();
         const isDuplicate =
-            flows.findIndex((flow) => flow.nameEN === text) > -1 ? true : flows.findIndex((flow) => flow.nameFA === text) > -1 ? true : false;
+            flows.findIndex((flow) => flow.nameEN === nameEN) > -1 ? true : flows.findIndex((flow) => flow.nameFA === nameFA) > -1 ? true : false;
         if (isDuplicate) {
             return res(ctx.status(409));
         }
