@@ -95,16 +95,18 @@ const Chart = () => {
   const onconnect = useCallback(
     (params) => {
       const sourceId = params.source;
+      const targetId = params.target;
       const sourceNode = nodes.find((nds) => nds.id === sourceId);
+      const targetNode = nodes.find((nds) => nds.id === targetId);
       if (sourceNode.type === "Checker" || sourceNode.type === "Question") {
         return setEdges(
           addEdge(
-            { ...params, type: "smoothstep", label: params.sourceHandle },
+            { ...params, type: "smoothstep", label: params.sourceHandle , targetNodeType: targetNode.type},
             edges
           )
         );
       }
-      return setEdges(addEdge({ ...params, type: "smoothstep" }, edges));
+      return setEdges(addEdge({ ...params, type: "smoothstep" ,targetNodeType: targetNode.type}, edges));
     },
     [setEdges, edges, nodes]
   );
