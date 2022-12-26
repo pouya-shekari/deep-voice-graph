@@ -44,7 +44,6 @@ const Add = ({ updateListHandler, onClose }) => {
   };
 
   const deleteAnswerHandler = (id) => {
-    console.log(id);
     setAnswers((ans) => [...ans.filter((item, index) => index !== id)]);
   };
 

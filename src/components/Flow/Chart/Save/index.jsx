@@ -54,7 +54,6 @@ const Save = ({ nodes, edges, flowId }) => {
         });
       }
     } else {
-      console.log(errors);
       showSnak({
         type: "error",
         message: errors[0] || errors[1],
