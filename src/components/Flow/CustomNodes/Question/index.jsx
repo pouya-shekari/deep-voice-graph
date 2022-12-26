@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const Question = (props) => {
+    console.log(props.data.errors.length)
   const positionHandle = (index) => {
     if (index % 2) {
       return `calc(50% + ${(index - 1) * 15}px)`;
@@ -141,6 +142,18 @@ const Question = (props) => {
       ) : (
         <></>
       )}
+        {props.data.errors.length!==0 ? (
+            <div style={{ fontSize: "12px", fontWeight: "bold", color: "crimson" }}>
+                {props.data.errors.map((err, index) => (
+                    <div key={index}>
+                        <ErrorOutlineIcon fontSize="inherit" sx={{ mr: 0.5 }} />
+                        <span>{err}</span>
+                    </div>
+                ))}
+            </div>
+        ) : (
+            <></>
+        )}
     </div>
   );
 };

@@ -1,14 +1,17 @@
 const IsFlowValid = (nodes, edges) => {
-  let checkForward = checkForwardNodes(nodes, edges);
-  let checkEnd = checkEndNode(nodes, edges);
-  let isValid = checkForward[0] && checkEnd[0];
+  //let checkForward = checkForwardNodes(nodes, edges);
+  //let checkEnd = checkEndNode(nodes, edges);
+  let checkLoop = checkLoopForNode(nodes,edges)
+  let isValid = /*checkForward[0] && checkEnd[0] &&*/ checkLoop[0];
   let errors = [];
-  errors.push(checkForward[1]);
-  errors.push(checkEnd[1]);
+  //errors.push(checkForward[1]);
+  //errors.push(checkEnd[1]);
+  errors.push(checkLoop[1]);
   return [isValid, errors];
 };
 
 export default IsFlowValid;
+/*
 
 const checkEndNode = (nodes, edges) => {
   let endNodes = nodes.filter((item) => item.type === "End");
@@ -101,3 +104,25 @@ const checkForwardNodes = (nodes, edges) => {
     return [true, null];
   }
 };
+*/
+
+const checkLoopForNode = (nodes,edges)=>{
+  let flag = true;
+  nodes.forEach(node=>{
+    let currentNodeEdges = edges.filter((edg) => edg.source === node.id)
+    if(currentNodeEdges.length !==0){
+      currentNodeEdges.forEach(edge=>{
+        if(edge.target === node.id){
+          flag = false;
+        }
+      })
+    }
+
+  })
+  if(flag){
+    return [true , null]
+  }
+  else{
+    return [false , 'ورودی و خروجی یک گره، نمی‌تواند یکسان باشد.']
+  }
+}
