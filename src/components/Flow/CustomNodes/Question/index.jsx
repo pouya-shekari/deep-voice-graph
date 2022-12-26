@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from "uuid";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const Question = (props) => {
-    console.log(props.data.errors.length)
   const positionHandle = (index) => {
     if (index % 2) {
       return `calc(50% + ${(index - 1) * 15}px)`;
@@ -116,6 +115,7 @@ const Question = (props) => {
       />
     ));
   }
+
   return (
     <div
       style={{
@@ -158,4 +158,4 @@ const Question = (props) => {
   );
 };
 
-export default React.memo(Question);
+export default Question;

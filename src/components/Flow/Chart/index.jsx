@@ -98,16 +98,17 @@ const Chart = () => {
       const targetId = params.target;
       const sourceNode = nodes.find((nds) => nds.id === sourceId);
       const targetNode = nodes.find((nds) => nds.id === targetId);
-      if (sourceNode.type === "Checker" || sourceNode.type === "Question") {
-        return setEdges(
-          addEdge(
-            { ...params, type: "smoothstep", label: params.sourceHandle , targetNodeType: targetNode.type},
-            edges
-          )
-        );
-      }
-      return setEdges(addEdge({ ...params, type: "smoothstep" ,targetNodeType: targetNode.type}, edges));
-    },
+      if(sourceNode !== targetNode){
+        if (sourceNode.type === "Checker" || sourceNode.type === "Question") {
+          return setEdges(
+              addEdge(
+                  { ...params, type: "smoothstep", label: params.sourceHandle , targetNodeType: targetNode.type , sourceNodeType: sourceNode.type},
+                  edges
+              )
+          );
+        }
+        return setEdges(addEdge({ ...params, type: "smoothstep" ,targetNodeType: targetNode.type , sourceNodeType: sourceNode.type}, edges))}
+      },
     [setEdges, edges, nodes]
   );
 
