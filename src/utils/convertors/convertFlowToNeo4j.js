@@ -1,22 +1,57 @@
 const convertFlowToNeo4j = (nodes, edges) => {
-  return nodes.map((nds) => {
-    const edgs = edges.filter((edg) => edg.source === nds.id);
-    return {
-      waitTime: +nds.data.waitTime ? +nds.data.waitTime : 0,
-      label: nds.data?.label,
-      stateId: nds.id,
-      type: nds.type,
+  const states = [];
+  const endNode = nodes.find((node) => node.type === "End");
+  if (endNode) {
+    states.push({
+      waitTime: 0,
+      label: endNode.data?.label,
+      stateId: endNode.id,
+      type: endNode.type,
       meta: JSON.stringify({
-        position: { ...nds.position },
-        responses: [...nds.data.responses],
+        position: { ...endNode.position },
+        responses: [...endNode.data.responses],
+        allEndNodes: nodes.filter((node) => node.type === "End"),
       }),
-      resourceId: nds.data.resourceId ? nds.data.resourceId : 1,
-      stateChildren: edgs.map((edge) => ({
-        targetId: edge.target,
-        value: edge.label ? edge.label : "",
-      })),
-    };
+      resourceId: 1,
+      stateChildren: [],
+    });
+  }
+  nodes.forEach((node) => {
+    if (node.type === "End") return;
+    const edgs = edges.filter((edg) => edg.source === node.id);
+    console.log(edgs.filter((ed) => ed.targetNodeType === "End"));
+    states.push({
+      waitTime: +node.data.waitTime ? +node.data.waitTime : 0,
+      label: node.data?.label,
+      stateId: node.id,
+      type: node.type,
+      meta: JSON.stringify({
+        position: { ...node.position },
+        responses: [...node.data.responses],
+        endNodesId: edgs
+          .filter((ed) => ed.targetNodeType === "End")
+          .map((el) => ({
+            id: el.target,
+            label: el.label ? el.label : "",
+            sourceId: el.source,
+          })),
+      }),
+      resourceId: node.data.resourceId ? node.data.resourceId : 1,
+      stateChildren: edgs.map((edge) => {
+        if (edge.targetNodeType === "End") {
+          return {
+            targetId: endNode.id,
+            value: edge.label ? edge.label : "",
+          };
+        }
+        return {
+          targetId: edge.target,
+          value: edge.label ? edge.label : "",
+        };
+      }),
+    });
   });
+  return states;
 };
 
 export default convertFlowToNeo4j;
