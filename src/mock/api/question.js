@@ -44,7 +44,6 @@ export const question = [
       questions.findIndex((question) => question.text === text) > -1
         ? true
         : false;
-    console.log(isDuplicate);
     if (isDuplicate) {
       return res(ctx.status("409"));
     }
