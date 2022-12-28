@@ -144,7 +144,7 @@ const List = () => {
       title: item.text,
       flowNames: (
         <Stack direction={"row"} spacing={1} justifyContent="center">
-          {item.flowNames.map((name) => (
+          {item.flowNames?.map((name) => (
             <Chip
               label={name}
               key={name}
@@ -166,7 +166,7 @@ const List = () => {
     };
   });
 
-  const handleContextMenu = ()=>{}
+  const handleContextMenu = () => {};
 
   return (
     <>

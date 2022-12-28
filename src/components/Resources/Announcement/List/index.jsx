@@ -117,7 +117,7 @@ const List = () => {
   if (announcementsError)
     return (
       <Alert
-        aria-label={'announcement-error'}
+        aria-label={"announcement-error"}
         variant="filled"
         severity="error"
         sx={{ justifyContent: "center", gap: "5px" }}
@@ -134,7 +134,7 @@ const List = () => {
       title: item.text,
       flowNames: (
         <Stack direction={"row"} spacing={1} justifyContent="center">
-          {item.flowNames.map((name) => (
+          {item.flowNames?.map((name) => (
             <Chip
               label={name}
               key={name}
@@ -156,7 +156,7 @@ const List = () => {
     };
   });
 
-  const handleContextMenu=()=>{}
+  const handleContextMenu = () => {};
 
   return (
     <>

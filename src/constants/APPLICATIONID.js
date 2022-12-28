@@ -1,3 +1,3 @@
-const APPLICATIONID = 5;
+const APPLICATIONID = 3;
 
 export default APPLICATIONID;
