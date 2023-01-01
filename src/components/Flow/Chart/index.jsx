@@ -30,6 +30,7 @@ import AddResource from "@cmp/Flow/Chart/AddResource";
 import faToEnDigits from "@utils/faToEnDigits";
 import Reset from "@cmp/Flow/Chart/Reset";
 import Validate from "./Validate";
+import ExportFlow from "./ExportFlow";
 
 const Chart = () => {
   const { showSnak } = useSnak();
@@ -98,17 +99,34 @@ const Chart = () => {
       const targetId = params.target;
       const sourceNode = nodes.find((nds) => nds.id === sourceId);
       const targetNode = nodes.find((nds) => nds.id === targetId);
-      if(sourceNode !== targetNode){
+      if (sourceNode !== targetNode) {
         if (sourceNode.type === "Checker" || sourceNode.type === "Question") {
           return setEdges(
-              addEdge(
-                  { ...params, type: "smoothstep", label: params.sourceHandle , targetNodeType: targetNode.type , sourceNodeType: sourceNode.type},
-                  edges
-              )
+            addEdge(
+              {
+                ...params,
+                type: "smoothstep",
+                label: params.sourceHandle,
+                targetNodeType: targetNode.type,
+                sourceNodeType: sourceNode.type,
+              },
+              edges
+            )
           );
         }
-        return setEdges(addEdge({ ...params, type: "smoothstep" ,targetNodeType: targetNode.type , sourceNodeType: sourceNode.type}, edges))}
-      },
+        return setEdges(
+          addEdge(
+            {
+              ...params,
+              type: "smoothstep",
+              targetNodeType: targetNode.type,
+              sourceNodeType: sourceNode.type,
+            },
+            edges
+          )
+        );
+      }
+    },
     [setEdges, edges, nodes]
   );
 
@@ -158,6 +176,7 @@ const Chart = () => {
             label: value.resource.label,
             resourceId: value.resource.id,
             waitTime: faToEnDigits(value.waitTime) ?? 0,
+            maxRetry: faToEnDigits(value.maxTry) ?? 0,
             errors: [],
             responses: value.resource.responses
               ? [...value.resource.responses]
@@ -167,11 +186,11 @@ const Chart = () => {
         return { ...node };
       })
     );
-    let index = nodes.findIndex((node)=>node.id === nodeToAddResource.id)
-    if(index !== -1){
-      if(nodes[index].type === 'Question'){
+    let index = nodes.findIndex((node) => node.id === nodeToAddResource.id);
+    if (index !== -1) {
+      if (nodes[index].type === "Question") {
         const updatedEdges = edges.filter(
-        (edge) => edge.source !== nodeToAddResource.id
+          (edge) => edge.source !== nodeToAddResource.id
         );
         setEdges([...updatedEdges]);
       }
@@ -214,11 +233,14 @@ const Chart = () => {
         aria-label="add new flow"
         className="mb-3 text-start d-flex gap-3 justify-content-between"
       >
-        <Validate
-          nodes={nodes}
-          edges={edges}
-          onValidateEnd={updateValidatedNodes}
-        />
+        <div className="d-flex gap-3">
+          <Validate
+            nodes={nodes}
+            edges={edges}
+            onValidateEnd={updateValidatedNodes}
+          />
+          <ExportFlow nodes={nodes} edges={edges} />
+        </div>
         <div className="d-flex gap-3">
           <Reset onClick={resetFlow} isLoading={isLoading} />
           <Save nodes={nodes} edges={edges} flowId={id} />

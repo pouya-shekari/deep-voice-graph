@@ -17,6 +17,7 @@ import AddChecker from "@cmp/Resources/Checker/Add";
 import AddAction from "@cmp/Resources/Action/Add";
 import AddAnnouncement from "@cmp/Resources/Announcement/Add";
 import AddQuestion from "@cmp/Resources/Questions/Add";
+import maxTryValidator from "@utils/maxTryValidator";
 
 const AddResource = ({ selectedNode, onClear, onUpdate }) => {
   const [checkers, setCheckers] = useState(null);
@@ -28,10 +29,12 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
   const [resource, setResource] = useState(null);
 
   const [waitTimeError, setWaitTimeError] = useState("");
+  const [maxTryError, setMaxTryError] = useState("");
 
   const [type, setType] = useState(selectedNode?.type);
 
   const waitTimeRef = useRef();
+  const maxTryRef = useRef();
 
   const modal = useModal();
   const { showSnak } = useSnak();
@@ -139,6 +142,7 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
       const list = await whichType[type]();
       setOptions([...list]);
       setWaitTimeError("");
+      setMaxTryError("");
       modal.show({ isAddResourceModalOpen: true });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -163,18 +167,23 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
 
   const validateInputs = () => {
     if (!resource) {
-      if(selectedNode.data.resourceId !== undefined){
-        let index = options.findIndex(item=>item.id === selectedNode.data.resourceId)
-        if(index !== -1){
-          if(validateWaitTime()=== false) return;
-          else{
-            let resource = options[index]
-            onUpdate({ resource, waitTime: waitTimeRef?.current?.value });
-            closeModalHandler();
-            return;
-          }
+      if (selectedNode.data.resourceId !== undefined) {
+        let index = options.findIndex(
+          (item) => item.id === selectedNode.data.resourceId
+        );
+        if (index !== -1) {
+          if (!validateWaitTime()) return;
+          if (!validateMaxTry()) return;
+          let resource = options[index];
+          onUpdate({
+            resource,
+            waitTime: waitTimeRef?.current?.value,
+            maxTry: maxTryRef?.current?.value,
+          });
+          closeModalHandler();
+          return;
         }
-      }else {
+      } else {
         showSnak({
           type: "error",
           message: "لطفا Resource را از لیست موجود انتخاب کنید.",
@@ -182,20 +191,39 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
         return;
       }
     }
-    if(validateWaitTime()=== false) return;
-    onUpdate({ resource, waitTime: waitTimeRef?.current?.value });
+    if (!validateWaitTime()) return;
+    if (!validateMaxTry()) return;
+    onUpdate({
+      resource,
+      waitTime: waitTimeRef?.current?.value,
+      maxTry: maxTryRef?.current?.value,
+    });
     closeModalHandler();
   };
 
-  const validateWaitTime = ()=>{
+  const validateMaxTry = () => {
     if (
-        ["Announcement", "Question"].includes(selectedNode?.type) &&
-        !waitTimeValidator(waitTimeRef.current.value)
+      ["Checker"].includes(selectedNode?.type) &&
+      !maxTryValidator(maxTryRef.current.value)
+    ) {
+      setMaxTryError(
+        "مقدار وارد شده صحیح نمی‌باشد. لطفا یک عدد صحیح بزرگتر از 0 وارد کنید"
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const validateWaitTime = () => {
+    if (
+      ["Announcement", "Question"].includes(selectedNode?.type) &&
+      !waitTimeValidator(waitTimeRef.current.value)
     ) {
       setWaitTimeError("زمان انتظار معتبر نمی‌باشد.");
       return false;
     }
-  }
+    return true;
+  };
 
   return (
     <>
@@ -271,9 +299,11 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
         <div className="mb-3">
           <Autocomplete
             options={options}
-            defaultValue={selectedNode?
-                options.find(item=>item.label === selectedNode.data.label)
-                : undefined}
+            defaultValue={
+              selectedNode
+                ? options.find((item) => item.label === selectedNode.data.label)
+                : undefined
+            }
             onChange={(event, newValue) => {
               setResource(newValue);
             }}
@@ -303,6 +333,22 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
               helperText={waitTimeError}
               inputRef={waitTimeRef}
               defaultValue={selectedNode?.data.waitTime}
+            />
+          </div>
+        )}
+        {["Checker"].includes(type) && type && (
+          <div className="mb-3">
+            <TextField
+              id="max-try"
+              label="Max Retry"
+              type="text"
+              fullWidth
+              variant="standard"
+              autoComplete={"off"}
+              error={maxTryError !== ""}
+              helperText={maxTryError}
+              inputRef={maxTryRef}
+              defaultValue={selectedNode?.data.maxTry}
             />
           </div>
         )}

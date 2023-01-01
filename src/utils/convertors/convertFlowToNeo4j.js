@@ -19,9 +19,9 @@ const convertFlowToNeo4j = (nodes, edges) => {
   nodes.forEach((node) => {
     if (node.type === "End") return;
     const edgs = edges.filter((edg) => edg.source === node.id);
-    console.log(edgs.filter((ed) => ed.targetNodeType === "End"));
     states.push({
       waitTime: +node.data.waitTime ? +node.data.waitTime : 0,
+      maxRetry: +node.data.maxRetry ? +node.data.maxRetry : 0,
       label: node.data?.label,
       stateId: node.id,
       type: node.type,
