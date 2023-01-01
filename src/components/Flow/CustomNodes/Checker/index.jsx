@@ -21,7 +21,7 @@ const Checker = (props) => {
       <br />
       <span>(true, false)</span>
       <br />
-      {props.data.maxRetry && <span>maxRetry: {props.data.maxRetry}</span>}
+      {Number.isInteger(+props.data.maxRetry)  && <span>maxRetry: {props.data.maxRetry}</span>}
       <div style={{ fontSize: "12px", fontWeight: "bold", color: "crimson" }}>
         {props.data.errors.map((err, index) => (
           <div key={index}>

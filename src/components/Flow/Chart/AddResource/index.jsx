@@ -348,7 +348,7 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
               error={maxTryError !== ""}
               helperText={maxTryError}
               inputRef={maxTryRef}
-              defaultValue={selectedNode?.data.maxTry}
+              defaultValue={selectedNode?.data.maxRetry}
             />
           </div>
         )}
