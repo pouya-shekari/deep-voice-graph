@@ -4,6 +4,7 @@ const convertFlowToNeo4j = (nodes, edges) => {
   if (endNode) {
     states.push({
       waitTime: 0,
+      maxRetry: 0,
       label: endNode.data?.label,
       stateId: endNode.id,
       type: endNode.type,
