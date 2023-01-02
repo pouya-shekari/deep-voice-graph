@@ -166,6 +166,7 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
   ]);
 
   const validateInputs = () => {
+    // TODO: need to refactor
     if (!resource) {
       if (selectedNode.data.resourceId !== undefined) {
         let index = options.findIndex(
@@ -182,6 +183,11 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
           });
           closeModalHandler();
           return;
+        } else {
+          showSnak({
+            type: "error",
+            message: "لطفا Resource را از لیست موجود انتخاب کنید.",
+          });
         }
       } else {
         showSnak({
@@ -190,6 +196,7 @@ const AddResource = ({ selectedNode, onClear, onUpdate }) => {
         });
         return;
       }
+      return;
     }
     if (!validateWaitTime()) return;
     if (!validateMaxTry()) return;
