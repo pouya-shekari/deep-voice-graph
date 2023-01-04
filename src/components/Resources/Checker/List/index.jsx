@@ -20,6 +20,7 @@ import Edit from "@cmp/Resources/Checker/Edit";
 
 import deleteChecker from "@services/checkers/deleteChecker";
 import updateChecker from "@services/checkers/updateChecker";
+import Search from "@cmp/Resources/Search";
 
 const tableHeaders = [
   { title: "شناسه چکر", field: "id", style: {} },
@@ -51,6 +52,7 @@ const tableHeaders = [
 
 const List = () => {
   const [selectedId, setSelectedId] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { showSnak } = useSnak();
   const modal = useModal();
@@ -123,6 +125,10 @@ const List = () => {
     modal.close();
   };
 
+  const searchHandler = (text) => {
+    setSearchQuery(text);
+  };
+
   if (checkersError)
     return (
       <Alert
@@ -181,6 +187,11 @@ const List = () => {
           افزودن چکر جدید
         </Button>
       </div>
+      <div className="row">
+        <div className="col-lg-4 col-md-6">
+          <Search onSearch={searchHandler} />
+        </div>
+      </div>
       <Edit
         title={checkers.find((item) => item.checkerId === selectedId)?.text}
         url={checkers.find((item) => item.checkerId === selectedId)?.url}
@@ -189,7 +200,9 @@ const List = () => {
       <Delete onDelete={deleteHandler} />
       <Table
         type={"simple"}
-        data={tableData}
+        data={[...tableData].filter((checker) =>
+          checker.title.includes(searchQuery)
+        )}
         label={"checker table"}
         hasAction={true}
         tableHeaders={tableHeaders}

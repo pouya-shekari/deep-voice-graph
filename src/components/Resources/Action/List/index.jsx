@@ -22,6 +22,7 @@ import Edit from "@cmp/Resources/Action/Edit";
 import getActions from "@services/actions/getActions";
 import deleteAction from "@services/actions/deleteAction";
 import updateAction from "@services/actions/updateChecker";
+import Search from "@cmp/Resources/Search";
 
 const tableHeaders = [
   { title: "شناسه اکشن", field: "id", style: {} },
@@ -53,6 +54,7 @@ const tableHeaders = [
 
 const List = () => {
   const [selectedId, setSelectedId] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { showSnak } = useSnak();
   const modal = useModal();
@@ -124,6 +126,10 @@ const List = () => {
     modal.close();
   };
 
+  const searchHandler = (text) => {
+    setSearchQuery(text);
+  };
+
   if (actionsError)
     return (
       <Alert
@@ -166,8 +172,6 @@ const List = () => {
     };
   });
 
-  const handleContextMenu = () => {};
-
   return (
     <>
       <Add updateListHandler={updateList} />
@@ -187,13 +191,19 @@ const List = () => {
           افزودن اکشن جدید
         </Button>
       </div>
+      <div className="row">
+        <div className="col-lg-4 col-md-6">
+          <Search onSearch={searchHandler} />
+        </div>
+      </div>
       <Table
         type={"simple"}
-        data={tableData}
+        data={[...tableData].filter((action) =>
+          action.title.includes(searchQuery)
+        )}
         label={"action table"}
         hasAction={true}
         tableHeaders={tableHeaders}
-        onContextMenu={handleContextMenu}
         actions={[
           {
             type: "primary",

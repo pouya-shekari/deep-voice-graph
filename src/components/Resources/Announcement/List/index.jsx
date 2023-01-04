@@ -21,6 +21,7 @@ import Edit from "@cmp/Resources/Announcement/Edit";
 
 import deleteAnnouncement from "@services/annoucements/deleteAnnouncement";
 import updateAnnouncement from "@services/annoucements/updateAnnouncement";
+import Search from "@cmp/Resources/Search";
 
 const tableHeaders = [
   { title: "شناسه اعلان", field: "id", style: {} },
@@ -40,6 +41,7 @@ const tableHeaders = [
 
 const List = () => {
   const [selectedId, setSelectedId] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { showSnak } = useSnak();
   const modal = useModal();
@@ -114,6 +116,10 @@ const List = () => {
     mutateAnnouncements([...announcements, data], { revalidate: false });
   };
 
+  const searchHandler = (text) => {
+    setSearchQuery(text);
+  };
+
   if (announcementsError)
     return (
       <Alert
@@ -178,9 +184,14 @@ const List = () => {
           افزودن اعلان جدید
         </Button>
       </div>
+      <div className="row">
+        <div className="col-lg-4 col-md-6">
+          <Search onSearch={searchHandler} />
+        </div>
+      </div>
       <Table
         type={"simple"}
-        data={tableData}
+        data={[...tableData].filter((ann) => ann.title.includes(searchQuery))}
         label={"announcements table"}
         hasAction={true}
         tableHeaders={tableHeaders}

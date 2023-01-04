@@ -30,6 +30,7 @@ import { v4 as uuidv4 } from "uuid";
 import updateFlowStates from "@services/flows/updateFlowStates";
 import convertFlowFromNeo4j from "@utils/convertors/convertFlowFromNeo4j";
 import convertFlowToNeo4j from "@utils/convertors/convertFlowToNeo4j";
+import Search from "@cmp/Resources/Search";
 
 const tableHeaders = [
   { title: "شناسه فلوچارت", field: "id", style: {} },
@@ -56,6 +57,7 @@ const List = () => {
   const [selectedId, setSelectedId] = useState(0);
   const [contextMenu, setContextMenu] = useState(null);
   const [duplicateId, setDuplicateId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [faNameError, setFaNameError] = useState("");
   const [enNameError, setEnNameError] = useState("");
@@ -70,6 +72,11 @@ const List = () => {
     error: flowsError,
     mutate: mutateFlows,
   } = useSWR(["flow/list", localStorageHelper.load("token")], getFlows);
+
+  const searchHandler = (text) => {
+    setSearchQuery(text);
+  };
+
   if (flowsError)
     return (
       <Alert
@@ -271,9 +278,18 @@ const List = () => {
         }
         onEdit={editHandler}
       />
+      <div className="row">
+        <div className="col-lg-4 col-md-6">
+          <Search onSearch={searchHandler} />
+        </div>
+      </div>
       <Table
         type={"simple"}
-        data={tableData}
+        data={[...tableData].filter(
+          (flow) =>
+            flow.nameEN.includes(searchQuery) ||
+            flow.nameFA.includes(searchQuery)
+        )}
         label={"flow table"}
         hasAction={true}
         tableHeaders={tableHeaders}
