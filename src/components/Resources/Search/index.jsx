@@ -6,6 +6,7 @@ const Search = ({ onSearch }) => {
   const changeHandler = debounce((value) => {
     onSearch(value);
   }, 300);
+
   return (
     <>
       <TextField
