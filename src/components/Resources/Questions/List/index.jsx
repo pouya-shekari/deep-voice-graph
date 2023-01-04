@@ -25,6 +25,7 @@ import localStorageHelper from "@utils/localStrogeHelper";
 import getUsedQuestions from "@services/questions/getUsedQuestions";
 
 import exportFromJSON from "export-from-json";
+import Search from "@cmp/Resources/Search";
 
 const tableHeaders = [
   { title: "شناسه سوال", field: "id", style: {} },
@@ -45,6 +46,7 @@ const tableHeaders = [
 
 const List = () => {
   const [selectedId, setSelectedId] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { showSnak } = useSnak();
   const modal = useModal();
@@ -133,6 +135,11 @@ const List = () => {
       showSnak({ type: "error", message: "دریافت سوالات با خطا مواجه شد." });
     }
   };
+
+  const searchHandler = (text) => {
+    setSearchQuery(text);
+  };
+
   if (questionsError)
     return (
       <Alert
@@ -205,11 +212,16 @@ const List = () => {
           دانلود سوالات استفاده شده در فلوچارت‌ها
         </Button>
       </div>
+      <div className="row">
+        <div className="col-lg-4 col-md-6">
+          <Search onSearch={searchHandler} />
+        </div>
+      </div>
       <Table
         type={"with-collapse"}
         label={"questions table"}
         tableHeaders={tableHeaders}
-        data={tableData}
+        data={[...tableData].filter((que) => que.title.includes(searchQuery))}
         hasAction={true}
         subTableItem={"responses"}
         actions={[

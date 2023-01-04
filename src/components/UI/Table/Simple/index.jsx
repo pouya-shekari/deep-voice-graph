@@ -70,7 +70,7 @@ const Simple = ({
   actions,
   tableHeaders,
   onRowClick,
-  onContextMenu
+  onContextMenu,
 }) => {
   return (
     <>
@@ -113,7 +113,9 @@ const Simple = ({
               <TableRow
                 key={uuidv4()}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                onContextMenu={onContextMenu.bind(this, row.id)}
+                onContextMenu={
+                  onContextMenu && onContextMenu.bind(this, row.id)
+                }
               >
                 {tableHeaders.map((header) => (
                   <TableCell
@@ -131,13 +133,13 @@ const Simple = ({
                   </TableCell>
                 ))}
                 {hasAction && (
-                  <TableCell align={'center'}>
+                  <TableCell align={"center"}>
                     {/*<div className={'d-flex justify-content-between flex-wrap'}>*/}
-                      {actions.map((action, index) => (
-                          <Fragment key={index}>
-                            {renderAction(action, row)}
-                          </Fragment>
-                      ))}
+                    {actions.map((action, index) => (
+                      <Fragment key={index}>
+                        {renderAction(action, row)}
+                      </Fragment>
+                    ))}
                     {/*</div>*/}
                   </TableCell>
                 )}
